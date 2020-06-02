@@ -26,11 +26,11 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
 
   //initializing sound device
   BASS_Init(-1, 48000, BASS_DEVICE_LATENCY, 0, NULL);
-  BASS_PluginLoad("bassopus.dll", BASS_UNICODE); 
+  BASS_PluginLoad("bassopus.dll", BASS_UNICODE);
 
   create_widgets();
   connect_widgets();
-  
+
   set_widgets();
   set_char_select();
   name_widgets();
@@ -857,7 +857,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
 
   if (is_system_speaking)
     append_system_text(m_chatmessage[MESSAGE]);
-  else append_ic_text(m_chatmessage[MESSAGE], f_showname);
+  else append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
 
   if(ao_app->read_config("enable_logging") == "true")
     save_textlog("[" + QTime::currentTime().toString() + "] " + f_showname + ": " + m_chatmessage[MESSAGE]);
@@ -1125,7 +1125,96 @@ void Courtroom::handle_chatmessage_3()
 
 }
 
-void Courtroom::append_ic_text(QString p_text, QString p_name)
+void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
+{
+  // record new entry
+  m_ic_records.append(std::make_shared<record_type>(p_name, p_line, "", p_system));
+
+  {// resize if needed
+    int len = m_ic_records.length();
+
+    if (len > m_log_limit)
+      m_ic_records.mid(len - m_log_limit);
+  }
+
+  QTextCharFormat name_format = ui_ic_chatlog->currentCharFormat();
+  name_format.setFontWeight(QFont::Bold);
+  name_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
+
+  QTextCharFormat line_format = ui_ic_chatlog->currentCharFormat();
+  line_format.setFontWeight(QFont::Normal);
+  line_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
+
+  QTextCharFormat system_format = ui_ic_chatlog->currentCharFormat();
+  system_format.setFontWeight(QFont::Normal);
+  system_format.setForeground(ao_app->get_color("system_msg", fonts_ini));
+
+  // need vscroll bar for cache
+  QScrollBar *vscrollbar = ui_ic_chatlog->verticalScrollBar();
+
+  // cache previous values
+  const QTextCursor prev_cursor = ui_ic_chatlog->textCursor();
+  const int scroll_pos = vscrollbar->value();
+  const bool is_scrolled = m_scroll_down ? scroll_pos == vscrollbar->maximum() : scroll_pos == vscrollbar->minimum();
+
+  // declare array
+  record_type_array records;
+  // populate
+  if (m_scroll_type_changed)
+  {
+    records = m_ic_records;
+
+    // clear log
+    ui_ic_chatlog->clear();
+  }
+  else
+  {
+    records.append(m_ic_records.last());
+  }
+
+  // recover cursor
+  QTextCursor cursor = ui_ic_chatlog->textCursor();
+  // figure out if we need to move up or down
+  const QTextCursor::MoveOperation move_type = m_scroll_down ? QTextCursor::End : QTextCursor::Start;
+
+  for (record_type_ptr record : records)
+  {
+    // move cursor
+    cursor.movePosition(move_type);
+
+    if (record->system)
+    {
+      cursor.insertText(record->line + QChar::LineFeed, system_format);
+    }
+    else
+    {
+      cursor.insertText(record->name + ": ", name_format);
+      cursor.insertText(record->line + QChar::LineFeed, line_format);
+    }
+  }
+
+  if (prev_cursor.hasSelection() || is_scrolled)
+  {
+    // restore previous selection and vscrollbar
+    ui_ic_chatlog->setTextCursor(prev_cursor);
+    vscrollbar->setValue(scroll_pos);
+  }
+  // scroll up/down depending on context
+  else
+  {
+    ui_ic_chatlog->moveCursor(move_type);
+    vscrollbar->setValue(m_scroll_down ? vscrollbar->maximum() : vscrollbar->minimum());
+  }
+}
+
+void Courtroom::append_system_text(QString p_line)
+{
+  if (chatmessage_is_empty)
+    return;
+  append_ic_text("", p_line, true);
+}
+
+void Courtroom::append_ic_text_DEPRECATED(QString p_name, QString p_text)
 {
   QTextCharFormat bold;
   QTextCharFormat normal;
@@ -1212,7 +1301,7 @@ void Courtroom::append_ic_text(QString p_text, QString p_name)
   }
 }
 
-void Courtroom::append_system_text(QString p_text)
+void Courtroom::append_system_text_DEPRECATED(QString p_line)
 {
   if (chatmessage_is_empty) return;
 
@@ -1250,7 +1339,7 @@ void Courtroom::append_system_text(QString p_text)
   }
 
   // new record
-  m_ic_records.append(std::make_shared<record_type>("", p_text, color, true));
+  m_ic_records.append(std::make_shared<record_type>("", p_line, color, true));
 
   int len = m_ic_records.length();
 
@@ -1262,7 +1351,7 @@ void Courtroom::append_system_text(QString p_text)
   if(m_scroll_down)
   {
     ui_ic_chatlog->moveCursor(QTextCursor::End);
-    ui_ic_chatlog->insertHtml("<font color=\"" + color + "\">" + p_text + "</font>");
+    ui_ic_chatlog->insertHtml("<font color=\"" + color + "\">" + p_line + "</font>");
     ui_ic_chatlog->textCursor().insertText("\n\n");
   }
   else
@@ -1718,7 +1807,7 @@ void Courtroom::handle_song(QStringList *p_contents)
       }
       else
       {
-        append_ic_text("has played a song: " + f_song, str_char);
+        append_ic_text(str_char, "has played a song: " + f_song, false);
         m_music_player->play(f_song);
       }
     }

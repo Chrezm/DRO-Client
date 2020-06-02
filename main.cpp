@@ -4,6 +4,8 @@
 #include "networkmanager.h"
 #include "lobby.h"
 #include "courtroom.h"
+#include "debug_functions.h"
+
 #include <QPluginLoader>
 #include <QDebug>
 #include <cstdio>
@@ -17,15 +19,18 @@ int main(int argc, char *argv[])
   AOApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
+  AOApplication main_app(argc, argv);
+
   QPluginLoader apng("imageformats/qapng.dll");
   if (!apng.load())
   {
-    qDebug() << apng.errorString();
+#ifdef QT_NO_DEBUG
+    call_error(QString("APNG plugin has encountered an error: %s").arg(apng.errorString()));
+#endif
   }
 
-  AOApplication main_app(argc, argv);
   main_app.construct_lobby();
-#ifndef INDEV
+#ifdef QT_NO_DEBUG
   main_app.net_manager->connect_to_master();
 #endif
   main_app.w_lobby->show();

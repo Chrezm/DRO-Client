@@ -6,18 +6,22 @@
 
 struct record_type
 {
-    record_type() = default;
-    record_type(QString p_name, QString p_line, QString p_color, bool p_system)
-        : name(p_name), line(p_line), color(p_color), system(p_system)
-    {}
+  QString name;
+  QString line;
+  QString color;
+  bool system = false;
 
-    QString name;
-    QString line;
-    QString color;
-    bool system;
+  record_type() = default;
+  record_type(QString p_name, QString p_line, QString p_color, bool p_is_system)
+      : name(p_name), line(p_line), system(p_is_system)
+  {
+    Q_UNUSED(p_color);
+  }
 };
 
 typedef std::shared_ptr<record_type> record_type_ptr;
+
+typedef QVector<record_type_ptr> record_type_array;
 
 struct server_type
 {

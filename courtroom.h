@@ -170,9 +170,10 @@ public:
   //adds text to the IC chatlog. p_name first as bold then p_text then a newlin
   //this function keeps the chatlog scrolled to the top unless there's text selected
   // or the user isn't already scrolled to the top
-  void append_ic_text(QString p_text, QString p_name = "");
-
-  void append_system_text(QString p_text);
+  void append_ic_text(QString p_name, QString p_line, bool p_system);
+  void append_ic_text_DEPRECATED(QString p_name, QString p_line);
+  void append_system_text(QString p_line);
+  void append_system_text_DEPRECATED(QString p_line);
 
   //prints who played the song to IC chat and plays said song(if found on local filesystem)
   //takes in a list where the first element is the song name and the second is the char id of who played it
@@ -428,7 +429,7 @@ private:
   QVector<AOTimer*> ui_timers;
 
   QTextEdit* ui_ic_chatlog = nullptr;
-  QVector<record_type_ptr> m_ic_records;
+  record_type_array m_ic_records;
 
   AOTextArea *ui_ms_chatlog;
   AOTextArea *ui_server_chatlog;

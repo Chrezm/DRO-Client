@@ -1143,7 +1143,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
 
   QTextCharFormat line_format = ui_ic_chatlog->currentCharFormat();
   line_format.setFontWeight(QFont::Normal);
-  line_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
+  line_format.setForeground(ao_app->get_color("chatlog_message_color", fonts_ini));
 
   QTextCharFormat system_format = ui_ic_chatlog->currentCharFormat();
   system_format.setFontWeight(QFont::Normal);
@@ -1162,6 +1162,9 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   // populate
   if (m_scroll_type_changed)
   {
+    m_scroll_type_changed = false;
+
+    // need the entire records to append
     records = m_ic_records;
 
     // clear log
@@ -1188,7 +1191,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
     }
     else
     {
-      cursor.insertText(record->name + ": ", name_format);
+      cursor.insertText(record->name + QChar::LineFeed, name_format);
       cursor.insertText(record->line + QChar::LineFeed, line_format);
     }
   }

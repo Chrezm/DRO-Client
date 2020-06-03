@@ -180,6 +180,10 @@ void Courtroom::enter_courtroom(int p_cid)
 
   name_widgets();
   set_widget_layers();
+
+  for (int i=0; i<3000; ++i)
+    append_ic_text("Hiyoko Saionji",
+                   "when you send an IC message now, does it lag noticeably?\n03 foobar", false);
 }
 
 void Courtroom::done_received()
@@ -857,8 +861,13 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
 
   if (is_system_speaking)
     append_system_text(m_chatmessage[MESSAGE]);
-  else append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
-
+  else {
+    QElapsedTimer timer;
+    timer.start();
+    append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
+    int elapsed = timer.elapsed();
+    call_notice(QString::number(elapsed));
+  }
   if(ao_app->read_config("enable_logging") == "true")
     save_textlog("[" + QTime::currentTime().toString() + "] " + f_showname + ": " + m_chatmessage[MESSAGE]);
 
@@ -1134,6 +1143,125 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
     int len = m_ic_records.length();
 
     if (len > m_log_limit)
+      m_ic_records = m_ic_records.mid(len - m_log_limit);
+  }
+
+  QTextCharFormat name_format = ui_ic_chatlog->currentCharFormat();
+  name_format.setFontWeight(QFont::Bold);
+  name_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
+
+  QTextCharFormat line_format = ui_ic_chatlog->currentCharFormat();
+  line_format.setFontWeight(QFont::Normal);
+  line_format.setForeground(ao_app->get_color("chatlog_message_color", fonts_ini));
+
+  QTextCharFormat system_format = ui_ic_chatlog->currentCharFormat();
+  system_format.setFontWeight(QFont::Normal);
+  system_format.setForeground(ao_app->get_color("system_msg", fonts_ini));
+
+  // need vscroll bar for cache
+  QScrollBar *vscrollbar = ui_ic_chatlog->verticalScrollBar();
+
+  // cache previous values
+  const QTextCursor prev_cursor = ui_ic_chatlog->textCursor();
+  const int scroll_pos = vscrollbar->value();
+  const bool is_scrolled = m_scroll_down ? scroll_pos == vscrollbar->maximum() : scroll_pos == vscrollbar->minimum();
+
+  // declare array
+  record_type_array records;
+  // populate
+  if (m_scroll_type_changed)
+  {
+    m_scroll_type_changed = false;
+
+    // need the entire records to append
+    records = m_ic_records;
+
+    // clear log
+    ui_ic_chatlog->clear();
+  }
+  else
+  {
+    records.append(m_ic_records.last());
+  }
+
+  // recover cursor
+  QTextCursor cursor = ui_ic_chatlog->textCursor();
+  // figure out if we need to move up or down
+  const QTextCursor::MoveOperation move_type = m_scroll_down ? QTextCursor::End : QTextCursor::Start;
+
+  for (record_type_ptr record : records)
+  {
+    // move cursor
+    cursor.movePosition(move_type);
+    if (record->system)
+    {
+      cursor.insertText(record->line + QChar::LineFeed, system_format);
+    }
+    else
+    {
+      cursor.insertText(record->name + QChar::LineFeed, name_format);
+      cursor.insertText(record->line + QChar::LineFeed, line_format);
+    }
+  }
+// while (ui_ic_chatlog->document()->blockCount() > m_log_limit+1 && m_log_limit > 0)
+  const QTextCursor::MoveOperation delete_location = m_scroll_down ? QTextCursor::Start : QTextCursor::End;
+  int blocks_to_delete = ui_ic_chatlog->document()->blockCount() - m_log_limit - 1;
+
+  for (int i=0; i<blocks_to_delete; ++i)
+  {
+    cursor.movePosition(delete_location);
+    cursor.movePosition(QTextCursor::Left); // Epic gamer moment
+    cursor.select(QTextCursor::BlockUnderCursor);
+    cursor.removeSelectedText();
+    cursor.deleteChar();
+  }
+  if (!m_scroll_down && blocks_to_delete > 0)
+    cursor.insertBlock();
+  /*
+    if (m_scroll_down)
+    {
+      cursor.deleteChar();
+    }
+    else
+    {
+      // All of this part gets rid of the newline of the (now) last block
+      // .deleteLastChar() (which typically would do that) does not work here as it
+      // also removes the last character.
+      //cursor.deletePreviousChar();
+
+      cursor.movePosition(QTextCursor::PreviousCharacter,QTextCursor::KeepAnchor,1);
+      QString last_char_and_newline = cursor.selectedText();
+      cursor.removeSelectedText();
+      QString last_char = last_char_and_newline.replace(QChar(0x2029), "");
+      cursor.movePosition(QTextCursor::PreviousCharacter,QTextCursor::KeepAnchor,1);
+      QTextCharFormat last_char_format = cursor.blockCharFormat();
+      cursor.insertText(last_char, last_char_format);
+    }
+  }*/
+
+  if (prev_cursor.hasSelection() || is_scrolled)
+  {
+    // restore previous selection and vscrollbar
+    ui_ic_chatlog->setTextCursor(prev_cursor);
+    vscrollbar->setValue(scroll_pos);
+  }
+  // scroll up/down depending on context
+  else
+  {
+    ui_ic_chatlog->moveCursor(move_type);
+    vscrollbar->setValue(m_scroll_down ? vscrollbar->maximum() : vscrollbar->minimum());
+  }
+}
+/*
+void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
+{
+  // record new entry
+  m_ic_records.append(std::make_shared<record_type>(p_name, p_line, "", p_system));
+
+  {// resize if needed
+    int len = m_ic_records.length();
+
+    if (len > m_log_limit)
       m_ic_records.mid(len - m_log_limit);
   }
 
@@ -1209,7 +1337,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
     vscrollbar->setValue(m_scroll_down ? vscrollbar->maximum() : vscrollbar->minimum());
   }
 }
-
+*/
 void Courtroom::append_system_text(QString p_line)
 {
   if (chatmessage_is_empty)

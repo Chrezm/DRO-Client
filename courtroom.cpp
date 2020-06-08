@@ -857,7 +857,8 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
 
   if (is_system_speaking)
     append_system_text(m_chatmessage[MESSAGE]);
-  else append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
+  else
+    append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
 
   if(ao_app->read_config("enable_logging") == "true")
     save_textlog("[" + QTime::currentTime().toString() + "] " + f_showname + ": " + m_chatmessage[MESSAGE]);
@@ -1134,7 +1135,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
     int len = m_ic_records.length();
 
     if (len > m_log_limit)
-      m_ic_records.mid(len - m_log_limit);
+      m_ic_records = m_ic_records.mid(len - m_log_limit);
   }
 
   QTextCharFormat name_format = ui_ic_chatlog->currentCharFormat();
@@ -1158,21 +1159,21 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   const bool is_scrolled = m_scroll_down ? scroll_pos == vscrollbar->maximum() : scroll_pos == vscrollbar->minimum();
 
   // declare array
-  record_type_array records;
+  record_type_array records_to_add;
   // populate
   if (m_scroll_type_changed)
   {
     m_scroll_type_changed = false;
 
     // need the entire records to append
-    records = m_ic_records;
+    records_to_add = m_ic_records;
 
     // clear log
     ui_ic_chatlog->clear();
   }
   else
   {
-    records.append(m_ic_records.last());
+    records_to_add.append(m_ic_records.last());
   }
 
   // recover cursor
@@ -1180,11 +1181,10 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   // figure out if we need to move up or down
   const QTextCursor::MoveOperation move_type = m_scroll_down ? QTextCursor::End : QTextCursor::Start;
 
-  for (record_type_ptr record : records)
+  for (record_type_ptr record : records_to_add)
   {
     // move cursor
     cursor.movePosition(move_type);
-
     if (record->system)
     {
       cursor.insertText(record->line + QChar::LineFeed, system_format);
@@ -1195,7 +1195,47 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
       cursor.insertText(record->line + QChar::LineFeed, line_format);
     }
   }
+  const QTextCursor::MoveOperation delete_location = m_scroll_down ? QTextCursor::Start : QTextCursor::End;
+  int blocks_to_delete;
+  if (m_log_limit > 0)
+    blocks_to_delete = ui_ic_chatlog->document()->blockCount() - m_log_limit - 1;
+  else
+    blocks_to_delete = 0;
 
+  /* Blocks appear like this
+   * textQChar(0x2029)
+   * additionaltextQChar(0x2029)
+   * moretextQChar(0x2029)
+   * where QChar(0x2029) is the paragraph break block.
+   * Do note that the above example has FOUR blocks: text, additionaltext, moretext, and
+   * an empty block. That is because QTextCursor separates blocks by paragraph break block
+   * (which is why the above code has a -1) and does not consider this break character as
+   * part of the block (which is why we move Left in the loop, to 'be in the block').
+   * Finally, BlockUnderCursor does NOT select the break character, so we deleteChar after
+   * removing the selection to remove the straggling newline.
+   */
+  for (int i=0; i<blocks_to_delete; ++i)
+  {
+    cursor.movePosition(delete_location);
+    cursor.movePosition(QTextCursor::Left);
+    cursor.select(QTextCursor::BlockUnderCursor);
+    cursor.removeSelectedText();
+    cursor.deleteChar();
+  }
+  /*
+   * However, if we do this, we also remove the last newline of the last block that remains,
+   * which will make it difficult to append new blocks to it/figure out the amount of blocks
+   * if we have a scroll up log, so we add it again if we removed any break characters at all
+   */
+  if (!m_scroll_down && blocks_to_delete > 0)
+    cursor.insertBlock();
+
+  /*
+   * Unfortunately, the simplest alternative, that is, move cursor to the last block, remove
+   * the block under it and delete the last char does not work, as this also removes the last
+   * character of the block that remains. That's why we have to do this whole complicated
+   * process.
+   */
   if (prev_cursor.hasSelection() || is_scrolled)
   {
     // restore previous selection and vscrollbar
@@ -1215,183 +1255,6 @@ void Courtroom::append_system_text(QString p_line)
   if (chatmessage_is_empty)
     return;
   append_ic_text("", p_line, true);
-}
-
-void Courtroom::append_ic_text_DEPRECATED(QString p_name, QString p_text)
-{
-  QTextCharFormat bold;
-  QTextCharFormat normal;
-  QString color = ao_app->read_theme_ini("chatlog_showname", fonts_ini);
-  bold.setFontWeight(QFont::Bold);
-  normal.setFontWeight(QFont::Normal);
-  const QTextCursor old_cursor = ui_ic_chatlog->textCursor();
-  const int old_scrollbar_value = ui_ic_chatlog->verticalScrollBar()->value();
-  const bool is_scrolled_up = old_scrollbar_value == ui_ic_chatlog->verticalScrollBar()->maximum();
-  const QTextCursor::MoveOperation f_operation = m_scroll_down ? QTextCursor::End : QTextCursor::Start;
-
-  //rewrite everything that was written before
-  if(m_scroll_type_changed)
-  {
-    ui_ic_chatlog->clear();
-
-    for (record_type_ptr record : m_ic_records)
-    {
-      ui_ic_chatlog->moveCursor(f_operation);
-      if (record->system == false)
-      {
-        ui_ic_chatlog->insertHtml("<b><font color=\"" + record->color + "\">" + record->name + "</font></b>");
-        ui_ic_chatlog->textCursor().insertText("\n");
-        ui_ic_chatlog->textCursor().insertText(record->line + "\n\n", normal);
-      }
-      else
-      {
-        ui_ic_chatlog->insertHtml("<font color=\"" + record->color + "\">" + record->line + "</font>");
-        ui_ic_chatlog->textCursor().insertText("\n\n");
-      }
-    }
-    m_scroll_type_changed = false;
-  }
-
-  // new record
-  m_ic_records.append(std::make_shared<record_type>(p_name, p_text, color, false));
-
-  int len = m_ic_records.length();
-
-  if (len > m_log_limit) // magic numbers, woo!
-  {
-    m_ic_records = m_ic_records.mid(len - m_log_limit);
-  }
-
-
-  if(m_scroll_down)
-  {
-    ui_ic_chatlog->moveCursor(QTextCursor::End);
-    ui_ic_chatlog->insertHtml("<b><font color=\"" + color + "\">" + p_name + "</font></b>");
-    ui_ic_chatlog->textCursor().insertText("\n" + p_text + "\n\n", normal);
-  }
-  else
-  {
-    ui_ic_chatlog->clear();
-
-    for (record_type_ptr record : m_ic_records)
-    {
-      ui_ic_chatlog->moveCursor(QTextCursor::Start);
-      if (record->system == false)
-      {
-        ui_ic_chatlog->insertHtml("<b><font color=\"" + record->color + "\">" + record->name + "</font></b>");
-        ui_ic_chatlog->textCursor().insertText("\n");
-        ui_ic_chatlog->textCursor().insertText(record->line + "\n\n", normal);
-      }
-      else
-      {
-        ui_ic_chatlog->insertHtml("<font color=\"" + record->color + "\">" + record->line + "</font>");
-        ui_ic_chatlog->textCursor().insertText("\n\n");
-      }
-    }
-  }
-
-  if (old_cursor.hasSelection() || !is_scrolled_up)
-  {
-    // The user has selected text or scrolled away from the top: maintain position.
-    ui_ic_chatlog->setTextCursor(old_cursor);
-    ui_ic_chatlog->verticalScrollBar()->setValue(old_scrollbar_value);
-  }
-  else
-  {
-    // The user hasn't selected any text and the scrollbar is at the top: scroll to the top.
-    ui_ic_chatlog->moveCursor(f_operation);
-    ui_ic_chatlog->verticalScrollBar()->setValue(ui_ic_chatlog->verticalScrollBar()->maximum());
-  }
-}
-
-void Courtroom::append_system_text_DEPRECATED(QString p_line)
-{
-  if (chatmessage_is_empty) return;
-
-  QTextCharFormat bold;
-  QTextCharFormat normal;
-  QString color = ao_app->read_theme_ini("system_msg", fonts_ini);
-  bold.setFontWeight(QFont::Bold);
-  normal.setFontWeight(QFont::Normal);
-  const QTextCursor old_cursor = ui_ic_chatlog->textCursor();
-  const int old_scrollbar_value = ui_ic_chatlog->verticalScrollBar()->value();
-  const bool is_scrolled_up = old_scrollbar_value == ui_ic_chatlog->verticalScrollBar()->maximum();
-  const QTextCursor::MoveOperation f_operation = m_scroll_down ? QTextCursor::End : QTextCursor::Start;
-
-  //rewrite everything that was written before
-  if(m_scroll_type_changed)
-  {
-    ui_ic_chatlog->clear();
-
-    for (record_type_ptr record : m_ic_records)
-    {
-      ui_ic_chatlog->moveCursor(f_operation);
-      if (record->system == false)
-      {
-        ui_ic_chatlog->insertHtml("<b><font color=\"" + record->color + "\">" + record->name + "</font></b>");
-        ui_ic_chatlog->textCursor().insertText("\n" + record->line + "\n\n", normal);
-
-      }
-      else
-      {
-        ui_ic_chatlog->insertHtml("<font color=\"" + record->color + "\">" + record->line + "</font>");
-        ui_ic_chatlog->textCursor().insertText("\n\n");
-      }
-    }
-    m_scroll_type_changed = false;
-  }
-
-  // new record
-  m_ic_records.append(std::make_shared<record_type>("", p_line, color, true));
-
-  int len = m_ic_records.length();
-
-  if (len > m_log_limit) // magic numbers, woo!
-  {
-    m_ic_records = m_ic_records.mid(len - m_log_limit);
-  }
-
-  if(m_scroll_down)
-  {
-    ui_ic_chatlog->moveCursor(QTextCursor::End);
-    ui_ic_chatlog->insertHtml("<font color=\"" + color + "\">" + p_line + "</font>");
-    ui_ic_chatlog->textCursor().insertText("\n\n");
-  }
-  else
-  {
-    ui_ic_chatlog->clear();
-
-    for (record_type_ptr record : m_ic_records)
-    {
-      ui_ic_chatlog->moveCursor(QTextCursor::Start);
-      if (record->system == false)
-      {
-        ui_ic_chatlog->insertHtml("<b><font color=\"" + record->color + "\">" + record->name + "</font></b>");
-        ui_ic_chatlog->textCursor().insertText("\n" + record->line + "\n\n", normal);
-      }
-      else
-      {
-        qDebug() << "<font color=\"" + record->color + ">" + record->line + "</font>";
-        ui_ic_chatlog->insertHtml("<font color=\"" + record->color + "\">" + record->line + "</font>");
-        ui_ic_chatlog->textCursor().insertText("\n\n");
-      }
-    }
-  }
-
-  ui_ic_chatlog->setTextColor("#000000");
-
-  if (old_cursor.hasSelection() || !is_scrolled_up)
-  {
-    // The user has selected text or scrolled away from the top: maintain position.
-    ui_ic_chatlog->setTextCursor(old_cursor);
-    ui_ic_chatlog->verticalScrollBar()->setValue(old_scrollbar_value);
-  }
-  else
-  {
-    // The user hasn't selected any text and the scrollbar is at the top: scroll to the top.
-    ui_ic_chatlog->moveCursor(f_operation);
-    ui_ic_chatlog->verticalScrollBar()->setValue(ui_ic_chatlog->verticalScrollBar()->maximum());
-  }
 }
 
 void Courtroom::play_preanim()

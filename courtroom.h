@@ -170,6 +170,7 @@ public:
   //adds text to the IC chatlog. p_name first as bold then p_text then a newlin
   //this function keeps the chatlog scrolled to the top unless there's text selected
   // or the user isn't already scrolled to the top
+  void update_ic_log(bool p_reset_log);
   void append_ic_text(QString p_name, QString p_line, bool p_system);
   void append_system_text(QString p_line);
 
@@ -355,12 +356,11 @@ private:
   int emote_rows = 2;
   int max_emotes_on_page = 10;
 
-  int m_log_limit = 200;
+  int m_chatlog_limit = 200;
   bool m_chatlog_newline = false;
   bool m_chatlog_scrolldown = false;
-  bool m_chatlog_changed = false;
 
-//  int note_amount = 0;
+//  inmchatlog_changed;
 
   QVector<evi_type> local_evidence_list;
 

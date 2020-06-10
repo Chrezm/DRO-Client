@@ -89,18 +89,27 @@ void Courtroom::enter_courtroom(int p_cid)
   m_wtce_current = 0;
   reset_wtce_buttons();
 
-  if(const int log_limit = ao_app->read_config("chatlog_limit").toInt())
-    m_log_limit = log_limit;
+  // forward declaration for a possible update of the chatlog
+  bool chatlog_changed = false;
+
+  int chatlog_limit = ao_app->read_config("chatlog_limit").toInt();
+  if (chatlog_limit > 0 && m_chatlog_limit != chatlog_limit) // the chatlog_limit should always be higher than 0
+    chatlog_changed = true;
+  m_chatlog_limit = chatlog_limit > 0 ? chatlog_limit : 200; // TODO declare the default somewhere so it's not a magic number
 
   bool chatlog_scrolldown = ao_app->read_config("scroll_type") == "down";
   if (m_chatlog_scrolldown != chatlog_scrolldown)
-    m_chatlog_changed = true;
+    chatlog_changed = true;
   m_chatlog_scrolldown = chatlog_scrolldown;
 
   bool chatlog_newline = ao_app->read_chatlog_newline();
   if (m_chatlog_newline != chatlog_newline)
-    m_chatlog_changed = true;
+    chatlog_changed = true;
   m_chatlog_newline = chatlog_newline;
+
+  // refresh the log if needed
+  if (chatlog_changed)
+    update_ic_log(chatlog_changed);
 
   set_evidence_page();
 
@@ -1130,6 +1139,138 @@ void Courtroom::handle_chatmessage_3()
 
 }
 
+void Courtroom::update_ic_log(bool p_reset_log)
+{
+    /*
+     * first, we figure out whatever we append the last message or if we reset
+     * the entire log
+     * */
+    record_type_array records_to_add;
+    // populate
+    if (p_reset_log)
+    {
+        // we need the entire recordings
+        records_to_add = m_ic_records;
+
+        // clear log
+        ui_ic_chatlog->clear();
+    }
+    else
+    {
+        records_to_add.append(m_ic_records.last());
+    }
+
+    // prepare the formats we need
+    QTextCharFormat name_format = ui_ic_chatlog->currentCharFormat();
+    name_format.setAnchor(true);
+    name_format.setFontWeight(QFont::Bold);
+    name_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
+
+    QTextCharFormat line_format = ui_ic_chatlog->currentCharFormat();
+    line_format.setFontWeight(QFont::Normal);
+    line_format.setForeground(ao_app->get_color("chatlog_message_color", fonts_ini));
+
+    QTextCharFormat system_format = ui_ic_chatlog->currentCharFormat();
+    system_format.setAnchor(true);
+    system_format.setFontWeight(QFont::Normal);
+    system_format.setForeground(ao_app->get_color("system_msg", fonts_ini));
+
+    // need vscroll bar for cache
+    QScrollBar *vscrollbar = ui_ic_chatlog->verticalScrollBar();
+
+    // cache previous values
+    const QTextCursor prev_cursor = ui_ic_chatlog->textCursor();
+    const int scroll_pos = vscrollbar->value();
+    const bool is_scrolled = m_chatlog_scrolldown ? scroll_pos == vscrollbar->maximum() : scroll_pos == vscrollbar->minimum();
+
+    // recover cursor
+    QTextCursor cursor = ui_ic_chatlog->textCursor();
+    // figure out if we need to move up or down
+    const QTextCursor::MoveOperation move_type = m_chatlog_scrolldown ? QTextCursor::End : QTextCursor::Start;
+
+    for (record_type_ptr record : records_to_add)
+    {
+        // move cursor
+        cursor.movePosition(move_type);
+
+        if (record->system)
+        {
+            cursor.insertText(record->line + QChar::LineFeed, system_format);
+        }
+        else
+        {
+            cursor.insertText(record->name + (m_chatlog_newline ? QString(QChar::LineFeed) : ": "), name_format);
+            cursor.insertText(record->line + QChar::LineFeed + (m_chatlog_newline ? QChar::LineFeed : QChar()), line_format);
+        }
+    }
+
+    // figure out the number of blocks we need overall
+    // this is always going to amount to at least the current length of records
+    int block_count = m_ic_records.length() + 1; // there's always one extra block
+    // to do that, we need to go through the records
+    for (record_type_ptr record : m_ic_records)
+        if (!record->system)
+            if (m_chatlog_newline)
+                block_count += 2; // if newline is actived, it always inserts two extra newlines; therefor two paragraphs
+
+    // there's always one extra block count, so deduce one from block_count
+    int blocks_to_delete = ui_ic_chatlog->document()->blockCount();
+
+    // the orientation at which we need to delete from
+    const QTextCursor::MoveOperation start_location = m_chatlog_scrolldown ? QTextCursor::Start : QTextCursor::End;
+    const QTextCursor::MoveOperation block_orientation = m_chatlog_scrolldown ? QTextCursor::NextBlock : QTextCursor::PreviousBlock;
+
+    /* Blocks appear like this
+     * textQChar(0x2029)
+     * additionaltextQChar(0x2029)
+     * moretextQChar(0x2029)
+     * where QChar(0x2029) is the paragraph break block.
+     * Do note that the above example has FOUR blocks: text, additionaltext, moretext, and
+     * an empty block. That is because QTextCursor separates blocks by paragraph break block
+     * (which is why the above code has a -1) and does not consider this break character as
+     * part of the block (which is why we move Left in the loop, to 'be in the block').
+     * Finally, BlockUnderCursor does NOT select the break character, so we deleteChar after
+     * removing the selection to remove the straggling newline.
+     * */
+
+    // move our cursor at the start
+    cursor.movePosition(start_location);
+
+    // move the cursor around, depending on the orientation we need
+    for (int i = 0; i < blocks_to_delete; ++i)
+        cursor.movePosition(block_orientation, QTextCursor::KeepAnchor);
+
+    // now that everything is selected, delete it
+    cursor.removeSelectedText();
+
+    /*
+    * However, if we do this, we also remove the last newline of the last block that remains,
+    * which will make it difficult to append new blocks to it/figure out the amount of blocks
+    * if we have a scroll up log, so we add it again if we removed any break characters at all
+    * */
+    if (!m_chatlog_scrolldown && blocks_to_delete > 0)
+        cursor.insertBlock();
+
+    /*
+    * Unfortunately, the simplest alternative, that is, move cursor to the last block, remove
+    * the block under it and delete the last char does not work, as this also removes the last
+    * character of the block that remains. That's why we have to do this whole complicated
+    * process.
+    * */
+    if (prev_cursor.hasSelection() || is_scrolled)
+    {
+        // restore previous selection and vscrollbar
+        ui_ic_chatlog->setTextCursor(prev_cursor);
+        vscrollbar->setValue(scroll_pos);
+    }
+    // scroll up/down depending on context
+    else
+    {
+        ui_ic_chatlog->moveCursor(move_type);
+        vscrollbar->setValue(m_chatlog_scrolldown ? vscrollbar->maximum() : vscrollbar->minimum());
+    }
+}
+
 void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
 {
   // record new entry
@@ -1138,121 +1279,12 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   {// resize if needed
     int len = m_ic_records.length();
 
-    if (len > m_log_limit)
-      m_ic_records = m_ic_records.mid(len - m_log_limit);
+    if (len > m_chatlog_limit)
+      m_ic_records = m_ic_records.mid(len - m_chatlog_limit);
   }
 
-  QTextCharFormat name_format = ui_ic_chatlog->currentCharFormat();
-  name_format.setFontWeight(QFont::Bold);
-  name_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
-
-  QTextCharFormat line_format = ui_ic_chatlog->currentCharFormat();
-  line_format.setFontWeight(QFont::Normal);
-  line_format.setForeground(ao_app->get_color("chatlog_message_color", fonts_ini));
-
-  QTextCharFormat system_format = ui_ic_chatlog->currentCharFormat();
-  system_format.setFontWeight(QFont::Normal);
-  system_format.setForeground(ao_app->get_color("system_msg", fonts_ini));
-
-  // need vscroll bar for cache
-  QScrollBar *vscrollbar = ui_ic_chatlog->verticalScrollBar();
-
-  // cache previous values
-  const QTextCursor prev_cursor = ui_ic_chatlog->textCursor();
-  const int scroll_pos = vscrollbar->value();
-  const bool is_scrolled = m_chatlog_scrolldown ? scroll_pos == vscrollbar->maximum() : scroll_pos == vscrollbar->minimum();
-
-  // declare array
-  record_type_array records_to_add;
-  // populate
-  if (m_chatlog_changed)
-  {
-    m_chatlog_changed = false;
-
-    // need the entire records to append
-    records_to_add = m_ic_records;
-
-    // clear log
-    ui_ic_chatlog->clear();
-  }
-  else
-  {
-    records_to_add.append(m_ic_records.last());
-  }
-
-  // recover cursor
-  QTextCursor cursor = ui_ic_chatlog->textCursor();
-  // figure out if we need to move up or down
-  const QTextCursor::MoveOperation move_type = m_chatlog_scrolldown ? QTextCursor::End : QTextCursor::Start;
-
-  for (record_type_ptr record : records_to_add)
-  {
-    // move cursor
-    cursor.movePosition(move_type);
-
-    if (record->system)
-    {
-      cursor.insertText(record->line + QChar::LineFeed, system_format);
-    }
-    else
-    {
-      cursor.insertText(record->name + (m_chatlog_newline ? QString(QChar::LineFeed) : ": "), name_format);
-      cursor.insertText(record->line + QChar::LineFeed + (m_chatlog_newline ? QChar::LineFeed : QChar()), line_format);
-    }
-  }
-  const QTextCursor::MoveOperation delete_location = m_chatlog_scrolldown ? QTextCursor::Start : QTextCursor::End;
-  int blocks_to_delete;
-  if (m_log_limit > 0)
-      blocks_to_delete = ui_ic_chatlog->document()->blockCount() - m_log_limit - 1;
-  else
-    blocks_to_delete = 0;
-
-  /* Blocks appear like this
-   * textQChar(0x2029)
-   * additionaltextQChar(0x2029)
-   * moretextQChar(0x2029)
-   * where QChar(0x2029) is the paragraph break block.
-   * Do note that the above example has FOUR blocks: text, additionaltext, moretext, and
-   * an empty block. That is because QTextCursor separates blocks by paragraph break block
-   * (which is why the above code has a -1) and does not consider this break character as
-   * part of the block (which is why we move Left in the loop, to 'be in the block').
-   * Finally, BlockUnderCursor does NOT select the break character, so we deleteChar after
-   * removing the selection to remove the straggling newline.
-   */
-  for (int i=0; i<blocks_to_delete; ++i)
-  {
-    cursor.movePosition(delete_location);
-    cursor.movePosition(QTextCursor::Left);
-    cursor.select(QTextCursor::BlockUnderCursor);
-    cursor.removeSelectedText();
-    cursor.deleteChar();
-  }
-  /*
-   * However, if we do this, we also remove the last newline of the last block that remains,
-   * which will make it difficult to append new blocks to it/figure out the amount of blocks
-   * if we have a scroll up log, so we add it again if we removed any break characters at all
-   */
-  if (!m_chatlog_scrolldown && blocks_to_delete > 0)
-    cursor.insertBlock();
-
-  /*
-   * Unfortunately, the simplest alternative, that is, move cursor to the last block, remove
-   * the block under it and delete the last char does not work, as this also removes the last
-   * character of the block that remains. That's why we have to do this whole complicated
-   * process.
-   */
-  if (prev_cursor.hasSelection() || is_scrolled)
-  {
-    // restore previous selection and vscrollbar
-    ui_ic_chatlog->setTextCursor(prev_cursor);
-    vscrollbar->setValue(scroll_pos);
-  }
-  // scroll up/down depending on context
-  else
-  {
-    ui_ic_chatlog->moveCursor(move_type);
-    vscrollbar->setValue(m_chatlog_scrolldown ? vscrollbar->maximum() : vscrollbar->minimum());
-  }
+  // update
+  update_ic_log(false);
 }
 
 void Courtroom::append_system_text(QString p_line)

@@ -93,9 +93,11 @@ void Courtroom::enter_courtroom(int p_cid)
   bool chatlog_changed = false;
 
   int chatlog_limit = ao_app->read_config("chatlog_limit").toInt();
-  if (chatlog_limit > 0 && m_chatlog_limit != chatlog_limit) // the chatlog_limit should always be higher than 0
+  // default chatlog_limit?
+  chatlog_limit = chatlog_limit <= 0 ? 200 : chatlog_limit; // TODO declare the default somewhere so it's not a magic number
+  if (chatlog_limit != m_chatlog_limit) // the chatlog_limit should always be higher than 0
     chatlog_changed = true;
-  m_chatlog_limit = chatlog_limit > 0 ? chatlog_limit : 200; // TODO declare the default somewhere so it's not a magic number
+  m_chatlog_limit = chatlog_limit;
 
   bool chatlog_scrolldown = ao_app->read_config("chatlog_scrolldown") == "true";
   if (m_chatlog_scrolldown != chatlog_scrolldown)

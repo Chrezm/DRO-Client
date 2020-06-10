@@ -97,10 +97,10 @@ void Courtroom::enter_courtroom(int p_cid)
     m_chatlog_changed = true;
   m_chatlog_scrolldown = chatlog_scrolldown;
 
-  bool chatlog_colon = ao_app->read_chatlog_colon();
-  if (m_chatlog_colon != chatlog_colon)
+  bool chatlog_newline = ao_app->read_chatlog_newline();
+  if (m_chatlog_newline != chatlog_newline)
     m_chatlog_changed = true;
-  m_chatlog_colon = chatlog_colon;
+  m_chatlog_newline = chatlog_newline;
 
   set_evidence_page();
 
@@ -1189,13 +1189,14 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   {
     // move cursor
     cursor.movePosition(move_type);
+
     if (record->system)
     {
       cursor.insertText(record->line + QChar::LineFeed, system_format);
     }
     else
     {
-      cursor.insertText(record->name + (m_chatlog_colon ? ": " : QString(QChar::LineFeed)), name_format);
+      cursor.insertText(record->name + (m_chatlog_newline ? QString(QChar::LineFeed) : ": "), name_format);
       cursor.insertText(record->line + QChar::LineFeed, line_format);
     }
   }

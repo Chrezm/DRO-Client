@@ -123,7 +123,7 @@ public:
 
   // returns whatever we want newlines or ':' to be appended in front of names
   // in the ic chat log
-  bool read_chatlog_colon();
+  bool read_chatlog_newline();
 
   //Returns true if blank blips is enabled in config.ini and false otherwise
   bool get_blank_blip();

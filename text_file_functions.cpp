@@ -63,9 +63,9 @@ int AOApplication::read_blip_rate()
     return result.toInt();
 }
 
-bool AOApplication::read_chatlog_colon()
+bool AOApplication::read_chatlog_newline()
 {
-  return read_config("chatlog_colon") == "true";
+  return read_config("chatlog_newline") == "true";
 }
 
 int AOApplication::get_default_music()

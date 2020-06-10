@@ -1143,12 +1143,10 @@ void Courtroom::handle_chatmessage_3()
 
 void Courtroom::update_ic_log(bool p_reset_log)
 {
-    { // resize if needed
-        int len = m_ic_records.length();
-
-        if (len > m_chatlog_limit)
-            m_ic_records = m_ic_records.mid(len - m_chatlog_limit);
-    }
+    // resize if needed
+    int len = m_ic_records.length();
+    if (len > m_chatlog_limit)
+        m_ic_records = m_ic_records.mid(len - m_chatlog_limit);
 
     /*
      * first, we figure out whatever we append the last message or if we reset

@@ -1162,7 +1162,6 @@ void Courtroom::update_ic_log(bool p_reset_log)
 
     // prepare the formats we need
     QTextCharFormat name_format = ui_ic_chatlog->currentCharFormat();
-    name_format.setAnchor(true);
     name_format.setFontWeight(QFont::Bold);
     name_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
 
@@ -1171,7 +1170,6 @@ void Courtroom::update_ic_log(bool p_reset_log)
     line_format.setForeground(ao_app->get_color("chatlog_message_color", fonts_ini));
 
     QTextCharFormat system_format = ui_ic_chatlog->currentCharFormat();
-    system_format.setAnchor(true);
     system_format.setFontWeight(QFont::Normal);
     system_format.setForeground(ao_app->get_color("system_msg", fonts_ini));
 

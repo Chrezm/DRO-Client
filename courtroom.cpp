@@ -1197,7 +1197,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
     else
     {
       cursor.insertText(record->name + (m_chatlog_newline ? QString(QChar::LineFeed) : ": "), name_format);
-      cursor.insertText(record->line + QChar::LineFeed, line_format);
+      cursor.insertText(record->line + QChar::LineFeed + (m_chatlog_newline ? QChar::LineFeed : QChar()), line_format);
     }
   }
   const QTextCursor::MoveOperation delete_location = m_chatlog_scrolldown ? QTextCursor::Start : QTextCursor::End;

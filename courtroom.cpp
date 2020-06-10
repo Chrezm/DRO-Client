@@ -94,19 +94,13 @@ void Courtroom::enter_courtroom(int p_cid)
 
   bool chatlog_scrolldown = ao_app->read_config("scroll_type") == "down";
   if (m_chatlog_scrolldown != chatlog_scrolldown)
-  {
-      m_chatlog_scrolldown = chatlog_scrolldown;
-      // need to update chatlog
-      m_chatlog_changed = true;
-  }
+    m_chatlog_changed = true;
+  m_chatlog_scrolldown = chatlog_scrolldown;
 
   bool chatlog_colon = ao_app->read_chatlog_colon();
   if (m_chatlog_colon != chatlog_colon)
-  {
-      m_chatlog_colon = chatlog_colon;
-      // need to update chatlog
-      m_chatlog_changed = true;
-  }
+    m_chatlog_changed = true;
+  m_chatlog_colon = chatlog_colon;
 
   set_evidence_page();
 

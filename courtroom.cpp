@@ -97,7 +97,7 @@ void Courtroom::enter_courtroom(int p_cid)
     chatlog_changed = true;
   m_chatlog_limit = chatlog_limit > 0 ? chatlog_limit : 200; // TODO declare the default somewhere so it's not a magic number
 
-  bool chatlog_scrolldown = ao_app->read_config("scroll_type") == "down";
+  bool chatlog_scrolldown = ao_app->read_config("chatlog_scrolldown") == "true";
   if (m_chatlog_scrolldown != chatlog_scrolldown)
     chatlog_changed = true;
   m_chatlog_scrolldown = chatlog_scrolldown;

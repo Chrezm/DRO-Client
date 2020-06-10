@@ -95,7 +95,7 @@ void Courtroom::enter_courtroom(int p_cid)
   int chatlog_limit = ao_app->read_config("chatlog_limit").toInt();
   // default chatlog_limit?
   chatlog_limit = chatlog_limit <= 0 ? 200 : chatlog_limit; // TODO declare the default somewhere so it's not a magic number
-  if (chatlog_limit != m_chatlog_limit) // the chatlog_limit should always be higher than 0
+  if (chatlog_limit < m_chatlog_limit) // only update if we need to chop away records
     chatlog_changed = true;
   m_chatlog_limit = chatlog_limit;
 

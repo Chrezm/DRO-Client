@@ -1214,7 +1214,7 @@ void Courtroom::update_ic_log(bool p_reset_log)
                 block_count += 2; // if newline is actived, it always inserts two extra newlines; therefor two paragraphs
 
     // there's always one extra block count, so deduce one from block_count
-    int blocks_to_delete = ui_ic_chatlog->document()->blockCount();
+    int blocks_to_delete = ui_ic_chatlog->document()->blockCount() - block_count;
 
     // the orientation at which we need to delete from
     const QTextCursor::MoveOperation start_location = m_chatlog_scrolldown ? QTextCursor::Start : QTextCursor::End;

@@ -1143,6 +1143,13 @@ void Courtroom::handle_chatmessage_3()
 
 void Courtroom::update_ic_log(bool p_reset_log)
 {
+    { // resize if needed
+        int len = m_ic_records.length();
+
+        if (len > m_chatlog_limit)
+            m_ic_records = m_ic_records.mid(len - m_chatlog_limit);
+    }
+
     /*
      * first, we figure out whatever we append the last message or if we reset
      * the entire log
@@ -1275,13 +1282,6 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
 {
   // record new entry
   m_ic_records.append(std::make_shared<record_type>(p_name, p_line, "", p_system));
-
-  {// resize if needed
-    int len = m_ic_records.length();
-
-    if (len > m_chatlog_limit)
-      m_ic_records = m_ic_records.mid(len - m_chatlog_limit);
-  }
 
   // update
   update_ic_log(false);

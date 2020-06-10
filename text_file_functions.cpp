@@ -63,6 +63,11 @@ int AOApplication::read_blip_rate()
     return result.toInt();
 }
 
+bool AOApplication::read_chatlog_colon()
+{
+  return read_config("chatlog_colon") == "true";
+}
+
 int AOApplication::get_default_music()
 {
   QString f_result = read_config("default_music");

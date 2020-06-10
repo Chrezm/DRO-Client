@@ -356,9 +356,9 @@ private:
   int max_emotes_on_page = 10;
 
   int m_log_limit = 200;
-  bool m_scroll_down = false;
-  bool m_previously_scroll_down = false;
-  bool m_scroll_type_changed = false;
+  bool m_chatlog_colon = false;
+  bool m_chatlog_scrolldown = false;
+  bool m_chatlog_changed = false;
 
 //  int note_amount = 0;
 

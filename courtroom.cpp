@@ -92,11 +92,21 @@ void Courtroom::enter_courtroom(int p_cid)
   if(const int log_limit = ao_app->read_config("chatlog_limit").toInt())
     m_log_limit = log_limit;
 
-  m_scroll_down = ao_app->read_config("scroll_type") == "down";
-  if(m_previously_scroll_down != m_scroll_down)
-    m_scroll_type_changed = !m_scroll_type_changed;
+  bool chatlog_scrolldown = ao_app->read_config("scroll_type") == "down";
+  if (m_chatlog_scrolldown != chatlog_scrolldown)
+  {
+      m_chatlog_scrolldown = chatlog_scrolldown;
+      // need to update chatlog
+      m_chatlog_changed = true;
+  }
 
-  m_previously_scroll_down = m_scroll_down;
+  bool chatlog_colon = ao_app->read_chatlog_colon();
+  if (m_chatlog_colon != chatlog_colon)
+  {
+      m_chatlog_colon = chatlog_colon;
+      // need to update chatlog
+      m_chatlog_changed = true;
+  }
 
   set_evidence_page();
 
@@ -1156,14 +1166,14 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   // cache previous values
   const QTextCursor prev_cursor = ui_ic_chatlog->textCursor();
   const int scroll_pos = vscrollbar->value();
-  const bool is_scrolled = m_scroll_down ? scroll_pos == vscrollbar->maximum() : scroll_pos == vscrollbar->minimum();
+  const bool is_scrolled = m_chatlog_scrolldown ? scroll_pos == vscrollbar->maximum() : scroll_pos == vscrollbar->minimum();
 
   // declare array
   record_type_array records_to_add;
   // populate
-  if (m_scroll_type_changed)
+  if (m_chatlog_changed)
   {
-    m_scroll_type_changed = false;
+    m_chatlog_changed = false;
 
     // need the entire records to append
     records_to_add = m_ic_records;
@@ -1179,7 +1189,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   // recover cursor
   QTextCursor cursor = ui_ic_chatlog->textCursor();
   // figure out if we need to move up or down
-  const QTextCursor::MoveOperation move_type = m_scroll_down ? QTextCursor::End : QTextCursor::Start;
+  const QTextCursor::MoveOperation move_type = m_chatlog_scrolldown ? QTextCursor::End : QTextCursor::Start;
 
   for (record_type_ptr record : records_to_add)
   {
@@ -1191,14 +1201,14 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
     }
     else
     {
-      cursor.insertText(record->name + QChar::LineFeed, name_format);
+      cursor.insertText(record->name + (m_chatlog_colon ? ": " : QString(QChar::LineFeed)), name_format);
       cursor.insertText(record->line + QChar::LineFeed, line_format);
     }
   }
-  const QTextCursor::MoveOperation delete_location = m_scroll_down ? QTextCursor::Start : QTextCursor::End;
+  const QTextCursor::MoveOperation delete_location = m_chatlog_scrolldown ? QTextCursor::Start : QTextCursor::End;
   int blocks_to_delete;
   if (m_log_limit > 0)
-    blocks_to_delete = ui_ic_chatlog->document()->blockCount() - m_log_limit - 1;
+      blocks_to_delete = ui_ic_chatlog->document()->blockCount() - m_log_limit - 1;
   else
     blocks_to_delete = 0;
 
@@ -1227,7 +1237,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
    * which will make it difficult to append new blocks to it/figure out the amount of blocks
    * if we have a scroll up log, so we add it again if we removed any break characters at all
    */
-  if (!m_scroll_down && blocks_to_delete > 0)
+  if (!m_chatlog_scrolldown && blocks_to_delete > 0)
     cursor.insertBlock();
 
   /*
@@ -1246,7 +1256,7 @@ void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
   else
   {
     ui_ic_chatlog->moveCursor(move_type);
-    vscrollbar->setValue(m_scroll_down ? vscrollbar->maximum() : vscrollbar->minimum());
+    vscrollbar->setValue(m_chatlog_scrolldown ? vscrollbar->maximum() : vscrollbar->minimum());
   }
 }
 

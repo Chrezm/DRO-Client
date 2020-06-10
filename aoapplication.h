@@ -121,6 +121,10 @@ public:
   //Returns the blip rate from config.ini
   int read_blip_rate();
 
+  // returns whatever we want newlines or ':' to be appended in front of names
+  // in the ic chat log
+  bool read_chatlog_colon();
+
   //Returns true if blank blips is enabled in config.ini and false otherwise
   bool get_blank_blip();
 
@@ -136,6 +140,7 @@ public:
   //Returns the list of words in callwords.ini
   QStringList get_call_words();
 
+  // TODO document what this does
   QStringList get_sfx_list();
 
   //Appends the argument string to serverlist.txt

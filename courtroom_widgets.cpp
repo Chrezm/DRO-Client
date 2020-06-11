@@ -579,66 +579,6 @@ void Courtroom::set_widget_layers()
     }
 }
 
-void Courtroom::set_widget_layers_DEPRECATED()
-{
-  QStringList paths{
-    ao_app->get_theme_variant_path() + "courtroom_layers.ini",
-    ao_app->get_theme_path() + "courtroom_layers.ini",
-    ao_app->get_default_theme_path() + "courtroom_layers.ini",
-  };
-
-  QWidget* current_parent = this;
-  QString current_widget_name;
-  QWidget* current_widget;
-
-  for (QString path: paths)
-  {
-    QFile layer_ini;
-    layer_ini.setFileName(path);
-    if (!layer_ini.open(QIODevice::ReadOnly))
-      continue;
-    QTextStream in(&layer_ini);
-
-    while (!in.atEnd())
-    {
-      QString f_line = in.readLine().trimmed();
-      // Lines are either empty, indicate the end or the start of a frame
-      // or list the items in a frame. We consider each case in order.
-      if (f_line == "")
-        continue;
-      // This particular check is not needed, but is added to keep compatibility
-      // with the other ini format.
-      if (f_line.startsWith("[\\"))
-        continue;
-      if (f_line.startsWith("["))
-      {
-        current_widget_name = f_line.remove(0, 1).chopped(1);
-        current_parent = widget_names[current_widget_name];
-        continue;
-      }
-      // If the item does not exist, do nothing; also prevent crashes
-      if (!widget_names.contains(f_line))
-      {
-        continue;
-      }
-      current_widget = widget_names[f_line];
-      bool was_visible = current_widget->isVisible();
-      current_widget->setParent(current_parent);
-      current_widget->raise();
-      // Readjust visibility in case this changed after the widget changed parent
-      // I don't know why, I don't want to know why, I shouldn't
-      // have to wonder why, but for whatever reason these stupid
-      // panels aren't laying out correctly unless we do this terribleness
-      if (was_visible != current_widget->isVisible())
-        current_widget->setVisible(was_visible);
-    }
-
-    layer_ini.close();
-    return;
-  }
-  return;
-}
-
 void Courtroom::set_widgets()
 {
   blip_rate = ao_app->read_blip_rate();

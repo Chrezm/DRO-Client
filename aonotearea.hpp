@@ -18,11 +18,9 @@ class AONoteArea : public AOImage
 
 public:
   AONoteArea(QWidget *p_parent, AOApplication *p_ao_app);
-  ~AONoteArea();
 
   AOButton *add_button;
   QVBoxLayout *m_layout;
-  AOButton *f_button;
 
 private:
   AOApplication *ao_app;

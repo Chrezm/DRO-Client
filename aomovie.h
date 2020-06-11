@@ -13,6 +13,7 @@ class AOMovie : public QLabel
 
 public:
   AOMovie(QWidget *p_parent, AOApplication *p_ao_app);
+  ~AOMovie();
 
   void set_play_once(bool p_play_once);
   void play(QString p_file, QString p_char = "", QString p_custom_theme = "");

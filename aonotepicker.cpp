@@ -10,9 +10,6 @@ AONotePicker::AONotePicker(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(
   ao_app = p_ao_app;
 }
 
-AONotePicker::~AONotePicker()
-{}
-
 void Courtroom::on_file_selected()
 {
   for(int i=0; i < ui_note_area->m_layout->count() -1; ++i)

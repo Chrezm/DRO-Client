@@ -10,11 +10,6 @@ AOButton::AOButton(QWidget *parent, AOApplication *p_ao_app) : QPushButton(paren
   ao_app = p_ao_app;
 }
 
-AOButton::~AOButton()
-{
-
-}
-
 void AOButton::set_image(QString p_image)
 {
   QString f_image_name = p_image.left(p_image.lastIndexOf(QChar('.')));

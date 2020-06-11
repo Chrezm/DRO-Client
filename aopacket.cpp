@@ -22,11 +22,6 @@ AOPacket::AOPacket(QString p_header, QStringList &p_contents)
   m_contents = p_contents;
 }
 
-AOPacket::~AOPacket()
-{
-
-}
-
 QString AOPacket::to_string()
 {
   QString f_string = m_header;

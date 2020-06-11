@@ -33,7 +33,7 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
 
   set_widgets();
   set_char_select();
-  name_widgets();
+  set_widget_names();
 }
 
 void Courtroom::enter_courtroom(int p_cid)
@@ -193,7 +193,7 @@ void Courtroom::enter_courtroom(int p_cid)
   ui_ic_chat_message->setEnabled(m_cid != -1);
   ui_ic_chat_message->setFocus();
 
-  name_widgets();
+  set_widget_names();
   set_widget_layers();
 }
 

@@ -598,7 +598,12 @@ private:
 
   void create_widgets();
   void connect_widgets();
-  void name_widgets();
+  void set_widget_names();
+  void reset_widget_names();
+  void insert_widget_name(QString p_widget_name, QWidget *p_widget);
+  void insert_widget_names(QVector<QString> &p_widget_names, QVector<QWidget*> &p_widgets);
+  template <typename T>
+  void insert_widget_names(QVector<QString> &p_widget_names, QVector<T *> &p_widgets);
   void set_widget_layers();
 
   void construct_char_select();
@@ -758,5 +763,16 @@ private slots:
 
   void ping_server();
 };
+
+template <typename T>
+void Courtroom::insert_widget_names(QVector<QString> &p_widget_names, QVector<T *> &p_widgets)
+{
+    QVector<QWidget *> widgets;
+
+    for (QWidget *widget : p_widgets)
+        widgets.append(widget);
+
+    insert_widget_names(p_widget_names, widgets);
+}
 
 #endif // COURTROOM_H

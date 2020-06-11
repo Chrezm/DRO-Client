@@ -28,7 +28,6 @@ AOEvidenceButton::AOEvidenceButton(QWidget *p_parent, AOApplication *p_ao_app, i
 
   connect(this, SIGNAL(clicked()), this, SLOT(on_clicked()));
 }
-
 void AOEvidenceButton::reset()
 {
   this->hide();

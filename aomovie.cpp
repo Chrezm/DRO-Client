@@ -17,7 +17,7 @@ AOMovie::AOMovie(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(p_parent)
 
 AOMovie::~AOMovie()
 {
-    delete m_movie;
+  delete m_movie;
 }
 
 void AOMovie::set_play_once(bool p_play_once)

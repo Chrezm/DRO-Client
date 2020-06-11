@@ -9,11 +9,6 @@ AOImage::AOImage(QWidget *parent, AOApplication *p_ao_app) : QLabel(parent)
   ao_app = p_ao_app;
 }
 
-AOImage::~AOImage()
-{
-
-}
-
 void AOImage::set_image(QString p_image)
 {
   QString f_path = ao_app->get_image_path(p_image);

@@ -10,10 +10,6 @@ AONoteArea::AONoteArea(QWidget *p_parent, AOApplication *p_ao_app) : AOImage(p_p
   ao_app = p_ao_app;
 }
 
-AONoteArea::~AONoteArea()
-{
-}
-
 void Courtroom::on_add_button_clicked()
 {
   if(ui_note_area->m_layout->count() > 6)

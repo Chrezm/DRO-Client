@@ -12,7 +12,6 @@ class AONotePicker : public QLabel
 
 public:
   AONotePicker(QWidget *p_parent, AOApplication *p_ao_app);
-  ~AONotePicker();
 
   QLineEdit *m_line;
   AOButton *m_button;

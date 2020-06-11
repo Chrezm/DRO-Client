@@ -689,6 +689,7 @@ private slots:
   void on_set_file_button_clicked();
   void on_file_selected();
 
+  void delete_widget(QWidget *p_widget);
   void load_shouts();
   void load_effects();
   void load_wtce();

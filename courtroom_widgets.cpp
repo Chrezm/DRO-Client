@@ -1301,20 +1301,31 @@ void Courtroom::check_wtce()
   }
 }
 
+void Courtroom::delete_widget(QWidget *p_widget)
+{
+    // remove the widget from recorded names
+    widget_names.remove(p_widget->objectName());
+
+    // transfer the children to our grandparent since our parent is
+    // about to commit suicide
+    QWidget *grand_parent = p_widget->parentWidget();
+    // if we don't have a grand parent, attach ourselves to courtroom
+    if (!grand_parent)
+        grand_parent = this;
+
+    // set new parent
+    for (QWidget *child : p_widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly))
+        child->setParent(grand_parent);
+
+    // delete widget
+    delete p_widget;
+}
+
 void Courtroom::load_effects()
 {
   // Close any existing effects to prevent memory leaks
-  for (int i=0; i<ui_effects.size(); ++i)
-  {
-    QString name = ui_effects[i]->objectName();
-    widget_names.remove(name);
-    // This index exists as ui_effects[i] can only exist if it was added by a previous
-    // call of load_effects(). However, this code later adds the name of all shouts.
-    // As this is the only place that changes the size of ui_effects and it originally
-    // starts empty, this code is correct..
-    ui_effects[i]->close();
-    delete ui_effects[i];
-  }
+  for (QWidget *widget : ui_effects)
+      delete_widget(widget);
 
   // And create new effects
   int effect_number = ao_app->get_design_ini_value("effect_number", cc_config_ini);
@@ -1348,27 +1359,8 @@ void Courtroom::load_effects()
 
 void Courtroom::load_free_blocks()
 {
-    for (int i = 0; i < ui_free_blocks.length(); ++i)
-    {
-        QWidget *block = ui_free_blocks[i];
-
-        // remove the block from recorded names
-        widget_names.remove(block->objectName());
-
-        // transfer the children to our grandparent since our parent is
-        // about to commit suicide
-        QWidget *grand_parent = block->parentWidget();
-        // if we don't have a grand parent, attach ourselves to courtroom
-        if (!grand_parent)
-            grand_parent = this;
-
-        // set new parent
-        for (QWidget *child : block->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly))
-            child->setParent(grand_parent);
-
-        // delete block
-        delete block;
-    }
+    for (QWidget *widget : ui_free_blocks)
+        delete_widget(widget);
 
   // And create new free block buttons
   int free_block_number = ao_app->get_design_ini_value("free_block_number", cc_config_ini);
@@ -1380,7 +1372,7 @@ void Courtroom::load_free_blocks()
     ui_free_blocks[i] = new AOMovie(this, ao_app);
     //ui_free_blocks[i]->setProperty("free_block_id", i+1);
     ui_free_blocks[i]->set_play_once(false);
-    ui_free_blocks[i]->stackUnder(this);
+    ui_free_blocks[i]->stackUnder(ui_vp_player_char);
   }
 
   // And add names
@@ -1400,14 +1392,8 @@ void Courtroom::load_free_blocks()
 
 void Courtroom::load_shouts()
 {
-  // Close any existing shouts to prevent memory leaks
-  for (int i=0; i<ui_shouts.size(); ++i)
-  {
-    QString name = ui_shouts[i]->objectName();
-    widget_names.remove(name);
-    ui_shouts[i]->close();
-    delete ui_shouts[i];
-  }
+    for (QWidget *widget : ui_shouts)
+        delete_widget(widget);
 
   // And create new shouts
   int shout_number = ao_app->get_design_ini_value("shout_number", cc_config_ini);
@@ -1444,14 +1430,8 @@ void Courtroom::load_shouts()
 
 void Courtroom::load_wtce()
 {
-  // Close any existing wtce buttons to prevent memory leaks
-  for (int i=0; i<ui_wtce.size(); ++i)
-  {
-    QString name = ui_wtce[i]->objectName();
-    widget_names.remove(name);
-    ui_wtce[i]->close();
-    delete ui_wtce[i];
-  }
+    for (QWidget *widget : ui_wtce)
+        delete_widget(widget);
 
   // And create new wtce buttons
   int wtce_number = ao_app->get_design_ini_value("wtce_number", cc_config_ini);

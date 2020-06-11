@@ -20,7 +20,6 @@ AOMovie::~AOMovie()
   delete m_movie;
 }
 
-
 void AOMovie::set_play_once(bool p_play_once)
 {
   play_once = p_play_once;

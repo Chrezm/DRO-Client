@@ -33,7 +33,7 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
 
   set_widgets();
   set_char_select();
-  name_widgets();
+  set_widget_names();
 }
 
 void Courtroom::enter_courtroom(int p_cid)
@@ -193,7 +193,7 @@ void Courtroom::enter_courtroom(int p_cid)
   ui_ic_chat_message->setEnabled(m_cid != -1);
   ui_ic_chat_message->setFocus();
 
-  name_widgets();
+  set_widget_names();
   set_widget_layers();
 }
 
@@ -1143,12 +1143,10 @@ void Courtroom::handle_chatmessage_3()
 
 void Courtroom::update_ic_log(bool p_reset_log)
 {
-    { // resize if needed
-        int len = m_ic_records.length();
-
-        if (len > m_chatlog_limit)
-            m_ic_records = m_ic_records.mid(len - m_chatlog_limit);
-    }
+    // resize if needed
+    int len = m_ic_records.length();
+    if (len > m_chatlog_limit)
+        m_ic_records = m_ic_records.mid(len - m_chatlog_limit);
 
     /*
      * first, we figure out whatever we append the last message or if we reset

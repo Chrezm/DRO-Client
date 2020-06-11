@@ -358,145 +358,228 @@ void Courtroom::connect_widgets()
   connect(ui_set_notes, SIGNAL(clicked(bool)), this, SLOT(on_set_notes_clicked()));
 }
 
-void Courtroom::name_widgets()
+void Courtroom::reset_widget_names()
 {
-  // Assign names to the default widgets
-  widget_names = {
-      {"viewport", ui_viewport},
-        {"background", ui_vp_background}, //*
-        {"speedlines", ui_vp_speedlines}, //*
-        {"player_char", ui_vp_player_char}, //*
-        {"desk", ui_vp_desk}, //*
-      {"music_display_a", ui_vp_music_display_a},
-      {"music_display_b", ui_vp_music_display_b},
-      {"music_area", ui_vp_music_area},
-      {"music_name", ui_vp_music_name},
-      // music_anim
-      {"clock", ui_vp_clock},
-      // ui_vp_evidence_display
-      {"ao2_chatbox", ui_vp_chatbox},
-        {"showname", ui_vp_showname},
-        {"message", ui_vp_message},
-      {"showname_image", ui_vp_showname_image},
-      {"vp_testimony", ui_vp_testimony},
-      {"vp_effect", ui_vp_effect},
-      {"vp_wtce", ui_vp_wtce},
-      {"vp_objection", ui_vp_objection},
-      {"ic_chatlog", ui_ic_chatlog},
-      {"ms_chatlog", ui_ms_chatlog},
-      {"server_chatlog", ui_server_chatlog},
-      {"mute_list", ui_mute_list},
-      {"area_list", ui_area_list},
-      {"music_list", ui_music_list},
-      {"sfx_list", ui_sfx_list},
-      {"ao2_ic_chat_message", ui_ic_chat_message},
-      // ui_muted
-      {"ooc_chat_message", ui_ooc_chat_message},
-      {"ooc_chat_name", ui_ooc_chat_name},
-      {"music_search", ui_music_search},
-      {"sfx_search", ui_sfx_search},
-      {"note_scroll_area", note_scroll_area},
-        {"note_area", ui_note_area},
-        // add_button
-        // m_layout
-      {"set_notes_button", ui_set_notes},
-      {"emotes", ui_emotes},
-      {"emote_left", ui_emote_left},
-      {"emote_right", ui_emote_right},
-      {"emote_dropdown", ui_emote_dropdown},
-      {"pos_dropdown", ui_pos_dropdown},
-      {"defense_bar", ui_defense_bar},
-      {"prosecution_bar", ui_prosecution_bar},
-      {"music_label", ui_music_label},
-      {"sfx_label", ui_sfx_label},
-      {"blip_label", ui_blip_label},
-      // Each ui_shouts[i]
-      {"shout_up", ui_shout_up},
-      {"shout_down", ui_shout_down},
-      // Each ui_effects[i]
-      {"effect_down", ui_effect_down},
-      {"effect_up", ui_effect_up},
-      // Each ui_wtce[i]
-      {"wtce_up", ui_wtce_up},
-      {"wtce_down", ui_wtce_down},
-      {"ooc_toggle", ui_ooc_toggle},
-      {"change_character", ui_change_character},
-      {"reload_theme", ui_reload_theme},
-      {"call_mod", ui_call_mod},
-      {"switch_area_music", ui_switch_area_music},
-      {"theme_list", ui_theme_list},
-      {"confirm_theme", ui_confirm_theme},
-      {"note_button", ui_note_button},
-      // Each ui_label_images[i]
-      {"pre", ui_pre},
-      {"flip", ui_flip},
-      {"guard", ui_guard},
-      {"hidden", ui_hidden},
-      {"mute_button", ui_mute},
-      {"defense_plus", ui_defense_plus},
-      {"defense_minus", ui_defense_minus},
-      {"prosecution_plus", ui_prosecution_plus},
-      {"prosecution_minus", ui_prosecution_minus},
-      {"text_color", ui_text_color},
-      {"music_slider", ui_music_slider},
-      {"sfx_slider", ui_sfx_slider},
-      {"blip_slider", ui_blip_slider},
-      {"evidence_button", ui_evidence_button},
-      {"notepad_image", ui_vp_notepad_image},
-      {"notepad", ui_vp_notepad},
-      // Each ui_timers[i]
-      {"evidence_background", ui_evidence},
-        {"evidence_buttons", ui_evidence_buttons},
-      {"char_select", ui_char_select_background},
-        {"back_to_lobby", ui_back_to_lobby},
-        {"char_password", ui_char_password},
-        {"char_buttons", ui_char_buttons},
-        {"char_select_left", ui_char_select_left},
-        {"char_select_right", ui_char_select_right},
-        {"spectator", ui_spectator},
+    // Assign names to the default widgets
+    widget_names = {
+        {"courtroom", this},
+            {"viewport", ui_viewport},
+                {"background", ui_vp_background}, //*
+                {"speedlines", ui_vp_speedlines}, //*
+                {"player_char", ui_vp_player_char}, //*
+                {"desk", ui_vp_desk}, //*
+            {"music_display_a", ui_vp_music_display_a},
+            {"music_display_b", ui_vp_music_display_b},
+            {"music_area", ui_vp_music_area},
+            {"music_name", ui_vp_music_name},
+            // music_anim
+            {"clock", ui_vp_clock},
+            // ui_vp_evidence_display
+            {"ao2_chatbox", ui_vp_chatbox},
+                {"showname", ui_vp_showname},
+                {"message", ui_vp_message},
+            {"showname_image", ui_vp_showname_image},
+            {"vp_testimony", ui_vp_testimony},
+            {"vp_effect", ui_vp_effect},
+            {"vp_wtce", ui_vp_wtce},
+            {"vp_objection", ui_vp_objection},
+            {"ic_chatlog", ui_ic_chatlog},
+            {"ms_chatlog", ui_ms_chatlog},
+            {"server_chatlog", ui_server_chatlog},
+            {"mute_list", ui_mute_list},
+            {"area_list", ui_area_list},
+            {"music_list", ui_music_list},
+            {"sfx_list", ui_sfx_list},
+            {"ao2_ic_chat_message", ui_ic_chat_message},
+            // ui_muted
+            {"ooc_chat_message", ui_ooc_chat_message},
+            {"ooc_chat_name", ui_ooc_chat_name},
+            {"music_search", ui_music_search},
+            {"sfx_search", ui_sfx_search},
+            {"note_scroll_area", note_scroll_area},
+                {"note_area", ui_note_area},
+            // add_button
+            // m_layout
+            {"set_notes_button", ui_set_notes},
+            {"emotes", ui_emotes},
+            {"emote_left", ui_emote_left},
+            {"emote_right", ui_emote_right},
+            {"emote_dropdown", ui_emote_dropdown},
+            {"pos_dropdown", ui_pos_dropdown},
+            {"defense_bar", ui_defense_bar},
+            {"prosecution_bar", ui_prosecution_bar},
+            {"music_label", ui_music_label},
+            {"sfx_label", ui_sfx_label},
+            {"blip_label", ui_blip_label},
+            // Each ui_shouts[i]
+            {"shout_up", ui_shout_up},
+            {"shout_down", ui_shout_down},
+            // Each ui_effects[i]
+            {"effect_down", ui_effect_down},
+            {"effect_up", ui_effect_up},
+            // Each ui_wtce[i]
+            {"wtce_up", ui_wtce_up},
+            {"wtce_down", ui_wtce_down},
+            {"ooc_toggle", ui_ooc_toggle},
+            {"change_character", ui_change_character},
+            {"reload_theme", ui_reload_theme},
+            {"call_mod", ui_call_mod},
+            {"switch_area_music", ui_switch_area_music},
+            {"theme_list", ui_theme_list},
+            {"confirm_theme", ui_confirm_theme},
+            {"note_button", ui_note_button},
+            // Each ui_label_images[i]
+            {"pre", ui_pre},
+            {"flip", ui_flip},
+            {"guard", ui_guard},
+            {"hidden", ui_hidden},
+            {"mute_button", ui_mute},
+            {"defense_plus", ui_defense_plus},
+            {"defense_minus", ui_defense_minus},
+            {"prosecution_plus", ui_prosecution_plus},
+            {"prosecution_minus", ui_prosecution_minus},
+            {"text_color", ui_text_color},
+            {"music_slider", ui_music_slider},
+            {"sfx_slider", ui_sfx_slider},
+            {"blip_slider", ui_blip_slider},
+            {"evidence_button", ui_evidence_button},
+            {"notepad_image", ui_vp_notepad_image},
+            {"notepad", ui_vp_notepad},
+            // Each ui_timers[i]
+            {"evidence_background", ui_evidence},
+                {"evidence_buttons", ui_evidence_buttons},
+            {"char_select", ui_char_select_background},
+                {"back_to_lobby", ui_back_to_lobby},
+                {"char_password", ui_char_password},
+                {"char_buttons", ui_char_buttons},
+                {"char_select_left", ui_char_select_left},
+                {"char_select_right", ui_char_select_right},
+                {"spectator", ui_spectator},
     };
+}
 
-  QHash<QString, QWidget*>::iterator i;
-  for (i = widget_names.begin(); i != widget_names.end(); ++i)
-  {
-    QString name = i.key();
-    QWidget* widget = i.value();
-    widget->setObjectName(name);
-  }
-  // Why
-  for (int i=0; i<ui_effects.size(); ++i)
-  {
-    QString name = effect_names[i];
-    widget_names[name] = ui_effects[i];
-    ui_effects[i]->setObjectName(name);
-  }
-  for (int i=0; i<ui_free_blocks.size(); ++i)
-  {
-    QString name = free_block_names[i];
-    widget_names[name] = ui_free_blocks[i];
-    ui_free_blocks[i]->setObjectName(name);
-  }
-  for (int i=0; i<ui_shouts.size(); ++i)
-  {
-    QString name = shout_names[i];
-    widget_names[name] = ui_shouts[i];
-    ui_shouts[i]->setObjectName(name);
-  }
-  for (int i=0; i<ui_wtce.size(); ++i)
-  {
-    QString name = wtce_names[i];
-    widget_names[name] = ui_wtce[i];
-    ui_wtce[i]->setObjectName(name);
-  }
-  for (int i=0; i<ui_timers.size(); ++i)
-  {
-    QString name = "timer_" + QString::number(i);
-    widget_names[name] = ui_timers[i];
-    ui_timers[i]->setObjectName(name);
-  }
+void Courtroom::insert_widget_name(QString p_widget_name, QWidget *p_widget)
+{
+    // insert entry
+    widget_names[p_widget_name] = p_widget;
+    // set name
+    p_widget->setObjectName(p_widget_name);
+}
+
+
+void Courtroom::insert_widget_names(QVector<QString> &p_widget_names, QVector<QWidget*> &p_widgets)
+{
+    for (int i = 0; i < p_widgets.length(); ++i)
+        insert_widget_name(p_widget_names[i], p_widgets[i]);
+}
+
+void Courtroom::set_widget_names()
+{
+    // Assign names to the default widgets
+    reset_widget_names();
+
+    // set existing widget names
+    for (QString widget_name : widget_names.keys())
+        widget_names[widget_name]->setObjectName(widget_name);
+
+    // setup table of widgets and names
+    insert_widget_names(effect_names, ui_effects);
+    insert_widget_names(free_block_names, ui_free_blocks);
+    insert_widget_names(shout_names, ui_shouts);
+    insert_widget_names(wtce_names, ui_wtce);
+
+    // timers are special children
+    QVector<QString> timer_names;
+    for (int i = 0; i < ui_timers.length(); ++i)
+        timer_names.append("timer_" + QString::number(i));
+    insert_widget_names(timer_names, ui_timers);
 }
 
 void Courtroom::set_widget_layers()
+{
+    QStringList paths{
+        ao_app->get_theme_variant_path() + "courtroom_layers.ini",
+        ao_app->get_theme_path() + "courtroom_layers.ini",
+        ao_app->get_default_theme_path() + "courtroom_layers.ini",
+    };
+
+    // needed to avoid cyclic parenting
+    QStringList recorded_widgets;
+
+    // read the entire thing
+    for (QString path : paths)
+    {
+        QFile layer_ini(path);
+
+        if (layer_ini.open(QFile::ReadOnly))
+        {
+            QTextStream in(&layer_ini);
+
+            // current parent's name
+            QString parent_name = "courtroom";
+            // the courtroom is ALWAYS going to be recorded
+            recorded_widgets.append(parent_name);
+
+            while (!in.atEnd())
+            {
+                QString line = in.readLine().trimmed();
+
+                // skip if line is empty
+                if (line.isEmpty())
+                    continue;
+
+                // revert to default parent if we encounter an end scope
+                if (line.startsWith("[\\"))
+                {
+                    parent_name = "courtroom";
+                }
+                // is this a parent?
+                else if (line.startsWith("["))
+                {
+                    // update the current parent
+                    parent_name = line.remove(0, 1).chopped(1).trimmed();
+                }
+                // if this is not a parent, it's a child
+                else
+                {
+                    // if the child is already known, skip
+                    if (recorded_widgets.contains(line))
+                        continue;
+                    // make the child known
+                    recorded_widgets.append(line);
+
+                    // attach the children to the parents'
+                    QWidget *child = widget_names[line];
+                    // if child is null, then it does not exist
+                    if (!child)
+                        continue;
+
+                    QWidget *parent = widget_names[parent_name];
+                    // if parent is null, attach main parent
+                    if (!parent)
+                        parent = widget_names["courtroom"];
+
+                    // set child to parent
+                    bool was_visible = child->isVisible();
+                    child->setParent(parent);
+                    child->raise();
+
+                    // Readjust visibility in case this changed after the widget changed parent
+                    // I don't know why, I don't want to know why, I shouldn't
+                    // have to wonder why, but for whatever reason these stupid
+                    // panels aren't laying out correctly unless we do this terribleness
+                    if (child->isVisible() != was_visible)
+                        child->setVisible(was_visible);
+                }
+            }
+
+            // break the loop, we have found a proper file
+            break;
+        }
+    }
+}
+
+void Courtroom::set_widget_layers_DEPRECATED()
 {
   QStringList paths{
     ao_app->get_theme_variant_path() + "courtroom_layers.ini",
@@ -1218,20 +1301,31 @@ void Courtroom::check_wtce()
   }
 }
 
+void Courtroom::delete_widget(QWidget *p_widget)
+{
+    // remove the widget from recorded names
+    widget_names.remove(p_widget->objectName());
+
+    // transfer the children to our grandparent since our parent is
+    // about to commit suicide
+    QWidget *grand_parent = p_widget->parentWidget();
+    // if we don't have a grand parent, attach ourselves to courtroom
+    if (!grand_parent)
+        grand_parent = this;
+
+    // set new parent
+    for (QWidget *child : p_widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly))
+        child->setParent(grand_parent);
+
+    // delete widget
+    delete p_widget;
+}
+
 void Courtroom::load_effects()
 {
   // Close any existing effects to prevent memory leaks
-  for (int i=0; i<ui_effects.size(); ++i)
-  {
-    QString name = ui_effects[i]->objectName();
-    widget_names.remove(name);
-    // This index exists as ui_effects[i] can only exist if it was added by a previous
-    // call of load_effects(). However, this code later adds the name of all shouts.
-    // As this is the only place that changes the size of ui_effects and it originally
-    // starts empty, this code is correct..
-    ui_effects[i]->close();
-    delete ui_effects[i];
-  }
+  for (QWidget *widget : ui_effects)
+      delete_widget(widget);
 
   // And create new effects
   int effect_number = ao_app->get_design_ini_value("effect_number", cc_config_ini);
@@ -1265,15 +1359,8 @@ void Courtroom::load_effects()
 
 void Courtroom::load_free_blocks()
 {
-  // Close any existing free blocks to prevent memory leaks
-  for (int i=0; i<ui_free_blocks.size(); ++i)
-  {
-    QString name = ui_free_blocks[i]->objectName();
-    widget_names.remove(name);
-    // Same logic for why this index exists as in ui_effects()
-    ui_free_blocks[i]->close();
-    delete ui_free_blocks[i];
-  }
+    for (QWidget *widget : ui_free_blocks)
+        delete_widget(widget);
 
   // And create new free block buttons
   int free_block_number = ao_app->get_design_ini_value("free_block_number", cc_config_ini);
@@ -1305,14 +1392,8 @@ void Courtroom::load_free_blocks()
 
 void Courtroom::load_shouts()
 {
-  // Close any existing shouts to prevent memory leaks
-  for (int i=0; i<ui_shouts.size(); ++i)
-  {
-    QString name = ui_shouts[i]->objectName();
-    widget_names.remove(name);
-    ui_shouts[i]->close();
-    delete ui_shouts[i];    
-  }
+    for (QWidget *widget : ui_shouts)
+        delete_widget(widget);
 
   // And create new shouts
   int shout_number = ao_app->get_design_ini_value("shout_number", cc_config_ini);
@@ -1349,14 +1430,8 @@ void Courtroom::load_shouts()
 
 void Courtroom::load_wtce()
 {
-  // Close any existing wtce buttons to prevent memory leaks
-  for (int i=0; i<ui_wtce.size(); ++i)
-  {
-    QString name = ui_wtce[i]->objectName();
-    widget_names.remove(name);
-    ui_wtce[i]->close();
-    delete ui_wtce[i];
-  }
+    for (QWidget *widget : ui_wtce)
+        delete_widget(widget);
 
   // And create new wtce buttons
   int wtce_number = ao_app->get_design_ini_value("wtce_number", cc_config_ini);

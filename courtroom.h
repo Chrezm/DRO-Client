@@ -605,6 +605,7 @@ private:
   template <typename T>
   void insert_widget_names(QVector<QString> &p_widget_names, QVector<T *> &p_widgets);
   void set_widget_layers();
+  void set_widget_layers_DEPRECATED();
 
   void construct_char_select();
   void set_char_select();

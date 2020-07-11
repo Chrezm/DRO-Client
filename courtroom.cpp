@@ -1778,7 +1778,11 @@ void Courtroom::on_ooc_return_pressed()
   QString ooc_message = ui_ooc_chat_message->text();
 
   if (ooc_message.isEmpty())
+  {
+    append_server_chatmessage(
+           "CLIENT", "You cannot send an empty message.");
     return;
+  }
   if (ooc_name.isEmpty())
   {
     bool ok;
@@ -1787,7 +1791,7 @@ void Courtroom::on_ooc_return_pressed()
     {
       ooc_name = QInputDialog::getText(this,
                                        "Enter a name",
-                                       "You must have a name to chat. Enter a name: ",
+                                       "You must have a name to talk in OOC chat. Enter a name: ",
                                        QLineEdit::Normal,
                                        "user", &ok);
     } while (!ok || ooc_name.isEmpty());

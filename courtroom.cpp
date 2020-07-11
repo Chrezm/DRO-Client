@@ -1794,7 +1794,7 @@ void Courtroom::on_ooc_return_pressed()
                                        "You must have a name to talk in OOC chat. Enter a name: ",
                                        QLineEdit::Normal,
                                        "user", &ok);
-    } while (!ok || ooc_name.isEmpty());
+    } while (ok && ooc_name.isEmpty());
     if (!ok)
       return;
 

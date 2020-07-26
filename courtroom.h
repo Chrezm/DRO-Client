@@ -607,10 +607,14 @@ private:
   void set_widget_layers();
 
   void construct_char_select();
+  void reconstruct_char_select();
+  void reset_char_select();
   void set_char_select();
   void set_char_select_page();
 
   void construct_emotes();
+  void reconstruct_emotes();
+  void reset_emote_page();
   void set_emote_page();
   void set_emote_dropdown();
 

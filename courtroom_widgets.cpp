@@ -148,18 +148,6 @@ void Courtroom::create_widgets()
 
   construct_emotes();
 
-  ui_emote_left = new AOButton(this, ao_app);
-  ui_emote_right = new AOButton(this, ao_app);
-
-  ui_emote_dropdown = new QComboBox(this);
-  ui_pos_dropdown = new QComboBox(this);
-  ui_pos_dropdown->addItem("wit");
-  ui_pos_dropdown->addItem("def");
-  ui_pos_dropdown->addItem("pro");
-  ui_pos_dropdown->addItem("jud");
-  ui_pos_dropdown->addItem("hld");
-  ui_pos_dropdown->addItem("hlp");
-
   ui_defense_bar = new AOImage(this, ao_app);
   ui_prosecution_bar = new  AOImage(this, ao_app);
 
@@ -712,7 +700,12 @@ void Courtroom::set_widgets()
 
   set_size_and_pos(ui_sfx_search, "sfx_search");
 
+  // char select
+  reconstruct_char_select();
+
+  // emotes
   set_size_and_pos(ui_emotes, "emotes");
+  reconstruct_emotes();
 
   set_size_and_pos(ui_emote_left, "emote_left");
   ui_emote_left->set_image("arrow_left.png");

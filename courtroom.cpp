@@ -575,6 +575,7 @@ void Courtroom::save_textlog(QString p_text)
 
 void Courtroom::list_themes()
 {
+    QString prev_theme_name = ui_theme_list->currentText();
   QString themes = ao_app->get_base_path() + "themes/";
   QDir dir(themes);
   ui_theme_list->clear();
@@ -585,6 +586,8 @@ void Courtroom::list_themes()
     if(s != "." && s != "..")
       ui_theme_list->addItem(s);
   }
+
+  ui_theme_list->setCurrentText(prev_theme_name);
 }
 
 void Courtroom::append_ms_chatmessage(QString f_name, QString f_message)

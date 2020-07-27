@@ -581,9 +581,8 @@ private:
 
   //abstract widget to hold char buttons
   QWidget *ui_char_buttons = nullptr;
-
+  AOImage *ui_char_button_selector = nullptr;
   QVector<AOCharButton*> ui_char_button_list;
-  AOImage *ui_selector;
 
   AOButton *ui_back_to_lobby;
 
@@ -761,10 +760,11 @@ private slots:
 
   void on_char_select_left_clicked();
   void on_char_select_right_clicked();
+  void char_clicked(int n_char);
+  void char_mouse_entered(AOCharButton *p_caller);
+  void char_mouse_left();
 
   void on_spectator_clicked();
-
-  void char_clicked(int n_char);
 
   void ping_server();
 };

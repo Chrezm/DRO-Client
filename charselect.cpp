@@ -11,9 +11,9 @@ void Courtroom::construct_char_select()
 
     ui_char_buttons = new QWidget(ui_char_select_background);
 
-    ui_selector = new AOImage(ui_char_select_background, ao_app);
-    ui_selector->setAttribute(Qt::WA_TransparentForMouseEvents);
-    ui_selector->resize(62, 62);
+    ui_char_button_selector = new AOImage(ui_char_buttons, ao_app);
+    ui_char_button_selector->setAttribute(Qt::WA_TransparentForMouseEvents);
+    ui_char_button_selector->resize(62, 62);
 
     ui_back_to_lobby = new AOButton(ui_char_select_background, ao_app);
 
@@ -63,10 +63,15 @@ void Courtroom::reconstruct_char_select()
         int x_pos = (button_width + x_spacing) * x_mod_count;
         int y_pos = (button_height + y_spacing) * y_mod_count;
 
-        ui_char_button_list.append(new AOCharButton(ui_char_buttons, ao_app, x_pos, y_pos));
+        AOCharButton *button = new AOCharButton(ui_char_buttons, ao_app, x_pos, y_pos);
+        ui_char_button_list.append(button);
 
-        connect(ui_char_button_list.at(n), SIGNAL(clicked()), char_button_mapper, SLOT(map()));
-        char_button_mapper->setMapping(ui_char_button_list.at(n), n);
+        connect(button, SIGNAL(clicked()), char_button_mapper, SLOT(map()));
+        char_button_mapper->setMapping(button, n);
+
+        // mouse events
+        connect(button, SIGNAL(mouse_entered(AOCharButton *)), this, SLOT(char_mouse_entered(AOCharButton *)));
+        connect(button, SIGNAL(mouse_left()), this, SLOT(char_mouse_left()));
 
         ++x_mod_count;
 
@@ -113,8 +118,11 @@ void Courtroom::set_char_select_page()
     ui_char_select_left->hide();
     ui_char_select_right->hide();
 
-    for (AOCharButton *i_button : ui_char_button_list)
-        i_button->hide();
+    for (AOCharButton *button : ui_char_button_list)
+    {
+        button->reset();
+        button->hide();
+    }
 
     int total_pages   = char_list.size() / max_chars_on_page;
     int chars_on_page = 0;
@@ -137,6 +145,7 @@ void Courtroom::set_char_select_page()
     if (current_char_page > 0)
         ui_char_select_left->show();
 
+    // show all buttons for this page
     for (int n_button = 0; n_button < chars_on_page; ++n_button)
     {
         if (char_list.length() <= n_button)
@@ -145,7 +154,6 @@ void Courtroom::set_char_select_page()
         int n_real_char        = n_button + current_char_page * max_chars_on_page;
         AOCharButton *f_button = ui_char_button_list.at(n_button);
 
-        f_button->reset();
         f_button->set_image(char_list.at(n_real_char).name);
         f_button->show();
 
@@ -176,4 +184,18 @@ void Courtroom::char_clicked(int n_char)
     {
         ao_app->send_server_packet(new AOPacket("CC#" + QString::number(ao_app->s_pv) + "#" + QString::number(n_real_char) + "#" + get_hdid() + "#%"));
     }
+}
+
+void Courtroom::char_mouse_entered(AOCharButton *p_caller)
+{
+    if (p_caller == nullptr)
+        return;
+    ui_char_button_selector->move(p_caller->x() - 1, p_caller->y() - 1);
+    ui_char_button_selector->raise();
+    ui_char_button_selector->show();
+}
+
+void Courtroom::char_mouse_left()
+{
+    ui_char_button_selector->hide();
 }

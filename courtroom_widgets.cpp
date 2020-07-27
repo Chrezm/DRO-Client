@@ -992,8 +992,8 @@ void Courtroom::set_widgets()
 
   set_size_and_pos(ui_evidence_description, "evidence_description");
 
-  ui_selector->set_image("char_selector.png");
-  ui_selector->hide();
+  ui_char_button_selector->set_image("char_selector.png");
+  ui_char_button_selector->hide();
 
   set_size_and_pos(ui_back_to_lobby, "back_to_lobby");
   ui_back_to_lobby->setText("Back to Lobby");

@@ -149,7 +149,8 @@ public:
 
   void set_shouts();
   void set_effects();
-  void set_wtce();
+  void set_judge_enabled(bool p_enabled);
+  void set_judge_wtce();
   void set_free_blocks();
 
   //these are for OOC chat
@@ -727,7 +728,7 @@ private slots:
 
   void on_witness_testimony_clicked();
   void on_cross_examination_clicked();
-  void reset_wtce_buttons();
+  void reset_judge_wtce_buttons();
   void on_wtce_clicked();
 
   void on_change_character_clicked();

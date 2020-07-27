@@ -794,11 +794,6 @@ void Courtroom::set_widgets()
     ui_effect_down->show();
   }
 
-  for(int i = 0; i < wtce_names.size(); ++i)
-  {
-    set_size_and_pos(ui_wtce[i], wtce_names[i]);
-  }
-
   set_size_and_pos(ui_wtce_up, "wtce_up");
   ui_wtce_up->set_image("wtceup.png");
   ui_wtce_up->hide();
@@ -806,12 +801,21 @@ void Courtroom::set_widgets()
   ui_wtce_down->set_image("wtcedown.png");
   ui_wtce_down->hide();
 
+  for(int i = 0; i < wtce_names.size(); ++i)
+  {
+      set_size_and_pos(ui_wtce[i], wtce_names[i]);
+  }
+
   if (ao_app->read_theme_ini("enable_single_wtce", cc_config_ini) == "true" ) // courtroom_config.ini necessary
   {
-    for(auto & wtce : ui_wtce) move_widget(wtce, "wtce");
+    for(auto & wtce : ui_wtce)
+        move_widget(wtce, "wtce");
     qDebug() << "AA: single wtce";
-    set_wtce();
   }
+  set_judge_wtce();
+
+  // this will reset the image
+  reset_judge_wtce_buttons();
 
   for(int i = 0; i < free_block_names.size(); ++i)
   {
@@ -1405,29 +1409,55 @@ void Courtroom::set_shouts()
 
 void Courtroom::set_effects()
 {
-  for(auto & effect : ui_effects) effect->hide();
-  if (ui_effects.size() > 0) ui_effects[m_effect_current]->show(); // check to prevent crashing
+  for(auto & effect : ui_effects)
+      effect->hide();
+
+  // check to prevent crashing
+  if (ui_effects.size() > 0)
+      ui_effects[m_effect_current]->show();
 }
 
-void Courtroom::set_wtce()
+void Courtroom::set_judge_enabled(bool p_enabled)
 {
-  for(auto & wtce : ui_wtce) wtce->hide();
+    is_judge = p_enabled;
 
-  if(is_judge && ui_wtce.size() > 0) // check to prevent crashing
-  {
-    if( ao_app->read_theme_ini("enable_single_wtce", cc_config_ini ) == "true" )
+    // set judge button visibility
+    ui_defense_plus->setVisible(is_judge);
+    ui_defense_minus->setVisible(is_judge);
+    ui_prosecution_plus->setVisible(is_judge);
+    ui_prosecution_minus->setVisible(is_judge);
+
+    set_judge_wtce();
+}
+
+void Courtroom::set_judge_wtce()
+{
+    // hide all wtce before enabling visibility
+    for(auto & wtce : ui_wtce)
+        wtce->hide();
+
+    // check if we use a single wtce or multiple
+    const bool is_single_wtce = ao_app->read_theme_ini("enable_single_wtce", cc_config_ini) == "true";
+
+    // update visibility for next/previous
+    ui_wtce_up->setVisible(is_judge && is_single_wtce);
+    ui_wtce_down->setVisible(is_judge && is_single_wtce);
+
+    // prevent going ahead if we have no wtce
+    if (!is_judge || ui_wtce.length() == 0)
+        return;
+
+
+    // set visibility based off parameter
+    if (is_single_wtce == true)
     {
-      ui_wtce[m_wtce_current]->show();
-      ui_wtce_up->show();
-      ui_wtce_down->show();
+        ui_wtce[m_wtce_current]->show();
     }
     else
     {
-      for(auto & wtce : ui_wtce) wtce->show();
-      ui_wtce_up->hide();
-      ui_wtce_down->hide();
+        for (AOButton *i_wtce : ui_wtce)
+            i_wtce->show();
     }
-  }
 }
 
 void Courtroom::set_free_blocks()

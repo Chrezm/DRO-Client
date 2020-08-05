@@ -6,6 +6,7 @@
 
 #include "aoapplication.h"
 #include "aosfxplayer.h"
+#include "aopixmap.h"
 
 class AOEvidenceDisplay : public QLabel
 {

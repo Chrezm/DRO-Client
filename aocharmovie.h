@@ -5,6 +5,8 @@
 #include <QLabel>
 #include <QTimer>
 
+#include "aopixmap.h"
+
 class AOApplication;
 
 class AOCharMovie : public QLabel

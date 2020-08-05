@@ -12,9 +12,8 @@ AOImage::AOImage(QWidget *parent, AOApplication *p_ao_app) : QLabel(parent)
 void AOImage::set_image(QString p_image)
 {
   QString f_path = ao_app->get_image_path(p_image);
-  QPixmap f_pixmap(f_path);
-
-  this->setPixmap(f_pixmap.scaled(this->width(), this->height(), Qt::IgnoreAspectRatio));
+  AOPixmap f_pixmap(f_path);
+  this->setPixmap(f_pixmap->scaled(this->width(), this->height(), Qt::IgnoreAspectRatio));
 
   // Store final path if the path exists
   if (file_exists(f_path))
@@ -34,8 +33,8 @@ void AOImage::set_image_from_path(QString p_path)
   else
     final_path = default_path;
 
-  QPixmap f_pixmap(final_path);
-  this->setPixmap(f_pixmap.scaled(this->width(), this->height(), Qt::IgnoreAspectRatio));
+  AOPixmap f_pixmap(final_path);
+  this->setPixmap(f_pixmap->scaled(this->width(), this->height(), Qt::IgnoreAspectRatio));
 
   // Store final path if the path exists
   if (file_exists(final_path))

@@ -5,7 +5,7 @@
 #include <QTime>
 #include <QTimer>
 #include <QElapsedTimer>
-#include <aolabel.hpp>
+#include <aolabel.h>
 #include <aobutton.h>
 
 class ManualTimer {

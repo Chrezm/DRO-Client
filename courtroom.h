@@ -23,7 +23,7 @@
 #include "aoevidencedisplay.h"
 #include "aonotepad.h"
 #include "aonotearea.hpp"
-#include "aolabel.hpp"
+#include "aolabel.h"
 #include "aotimer.h"
 #include "datatypes.h"
 

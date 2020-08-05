@@ -4,6 +4,7 @@
 #define AOIMAGE_H
 
 #include "aoapplication.h"
+#include "aopixmap.h"
 
 #include <QLabel>
 

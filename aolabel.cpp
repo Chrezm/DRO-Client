@@ -1,4 +1,4 @@
-#include "aolabel.hpp"
+#include "aolabel.h"
 
 #include "file_functions.h"
 

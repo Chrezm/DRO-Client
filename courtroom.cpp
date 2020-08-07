@@ -206,7 +206,7 @@ void Courtroom::set_window_title(QString p_title)
 void Courtroom::set_scene()
 {
   if (testimony_in_progress)
-    show_testimony();
+    show_testimony();)
 
   //witness is default if pos is invalid
   QString f_background = "witnessempty";
@@ -795,6 +795,30 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
   if (mute_map.value(m_chatmessage[CHAR_ID].toInt()))
     return;
 
+  chatmessage_is_empty = m_chatmessage[MESSAGE] == " " || m_chatmessage[MESSAGE] == "";
+  m_msg_is_first_person = false;
+
+  // reset our ui state
+  if (m_cid == f_char_id && !is_system_speaking)
+  {
+      ui_ic_chat_message->clear();
+      ui_sfx_list->setCurrentItem(ui_sfx_list->item(0));
+
+      m_objection_state = 0;
+      reset_shout_buttons();
+
+      m_effect_state = 0;
+      reset_effect_buttons();
+
+      m_wtce_current = 0;
+      reset_judge_wtce_buttons();
+
+      is_presenting_evidence = false;
+      ui_evidence_present->set_image("present_disabled.png");
+
+      m_msg_is_first_person = ao_app->read_config_bool("first_person");
+  }
+
   QString f_showname;
   qDebug() << "handle_chatmessage";
   qDebug() << m_chatmessage[SHOWNAME] << ao_app->get_showname(char_list.at(f_char_id).name);
@@ -810,8 +834,11 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
 
   QString f_message = f_showname + ": " + m_chatmessage[MESSAGE] + "\n";
 
+  /*
   if (f_message == previous_ic_message && is_system_speaking == false)
     return;
+  previous_ic_message = f_message;
+    */
 
   text_state = 0;
   anim_state = 0;
@@ -822,36 +849,6 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
   // reset effect
   ui_vp_effect->stop();
 
-  chatmessage_is_empty = m_chatmessage[MESSAGE] == " " || m_chatmessage[MESSAGE] == "";
-  showed = true;
-
-  if (m_chatmessage[MESSAGE] == ui_ic_chat_message->text())
-  {
-    ui_ic_chat_message->clear();
-    ui_sfx_list->setCurrentItem(ui_sfx_list->item(0));
-
-    m_objection_state = 0;
-    reset_shout_buttons();
-
-    m_effect_state = 0;
-    reset_effect_buttons();
-
-    m_wtce_current = 0;
-    reset_judge_wtce_buttons();
-
-    is_presenting_evidence = false;
-    ui_evidence_present->set_image("present_disabled.png");
-
-    //    if(ao_app->read_config("first_person") == "true"){
-    //      ui_vp_player_char->hide();
-    //      qDebug() << "wow!";
-    //    }
-    //    else ui_vp_player_char->show();
-
-    if(ao_app->read_config("first_person") == "true") showed = false;
-    else showed = true;
-  }
-
   if (is_system_speaking)
     append_system_text(m_chatmessage[MESSAGE]);
   else
@@ -859,8 +856,6 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
 
   if(ao_app->read_config("enable_logging") == "true")
     save_textlog("[" + QTime::currentTime().toString() + "] " + f_showname + ": " + m_chatmessage[MESSAGE]);
-
-  previous_ic_message = f_message;
 
   int objection_mod = m_chatmessage[OBJECTION_MOD].toInt();
   QString f_char = m_chatmessage[CHAR_NAME];
@@ -949,7 +944,11 @@ void Courtroom::handle_chatmessage_2() // handles IC
     ui_vp_chatbox->set_image_from_path(chatbox_path);
   }
 
-  set_scene();
+  if (!m_msg_is_first_person)
+  {
+      set_scene();
+  }
+
   set_text_color();
 
   int emote_mod = m_chatmessage[EMOTE_MOD].toInt();
@@ -1047,13 +1046,19 @@ void Courtroom::handle_chatmessage_3()
   switch (f_anim_state)
   {
   case 2:
-    ui_vp_player_char->play_talking(f_char, f_emote, showed);
+      if (!m_msg_is_first_person)
+      {
+          ui_vp_player_char->play_talking(f_char, f_emote, true);
+      }
     anim_state = 2;
     break;
   default:
     qDebug() << "W: invalid anim_state: " << f_anim_state;
   case 3:
-    ui_vp_player_char->play_idle(f_char, f_emote, showed);
+      if (!m_msg_is_first_person)
+      {
+          ui_vp_player_char->play_idle(f_char, f_emote, true);
+      }
     anim_state = 3;
   }
 
@@ -1293,21 +1298,29 @@ void Courtroom::play_preanim()
 
   sfx_delay_timer->start(sfx_delay);
 
-  if (!file_exists(ao_app->get_character_path(f_char) + f_preanim.toLower() + ".gif") ||
-      preanim_duration < 0)
+  if (!m_msg_is_first_person)
   {
-    anim_state = 1;
-    preanim_done();
-    qDebug() << "could not find " + ao_app->get_character_path(f_char) + f_preanim.toLower() + ".gif";
-    return;
+      QString f_anim_path = ao_app->get_character_path(f_char) + f_preanim.toLower() + ".gif";
+      if (file_exists(f_anim_path) && preanim_duration >= 0)
+      {
+          anim_state = 1;
+          ui_vp_player_char->play_pre(f_char, f_preanim, preanim_duration, true);
+
+          if (text_delay >= 0)
+              text_delay_timer->start(text_delay);
+
+          // finished
+          return;
+      }
+      else
+      {
+          qDebug() << "could not find " + f_anim_path;
+      }
   }
 
-  ui_vp_player_char->play_pre(f_char, f_preanim, preanim_duration, showed);
-
+  // no animation, continue
   anim_state = 1;
-  if (text_delay >= 0)
-    text_delay_timer->start(text_delay);
-
+  preanim_done();
 }
 
 void Courtroom::preanim_done()
@@ -1400,7 +1413,12 @@ void Courtroom::chat_tick()
     text_state = 2;
     chat_tick_timer->stop();
     anim_state = 3;
-    ui_vp_player_char->play_idle(m_chatmessage[CHAR_NAME], m_chatmessage[EMOTE], showed);
+
+    if (!m_msg_is_first_person)
+    {
+        ui_vp_player_char->play_idle(m_chatmessage[CHAR_NAME], m_chatmessage[EMOTE], true);
+    }
+
     m_string_color = "";
     m_color_stack.clear();
   }

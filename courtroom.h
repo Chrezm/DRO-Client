@@ -316,16 +316,17 @@ private:
 
   bool is_muted = false;
 
-  //state of animation, 0 = objecting, 1 = preanim, 2 = talking, 3 = idle
+  // state of animation, 0 = objecting, 1 = preanim, 2 = talking, 3 = idle
   int anim_state = 3;
 
-  //state of text ticking, 0 = not yet ticking, 1 = ticking in progress, 2 = ticking done
+  // state of text ticking, 0 = not yet ticking, 1 = ticking in progress, 2 = ticking done
   int text_state = 2;
 
-  //character id, which index of the char_list the player is
+  // character id, which index of the char_list the player is
   int m_cid = -1;
 
-  bool showed = true;
+  // if enabled, disable showing our own sprites when we talk in ic
+  bool m_msg_is_first_person = false;
 
   //cid and this may differ in cases of ini-editing
   QString current_char = "";

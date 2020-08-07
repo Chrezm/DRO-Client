@@ -52,6 +52,11 @@ QString AOApplication::read_theme()
     return result;
 }
 
+bool AOApplication::read_config_bool(QString p_name)
+{
+    return read_config(p_name) == "true";
+}
+
 int AOApplication::read_blip_rate()
 {
   QString result = read_config("blip_rate");

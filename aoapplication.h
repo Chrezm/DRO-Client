@@ -118,6 +118,9 @@ public:
   //Reads the theme from config.ini and loads it into the current_theme variable
   QString read_theme();
 
+  //Returns a bool rate from config.ini
+  bool read_config_bool(QString p_name);
+
   //Returns the blip rate from config.ini
   int read_blip_rate();
 

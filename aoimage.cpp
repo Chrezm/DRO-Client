@@ -13,7 +13,7 @@ void AOImage::set_image(QString p_image)
 {
   QString f_path = ao_app->get_image_path(p_image);
   AOPixmap f_pixmap(f_path);
-  this->setPixmap(f_pixmap->scaled(this->width(), this->height(), Qt::IgnoreAspectRatio));
+  this->setPixmap(f_pixmap.scaleToSize(size()));
 
   // Store final path if the path exists
   if (file_exists(f_path))
@@ -34,7 +34,7 @@ void AOImage::set_image_from_path(QString p_path)
     final_path = default_path;
 
   AOPixmap f_pixmap(final_path);
-  this->setPixmap(f_pixmap->scaled(this->width(), this->height(), Qt::IgnoreAspectRatio));
+  this->setPixmap(f_pixmap.scaleToSize(size()));
 
   // Store final path if the path exists
   if (file_exists(final_path))

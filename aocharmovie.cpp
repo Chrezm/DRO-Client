@@ -169,7 +169,7 @@ void AOCharMovie::frame_change(int n_frame)
     if (movie_frames.size() > n_frame)
     {
         AOPixmap f_pixmap = QPixmap::fromImage(movie_frames.at(n_frame));
-        this->setPixmap(f_pixmap->scaled(this->width(), this->height()));
+        this->setPixmap(f_pixmap.scaleToSize(this->size()));
     }
 
     if (m_movie->frameCount() - 1 == n_frame && play_once)

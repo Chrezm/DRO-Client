@@ -46,7 +46,7 @@ void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_sid
 
   evidence_icon->move(icon_dimensions.x, icon_dimensions.y);
   evidence_icon->resize(icon_dimensions.width, icon_dimensions.height);
-  evidence_icon->setPixmap(f_pixmap->scaled(evidence_icon->width(), evidence_icon->height(), Qt::IgnoreAspectRatio));
+  evidence_icon->setPixmap(f_pixmap.scaleToSize(evidence_icon->size()));
 
   QString f_path = ao_app->get_image_path(gif_name);
   evidence_movie->setFileName(f_path);

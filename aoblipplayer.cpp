@@ -1,26 +1,45 @@
 #include "aoblipplayer.h"
 
-#include <string.h>
-
-#include <QDebug>
-
-AOBlipPlayer::AOBlipPlayer(QObject *p_parent, AOApplication *p_ao_app)
-    : AOAbstractPlayer(p_parent, p_ao_app)
-{}
-
-void AOBlipPlayer::set_file(QString p_file)
+AOBlipPlayer::AOBlipPlayer(QWidget *parent, AOApplication *p_ao_app)
 {
-    m_file = ao_app->get_sounds_path() + QString("sfx-blip%1.wav").arg(p_file).toLower();
+  m_parent = parent;
+  ao_app = p_ao_app;
 }
 
-void AOBlipPlayer::play()
+void AOBlipPlayer::set_blips(QString p_sfx)
 {
-    try {
-        AOBassHandle *handle = new AOBassHandle(m_file, true, this);
-        connect(this, &AOBlipPlayer::new_volume, handle, &AOBassHandle::set_volume);
-        handle->set_volume(get_volume());
-        handle->play();
-    } catch (const std::exception &e_exception) {
-        qDebug() << e_exception.what();
-    }
+  QString f_path = ao_app->get_sounds_path() + p_sfx.toLower();
+
+  for (int n_stream = 0 ; n_stream < BLIP_COUNT ; ++n_stream)
+  {
+    BASS_StreamFree(m_stream_list[n_stream]);
+
+    m_stream_list[n_stream] = BASS_StreamCreateFile(FALSE, f_path.utf16(), 0, 0, BASS_UNICODE | BASS_ASYNCFILE);
+  }
+
+  set_volume(m_volume);
+}
+
+void AOBlipPlayer::blip_tick()
+{
+  int f_cycle = m_cycle++;
+
+  if (m_cycle == BLIP_COUNT)
+    m_cycle = 0;
+
+  HSTREAM f_stream = m_stream_list[f_cycle];
+
+  BASS_ChannelPlay(f_stream, false);
+}
+
+void AOBlipPlayer::set_volume(int p_value)
+{
+  m_volume = p_value;
+
+  float volume = p_value / 100.0f;
+
+  for (int n_stream = 0 ; n_stream < BLIP_COUNT ; ++n_stream)
+  {
+    BASS_ChannelSetAttribute(m_stream_list[n_stream], BASS_ATTRIB_VOL, volume);
+  }
 }

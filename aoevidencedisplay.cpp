@@ -25,7 +25,7 @@ void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_sid
 
   QString f_evidence_path = ao_app->get_evidence_path() + p_evidence_image;
 
-  QPixmap f_pixmap(f_evidence_path);
+  AOPixmap f_pixmap(f_evidence_path);
 
   QString final_gif_path;
   QString gif_name;
@@ -46,19 +46,10 @@ void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_sid
 
   evidence_icon->move(icon_dimensions.x, icon_dimensions.y);
   evidence_icon->resize(icon_dimensions.width, icon_dimensions.height);
+  evidence_icon->setPixmap(f_pixmap->scaled(evidence_icon->width(), evidence_icon->height(), Qt::IgnoreAspectRatio));
 
-  evidence_icon->setPixmap(f_pixmap.scaled(evidence_icon->width(), evidence_icon->height(), Qt::IgnoreAspectRatio));
-
-  QString f_default_gif_path = ao_app->get_default_theme_path() + gif_name;
-  QString f_gif_path = ao_app->get_theme_path() + gif_name;
-
-  if (file_exists(f_gif_path))
-    final_gif_path = f_gif_path;
-  else
-    final_gif_path = f_default_gif_path;
-
-  evidence_movie->setFileName(final_gif_path);
-
+  QString f_path = ao_app->get_image_path(gif_name);
+  evidence_movie->setFileName(f_path);
   if(evidence_movie->frameCount() < 1)
     return;
 

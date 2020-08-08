@@ -29,21 +29,6 @@ QString AOApplication::get_base_path()
 #endif
 }
     return base_path;
-  /*
-#ifdef OMNI_DEBUG
-  return "/media/omnitroid/Data/winshare/AO/client/base/";
-#elif OMNI_DEBUG2
-  return "/home/omnitroid/winshare/AO/client/base/";
-#elif defined(OMNI_WIN_DEBUG)
-  return "E:/AO/client/base/";
-#elif defined(OMNI_WIN_DEBUG2)
-  return "F:/winshare/AO/client/base/";
-#elif defined(ANDROID)
-  return "/storage/extSdCard/AO2/";
-#else
-  return QDir::currentPath() + "/base/";
-#endif
-*/
 }
 
 QString AOApplication::get_data_path()
@@ -54,6 +39,12 @@ QString AOApplication::get_data_path()
 QString AOApplication::get_theme_path()
 {
   return get_base_path() + "themes/" + current_theme.toLower() + "/";
+}
+
+QString AOApplication::get_theme_variant_path()
+{
+  return get_base_path() + "themes/" + current_theme.toLower() + "/"
+      + theme_variant.toLower() + "/";
 }
 
 QString AOApplication::get_default_theme_path()

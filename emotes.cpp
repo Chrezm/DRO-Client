@@ -6,46 +6,84 @@
 
 void Courtroom::construct_emotes()
 {
-  ui_emotes = new QWidget(this);
+    ui_emotes = new QWidget(this);
 
-  set_size_and_pos(ui_emotes, "emotes");
+    ui_emote_left = new AOButton(this, ao_app);
+    ui_emote_right = new AOButton(this, ao_app);
 
-  QPoint f_spacing = ao_app->get_button_spacing("emote_button_spacing", "courtroom_design.ini");
+    ui_emote_dropdown = new QComboBox(this);
+    ui_pos_dropdown = new QComboBox(this);
+    ui_pos_dropdown->addItem("wit");
+    ui_pos_dropdown->addItem("def");
+    ui_pos_dropdown->addItem("pro");
+    ui_pos_dropdown->addItem("jud");
+    ui_pos_dropdown->addItem("hld");
+    ui_pos_dropdown->addItem("hlp");
 
-  const int button_width = 40;
-  int x_spacing = f_spacing.x();
-  int x_mod_count = 0;
+    reconstruct_emotes();
+}
 
-  const int button_height = 40;
-  int y_spacing = f_spacing.y();
-  int y_mod_count = 0;
+void Courtroom::reconstruct_emotes()
+{
+    // delete previous buttons
+    while (!ui_emote_list.isEmpty())
+        delete ui_emote_list.takeLast();
 
-  emote_columns = ((ui_emotes->width() - button_width) / (x_spacing + button_width)) + 1;
-  emote_rows = ((ui_emotes->height() - button_height) / (y_spacing + button_height)) + 1;
+    // resize and move
+    set_size_and_pos(ui_emotes, "emotes");
 
-  max_emotes_on_page = emote_columns * emote_rows;
+    QPoint f_spacing = ao_app->get_button_spacing("emote_button_spacing", "courtroom_design.ini");
 
-  for (int n = 0 ; n < max_emotes_on_page ; ++n)
-  {
-    int x_pos = (button_width + x_spacing) * x_mod_count;
-    int y_pos = (button_height + y_spacing) * y_mod_count;
+    const int button_width = 40;
+    int x_spacing = f_spacing.x();
+    int x_mod_count = 0;
 
-    AOEmoteButton *f_emote = new AOEmoteButton(ui_emotes, ao_app, x_pos, y_pos);
+    const int button_height = 40;
+    int y_spacing = f_spacing.y();
+    int y_mod_count = 0;
 
-    ui_emote_list.append(f_emote);
+    emote_columns = ((ui_emotes->width() - button_width) / (x_spacing + button_width)) + 1;
+    emote_rows = ((ui_emotes->height() - button_height) / (y_spacing + button_height)) + 1;
 
-    f_emote->set_id(n);
+    max_emotes_on_page = emote_columns * emote_rows;
 
-    connect(f_emote, SIGNAL(emote_clicked(int)), this, SLOT(on_emote_clicked(int)));
-
-    ++x_mod_count;
-
-    if (x_mod_count == emote_columns)
+    for (int n = 0 ; n < max_emotes_on_page ; ++n)
     {
-      ++y_mod_count;
-      x_mod_count = 0;
+        int x_pos = (button_width + x_spacing) * x_mod_count;
+        int y_pos = (button_height + y_spacing) * y_mod_count;
+
+        AOEmoteButton *f_emote = new AOEmoteButton(ui_emotes, ao_app, x_pos, y_pos);
+
+        ui_emote_list.append(f_emote);
+
+        f_emote->set_id(n);
+
+        connect(f_emote, SIGNAL(emote_clicked(int)), this, SLOT(on_emote_clicked(int)));
+
+        ++x_mod_count;
+
+        if (x_mod_count == emote_columns)
+        {
+            ++y_mod_count;
+            x_mod_count = 0;
+        }
     }
-  }
+
+    reset_emote_page();
+}
+
+void Courtroom::reset_emote_page()
+{
+    current_emote_page = 0;
+    current_emote = 0;
+
+    if (m_cid == -1)
+        ui_emotes->hide();
+    else
+        ui_emotes->show();
+
+    set_emote_page();
+    set_emote_dropdown();
 }
 
 void Courtroom::set_emote_page()

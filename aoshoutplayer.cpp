@@ -12,19 +12,15 @@ void AOShoutPlayer::play(QString p_name, QString p_char)
     QString f_file;
 
     QString char_path = ao_app->get_character_path(p_char) + p_name.toLower();
-    QString theme_path = ao_app->get_theme_path() + p_name.toLower();
-    QString default_theme_path = ao_app->get_default_theme_path() + p_name.toLower();
+    QString theme_path = ao_app->get_image_path(p_name.toLower());
 
     qDebug() << char_path;
     qDebug() << theme_path;
-    qDebug() << default_theme_path;
 
     if(file_exists(char_path))
       f_file = char_path;
     else if (file_exists(theme_path))
       f_file = theme_path;
-    else if (file_exists(default_theme_path))
-      f_file = default_theme_path;
     else
       f_file = "";
 

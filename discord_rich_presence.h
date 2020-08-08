@@ -9,7 +9,7 @@ namespace AttorneyOnline {
 class Discord
 {
 private:
-  const char* APPLICATION_ID[2] = { "427835282495111168" , "427835282495111168", }; // insert second one here blah blah
+  const char* APPLICATION_ID[2] = { "538080629535801347" , "538080629535801347", }; // insert second one here blah blah
   int m_index = 0;
   std::string server_name, server_id;
   int64_t timestamp;

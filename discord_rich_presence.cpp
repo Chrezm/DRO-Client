@@ -117,6 +117,7 @@ void Discord::state_character(std::string name)
   presence.startTimestamp = this->timestamp;
 
   presence.state = playing_as.c_str();
+//  presence.smallImageKey = "danganronpa_online";
   presence.smallImageKey = "danganronpa_online";
   presence.smallImageText = "Danganronpa Online";
   Discord_UpdatePresence(&presence);

@@ -23,7 +23,8 @@
 #include "aoevidencedisplay.h"
 #include "aonotepad.h"
 #include "aonotearea.hpp"
-#include "aolabel.hpp"
+#include "aolabel.h"
+#include "aotimer.h"
 #include "datatypes.h"
 
 #include <QMainWindow>
@@ -55,6 +56,20 @@ public:
   void append_char(char_type p_char){char_list.append(p_char);}
   void append_evidence(evi_type p_evi){evidence_list.append(p_evi);}
   void append_music(QString f_music){music_list.append(f_music);}
+  void append_area(QString f_area){area_list.append(f_area);}
+  void clear_music(){music_list.clear();}
+  void clear_areas(){area_list.clear();}
+
+  void fix_last_area()
+  {
+    if (area_list.size() > 0)
+    {
+      QString malplaced = area_list.last();
+      area_list.removeLast();
+      append_music(malplaced);
+//      qDebug() << "what" << malplaced;
+    }
+  }
 
   //sets position of widgets based on theme ini files
   void set_widgets();
@@ -120,6 +135,8 @@ public:
   //helper function that populates ui_music_list with the contents of music_list
   void list_music();
 
+  void list_areas();
+
   void list_sfx();
 
   void list_themes();
@@ -131,8 +148,10 @@ public:
   void move_widget(QWidget *p_widget, QString p_identifier);
 
   void set_shouts();
-
   void set_effects();
+  void set_judge_enabled(bool p_enabled);
+  void set_judge_wtce();
+  void set_free_blocks();
 
   //these are for OOC chat
   void append_ms_chatmessage(QString f_name, QString f_message);
@@ -152,7 +171,9 @@ public:
   //adds text to the IC chatlog. p_name first as bold then p_text then a newlin
   //this function keeps the chatlog scrolled to the top unless there's text selected
   // or the user isn't already scrolled to the top
-  void append_ic_text(QString p_text, QString p_name = "");
+  void update_ic_log(bool p_reset_log);
+  void append_ic_text(QString p_name, QString p_line, bool p_system);
+  void append_system_text(QString p_line);
 
   //prints who played the song to IC chat and plays said song(if found on local filesystem)
   //takes in a list where the first element is the song name and the second is the char id of who played it
@@ -161,7 +182,15 @@ public:
   //animates music text
   void handle_music_anim();
 
+  //handle server-side clock animation and display
+  void handle_clock(QString time);
+
+  //handle request to change theme variant
+  void handle_theme_variant(QString theme_variant);
+
   void play_preanim();
+
+  QString parse_message(QString message);
 
   //plays the witness testimony or cross examination animation based on argument
   void handle_wtce(QString p_wtce);
@@ -172,9 +201,21 @@ public:
 
   void check_connection_received();
 
-  //checks whether shout/effect files are found
+  //checks whether shout/effect/wtce/free block files are found
   void check_shouts();
   void check_effects();
+  void check_wtce();
+  void check_free_blocks();
+
+  void resume_timer(int timer_id);
+  void set_timer_time(int timer_id, int new_time);
+  void set_timer_timestep(int timer_id, int timestep_length);
+  void set_timer_firing(int timer_id, int firing_interval);
+  void pause_timer(int timer_id);
+
+  template<typename T>
+  int adapt_numbered_items(QVector<T*> &item_vector, QString config_item_number,
+                           QString item_name);
 
 private:
   AOApplication *ao_app = nullptr;
@@ -191,7 +232,9 @@ private:
   QVector<char_type> char_list;
   QVector<evi_type> evidence_list;
   QVector<QString> music_list;
+  QVector<QString> area_list;
   QVector<QString> sfx_names;
+  QVector<QString> area_names;
   QVector<QString> note_list;
 
   QSignalMapper *char_button_mapper;
@@ -237,6 +280,7 @@ private:
   QString rpc_ini = "configs/rpccharlist.ini";
   QString file_select_ini = "configs/filesabstract.ini";
   QString shownames_ini = "configs/shownames.ini";
+
   //theme files locations
   QString design_ini = "courtroom_design.ini";
   QString fonts_ini = "courtroom_fonts.ini";
@@ -246,12 +290,13 @@ private:
   //every time point in char.inis times this equals the final time
   const int time_mod = 40;
 
-  static const int chatmessage_size = 15;
+  static const int chatmessage_size = 16;
   QString m_chatmessage[chatmessage_size];
   bool chatmessage_is_empty = false;
 
   QString previous_ic_message = "";
 
+  QColor m_base_string_color;
   QString m_string_color = "";
 
   QStack<QString> m_color_stack;
@@ -279,6 +324,9 @@ private:
 
   //character id, which index of the char_list the player is
   int m_cid = -1;
+
+  bool showed = true;
+
   //cid and this may differ in cases of ini-editing
   QString current_char = "";
 
@@ -289,7 +337,10 @@ private:
   int m_text_color = 0;
   int m_shout_state = 0;
   int m_effect_current = 0;
+  int m_wtce_current = 0;
   bool is_presenting_evidence = false;
+  bool is_judge = false;
+  bool is_system_speaking = false;
 
   int defense_bar_state = 0;
   int prosecution_bar_state = 0;
@@ -306,12 +357,11 @@ private:
   int emote_rows = 2;
   int max_emotes_on_page = 10;
 
-  int m_log_limit = 200;
-  bool m_scroll_down = false;
-  bool m_previously_scroll_down = false;
-  bool m_scroll_type_changed = false;
+  int m_chatlog_limit = 200;
+  bool m_chatlog_newline = false;
+  bool m_chatlog_scrolldown = false;
 
-//  int note_amount = 0;
+//  inmchatlog_changed;
 
   QVector<evi_type> local_evidence_list;
 
@@ -321,11 +371,11 @@ private:
   int evidence_rows = 3;
   int max_evidence_on_page = 18;
 
-  //is set to true if the bg folder contains defensedesk.png, prosecutiondesk.png and stand.png
-  bool is_ao2_bg = false;
-
   //whether the ooc chat is server or master chat, true is server
   bool server_ooc = true;
+
+  int current_clock = -1;
+  int timer_number = 0;
 
   QString current_background = "gs4";
 
@@ -343,7 +393,6 @@ private:
   AOMovie *ui_vp_speedlines;
   AOCharMovie *ui_vp_player_char;
   AOScene *ui_vp_desk;
-  AOScene *ui_vp_legacy_desk;
   AOEvidenceDisplay *ui_vp_evidence_display;
 
   AONoteArea *ui_note_area;
@@ -375,8 +424,11 @@ private:
 
   QWidget *ui_vp_music_area;
 
+  AOMovie *ui_vp_clock;
+  QVector<AOTimer*> ui_timers;
+
   QTextEdit* ui_ic_chatlog = nullptr;
-  QVector<record_type_ptr> m_ic_records;
+  record_type_array m_ic_records;
 
   AOTextArea *ui_ms_chatlog;
   AOTextArea *ui_server_chatlog;
@@ -419,21 +471,39 @@ private:
   //buttons to cycle through effects
   AOButton* ui_effect_up = nullptr;
   AOButton* ui_effect_down = nullptr;
+  //buttons to cycle through wtce
+  AOButton* ui_wtce_up = nullptr;
+  AOButton* ui_wtce_down = nullptr;
 
   //holds all the shout button objects
   QVector<AOButton*> ui_shouts;
   //holds all the effect button objects
   QVector<AOButton*> ui_effects;
+  //holds all the shout buttons objects
+  QVector<AOButton*> ui_wtce;
+  //holds all the free block objects
+  QVector<AOMovie*> ui_free_blocks;
 
   //holds all the names for sound files for the shouts
-  QVector<QString> shout_names = {"holdit", "objection", "takethat", "custom", "gotit", "crossswords", "counteralt"};
+//  QVector<QString> shout_names = {"holdit", "objection", "takethat", "custom", "gotit", "crossswords", "counteralt"};
+  QVector<QString> shout_names;
 
   //holds all the names for sound/anim files for the effects
-  QVector<QString> effect_names = {"effect_flash", "effect_gloom", "effect_question", "effect_pow"};
+  //QVector<QString> effect_names = {"effect_flash", "effect_gloom", "effect_question", "effect_pow"};
+  QVector<QString> effect_names;
 
-  //holds whether the sound file exists for a determined shout/effect
+  //holds all the names for sound/anim files for the shouts
+  //QVector<QString> shout_names = {"witnesstestimony", "crossexamination", "investigation", "nonstop"};
+  QVector<QString> wtce_names;
+
+  //holds all the names for free blocks
+  QVector<QString> free_block_names;
+
+  //holds whether the animation file exists for a determined shout/effect
   QVector<bool> shouts_enabled;
   QVector<bool> effects_enabled;
+  QVector<bool> wtce_enabled;
+  QVector<bool> free_blocks_enabled;
 
 //  AOButton* ui_shout_hold_it      = nullptr; // 1
 //  AOButton* ui_shout_objection    = nullptr; // 2
@@ -453,6 +523,8 @@ private:
   AOButton *ui_change_character;
   AOButton *ui_reload_theme;
   AOButton *ui_call_mod;
+  AOButton *ui_switch_area_music;
+
 
   QComboBox *ui_theme_list;
 
@@ -510,9 +582,8 @@ private:
 
   //abstract widget to hold char buttons
   QWidget *ui_char_buttons = nullptr;
-
+  AOImage *ui_char_button_selector = nullptr;
   QVector<AOCharButton*> ui_char_button_list;
-  AOImage *ui_selector;
 
   AOButton *ui_back_to_lobby;
 
@@ -523,11 +594,27 @@ private:
 
   AOButton *ui_spectator;
 
+  QHash<QString, QWidget*> widget_names;
+
+  void create_widgets();
+  void connect_widgets();
+  void set_widget_names();
+  void reset_widget_names();
+  void insert_widget_name(QString p_widget_name, QWidget *p_widget);
+  void insert_widget_names(QVector<QString> &p_widget_names, QVector<QWidget*> &p_widgets);
+  template <typename T>
+  void insert_widget_names(QVector<QString> &p_widget_names, QVector<T *> &p_widgets);
+  void set_widget_layers();
+
   void construct_char_select();
+  void reconstruct_char_select();
+  void reset_char_select();
   void set_char_select();
   void set_char_select_page();
 
   void construct_emotes();
+  void reconstruct_emotes();
+  void reset_emote_page();
   void set_emote_page();
   void set_emote_dropdown();
 
@@ -539,7 +626,6 @@ private:
   void save_textlog(QString p_text);
 
   void set_char_rpc();
-
 
 public slots:
   void objection_done();
@@ -566,7 +652,9 @@ private slots:
 
   void on_music_search_edited(QString p_text);
   void on_music_list_clicked();
+  void on_area_list_clicked();
   void on_music_list_double_clicked(QModelIndex p_model);
+  void on_area_list_double_clicked(QModelIndex p_model);
 
   void on_sfx_search_edited(QString p_text);
 
@@ -595,17 +683,20 @@ private slots:
   void on_cycle_clicked();
 
   void cycle_shout(int p_index);
-
   void cycle_effect(int p_index);
+  void cycle_wtce(int p_index);
 
   void on_add_button_clicked();
-
   void on_delete_button_clicked();
 
   void on_set_file_button_clicked();
-
   void on_file_selected();
 
+  void delete_widget(QWidget *p_widget);
+  void load_shouts();
+  void load_effects();
+  void load_wtce();
+  void load_free_blocks();
   /**
    * @brief reset the shout button's texture to default
    * DOES NOT MODIFY OBJECTION_STATE
@@ -637,11 +728,14 @@ private slots:
 
   void on_witness_testimony_clicked();
   void on_cross_examination_clicked();
+  void reset_judge_wtce_buttons();
   void on_wtce_clicked();
 
   void on_change_character_clicked();
   void on_reload_theme_clicked();
   void on_call_mod_clicked();
+
+  void on_switch_area_music_clicked();
 
   void on_confirm_theme_clicked();
   void on_note_button_clicked();
@@ -667,12 +761,24 @@ private slots:
 
   void on_char_select_left_clicked();
   void on_char_select_right_clicked();
+  void char_clicked(int n_char);
+  void char_mouse_entered(AOCharButton *p_caller);
+  void char_mouse_left();
 
   void on_spectator_clicked();
 
-  void char_clicked(int n_char);
-
   void ping_server();
 };
+
+template <typename T>
+void Courtroom::insert_widget_names(QVector<QString> &p_widget_names, QVector<T *> &p_widgets)
+{
+    QVector<QWidget *> widgets;
+
+    for (QWidget *widget : p_widgets)
+        widgets.append(widget);
+
+    insert_widget_names(p_widget_names, widgets);
+}
 
 #endif // COURTROOM_H

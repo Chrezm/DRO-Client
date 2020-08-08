@@ -76,11 +76,8 @@ void NetworkManager::ship_server_packet(QString p_packet)
 
 void NetworkManager::handle_ms_packet()
 {
-  char buffer[buffer_max_size];
-  std::memset(buffer, 0, buffer_max_size);
-  ms_socket->read(buffer, buffer_max_size);
-
-  QString in_data = buffer;
+  QByteArray buffer = ms_socket->readAll();
+  QString in_data = QString::fromUtf8(buffer, buffer.size());
 
   if (!in_data.endsWith("%"))
   {
@@ -215,11 +212,8 @@ void NetworkManager::retry_ms_connect()
 
 void NetworkManager::handle_server_packet()
 {
-  char buffer[buffer_max_size];
-  std::memset(buffer, 0, buffer_max_size);
-  server_socket->read(buffer, buffer_max_size);
-
-  QString in_data = buffer;
+  QByteArray buffer = server_socket->readAll();
+  QString in_data = QString::fromUtf8(buffer, buffer.size());
 
   if (!in_data.endsWith("%"))
   {

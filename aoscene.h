@@ -8,18 +8,16 @@ class AOApplication;
 
 class AOScene : public QLabel
 {
-  Q_OBJECT
-public:
-  explicit AOScene(QWidget *parent, AOApplication *p_ao_app);
+    Q_OBJECT
 
-  void set_image(QString p_image);
-  void set_legacy_desk(QString p_image);
+public:
+    explicit AOScene(QWidget *parent, AOApplication *p_ao_app);
+
+    void set_image(QString p_image);
 
 private:
-  QWidget*       m_parent = nullptr;
-  QMovie*        m_movie = nullptr;
-  AOApplication* ao_app = nullptr;
-
+    AOApplication *ao_app = nullptr;
+    QMovie *m_movie       = nullptr;
 };
 
 #endif // AOSCENE_H

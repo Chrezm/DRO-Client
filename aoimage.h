@@ -4,6 +4,7 @@
 #define AOIMAGE_H
 
 #include "aoapplication.h"
+#include "aopixmap.h"
 
 #include <QLabel>
 
@@ -11,13 +12,14 @@ class AOImage : public QLabel
 {
 public:
   AOImage(QWidget *parent, AOApplication *p_ao_app);
-  ~AOImage();
-
-  AOApplication *ao_app = nullptr;
 
   void set_image(QString p_image);
+  void set_image_variant(QString p_image, QString p_variant);
   void set_image_from_path(QString p_path);
   void set_size_and_pos(QString identifier);
+
+  AOApplication *ao_app = nullptr;
+  QString image_path = "";
 };
 
 #endif // AOIMAGE_H

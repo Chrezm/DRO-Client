@@ -1,6 +1,7 @@
-#include <QMessageBox>
-
 #include "debug_functions.h"
+
+#include <QMessageBox>
+#include <QDebug>
 
 void call_error(QString p_message)
 {
@@ -8,6 +9,7 @@ void call_error(QString p_message)
 
   f_box->setText("Error: " + p_message);
   f_box->setWindowTitle("Error");
+  qDebug() << f_box->text();
 
   //msgBox->setWindowModality(Qt::NonModal);
   f_box->exec();
@@ -20,6 +22,7 @@ void call_notice(QString p_message)
 
   f_box->setText(p_message);
   f_box->setWindowTitle("Notice");
+  qDebug() << f_box->text();
 
   //msgBox->setWindowModality(Qt::NonModal);
   f_box->exec();

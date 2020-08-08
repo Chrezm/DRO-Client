@@ -16,6 +16,8 @@ TEMPLATE = app
 VERSION = 2.4.8.0
 
 SOURCES += main.cpp\
+  aopixmap.cpp \
+    aotimer.cpp \
         lobby.cpp \
     text_file_functions.cpp \
     path_functions.cpp \
@@ -56,10 +58,14 @@ SOURCES += main.cpp\
     aoshoutplayer.cpp \
     aonotearea.cpp \
     aonotepicker.cpp \
-    aolabel.cpp
+    aolabel.cpp \
+    courtroom_widgets.cpp
 
 HEADERS  += lobby.h \
     aoimage.h \
+    aolabel.h \
+    aopixmap.h \
+    aotimer.h \
     file_functions.h \
     aobutton.h \
     debug_functions.h \
@@ -94,8 +100,7 @@ HEADERS  += lobby.h \
     aoabstractplayer.hpp \
     aoshoutplayer.hpp \
     aonotearea.hpp \
-    aonotepicker.hpp \
-    aolabel.hpp
+    aonotepicker.hpp
 
 # 1. You need to get BASS and put the x86 bass DLL/headers in the project root folder
 #    AND the compilation output folder. If you want a static link, you'll probably

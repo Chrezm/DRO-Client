@@ -15,6 +15,11 @@ AOMovie::AOMovie(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(p_parent)
   connect(m_movie, SIGNAL(frameChanged(int)), this, SLOT(frame_change(int)));
 }
 
+AOMovie::~AOMovie()
+{
+  delete m_movie;
+}
+
 void AOMovie::set_play_once(bool p_play_once)
 {
   play_once = p_play_once;
@@ -23,10 +28,14 @@ void AOMovie::set_play_once(bool p_play_once)
 void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme)
 {
   m_movie->stop();
-
   QVector<QString> f_vec;
-
   QString file_path = "";
+
+  // Remove ! at the beginning of p_file if needed
+  // This is an indicator that the file is not selectable in the current theme (variant) but
+  // is still usable by other people
+  if (p_file.length() > 0 && p_file.at(0) == "!")
+    p_file = p_file.remove(0, 1);
 
   QString custom_path;
   if (p_file == "custom")
@@ -34,23 +43,19 @@ void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme)
   else
     custom_path = ao_app->get_character_path(p_char) + p_file + "_bubble";
 
-  f_vec.push_back(custom_path);
+  QStringList f_paths{
+    custom_path,
+    ao_app->get_character_path(p_char) + "overlay/" + p_file,
+    ao_app->get_base_path() + "themes/" + p_custom_theme + "/" + p_file,
+    ao_app->get_theme_variant_path() + p_file,
+    ao_app->get_theme_path() + p_file,
+    ao_app->get_default_theme_path() + p_file,
+    ao_app->get_theme_variant_path() + "placeholder",
+    ao_app->get_theme_path() + "placeholder",
+    ao_app->get_default_theme_path() + "placeholder"
+  };
 
-  QString overlay_path = ao_app->get_character_path(p_char) + "overlay/" + p_file;
-  QString custom_theme_path = ao_app->get_base_path() + "themes/" + p_custom_theme + "/" + p_file;
-  QString theme_path = ao_app->get_theme_path() + p_file;
-  QString default_theme_path = ao_app->get_default_theme_path() + p_file;
-  QString placeholder_path = ao_app->get_theme_path() + "placeholder";
-  QString default_placeholder_path = ao_app->get_default_theme_path() + "placeholder";
-
-  f_vec.push_back(overlay_path);
-  f_vec.push_back(custom_theme_path);
-  f_vec.push_back(theme_path);
-  f_vec.push_back(default_theme_path);
-  f_vec.push_back(placeholder_path);
-  f_vec.push_back(default_placeholder_path);
-
-  for(auto &f_file : f_vec)
+  for(auto &f_file : f_paths)
   {
     bool found = false;
     for (auto &ext : decltype(f_vec){".apng", ".gif", ".png"})
@@ -68,6 +73,7 @@ void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme)
       break;
   }
 
+  qDebug() << file_path;
   m_movie->setFileName(file_path);
 
   this->show();

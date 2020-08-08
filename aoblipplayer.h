@@ -1,22 +1,32 @@
 #ifndef AOBLIPPLAYER_H
 #define AOBLIPPLAYER_H
 
-#include "aoabstractplayer.hpp"
+#include "bass.h"
+#include "aoapplication.h"
 
-class AOBlipPlayer : public AOAbstractPlayer
+#include <QWidget>
+#include <string.h>
+#include <QDebug>
+
+const int BLIP_COUNT = 5;
+
+class AOBlipPlayer
 {
-    Q_OBJECT
-
 public:
-    AOBlipPlayer(QObject *p_parent, AOApplication *p_ao_app);
+  AOBlipPlayer(QWidget *parent, AOApplication *p_ao_app);
 
-    void set_file(QString p_file);
+  void set_blips(QString p_sfx);
+  void blip_tick();
+  void set_volume(int p_volume);
 
-public slots:
-    void play();
+  int m_cycle = 0;
 
 private:
-    QString m_file;
+  QWidget *m_parent;
+  AOApplication *ao_app;
+
+  int m_volume;
+  HSTREAM m_stream_list[BLIP_COUNT];
 };
 
 #endif // AOBLIPPLAYER_H

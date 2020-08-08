@@ -11,11 +11,10 @@ class AOButton : public QPushButton
 
 public:
   AOButton(QWidget *parent, AOApplication *p_ao_app);
-  ~AOButton();
+  void set_image(QString p_image);
 
   AOApplication *ao_app = nullptr;
-
-  void set_image(QString p_image);
+  QString image_path = "";
 };
 
 #endif // AOBUTTON_H

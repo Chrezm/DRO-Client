@@ -5,6 +5,8 @@
 #include <QLabel>
 #include <QTimer>
 
+#include "aopixmap.h"
+
 class AOApplication;
 
 class AOCharMovie : public QLabel
@@ -14,10 +16,10 @@ class AOCharMovie : public QLabel
 public:
   AOCharMovie(QWidget *p_parent, AOApplication *p_ao_app);
 
-  void play(QString p_char, QString p_emote, QString emote_prefix);
-  void play_pre(QString p_char, QString p_emote, int duration);
-  void play_talking(QString p_char, QString p_emote);
-  void play_idle(QString p_char, QString p_emote);
+  void play(QString p_char, QString p_emote, QString emote_prefix, bool show);
+  void play_pre(QString p_char, QString p_emote, int duration, bool show);
+  void play_talking(QString p_char, QString p_emote, bool show);
+  void play_idle(QString p_char, QString p_emote, bool show);
 
   void set_flipped(bool p_flipped) {m_flipped = p_flipped;}
 

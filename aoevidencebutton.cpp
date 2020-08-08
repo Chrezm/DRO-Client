@@ -28,7 +28,6 @@ AOEvidenceButton::AOEvidenceButton(QWidget *p_parent, AOApplication *p_ao_app, i
 
   connect(this, SIGNAL(clicked()), this, SLOT(on_clicked()));
 }
-
 void AOEvidenceButton::reset()
 {
   this->hide();
@@ -54,18 +53,9 @@ void AOEvidenceButton::set_image(QString p_image)
 
 void AOEvidenceButton::set_theme_image(QString p_image)
 {
-  QString theme_image_path = ao_app->get_theme_path() + p_image;
-  QString default_image_path = ao_app->get_default_theme_path() + p_image;
-
-  QString final_image_path;
-
-  if (file_exists(theme_image_path))
-    final_image_path = theme_image_path;
-  else
-    final_image_path = default_image_path;
-
+  QString path = ao_app->get_image_path(p_image);
   this->setText("");
-  this->setStyleSheet("border-image:url(\"" + final_image_path + "\")");
+  this->setStyleSheet("border-image:url(\"" + path + "\")");
 }
 
 void AOEvidenceButton::set_selected(bool p_selected)

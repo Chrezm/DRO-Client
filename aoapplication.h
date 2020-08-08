@@ -96,6 +96,7 @@ public:
   QString get_base_path();
   QString get_data_path();
   QString get_theme_path();
+  QString get_theme_variant_path();
   QString get_default_theme_path();
   QString get_character_path(QString p_character);
   QString get_demothings_path();
@@ -120,6 +121,10 @@ public:
   //Returns the blip rate from config.ini
   int read_blip_rate();
 
+  // returns whatever we want newlines or ':' to be appended in front of names
+  // in the ic chat log
+  bool read_chatlog_newline();
+
   //Returns true if blank blips is enabled in config.ini and false otherwise
   bool get_blank_blip();
 
@@ -135,6 +140,7 @@ public:
   //Returns the list of words in callwords.ini
   QStringList get_call_words();
 
+  // TODO document what this does
   QStringList get_sfx_list();
 
   //Appends the argument string to serverlist.txt
@@ -149,12 +155,20 @@ public:
   //Overwrites config.ini with new theme
   void write_theme(QString theme);
 
+  //Set the theme variant
+  void set_theme_variant(QString theme_variant);
 
   //Returns the contents of serverlist.txt
   QVector<server_type> read_serverlist_txt();
 
   //Returns the value of p_identifier in the design.ini file in p_design_path
   QString read_design_ini(QString p_identifier, QString p_design_path);
+
+  //Returns the value of p_identifier from p_file in either a theme variant subfolder, a theme folder, or default theme folder
+  QString read_theme_ini(QString p_identifier, QString p_file);
+
+  //Helper function for returning an int in a file inside of the theme folder
+  int get_design_ini_value(QString p_identifier, QString p_design_file);
 
   //Returns the coordinates of widget with p_identifier from p_file
   QPoint get_button_spacing(QString p_identifier, QString p_file);
@@ -182,6 +196,15 @@ public:
 
   //Returns string list (characters, color) from p_file
   QVector<QStringList> get_highlight_color();
+
+  //Returns special button on cc_config according to index
+  QString get_spbutton(QString p_tag, int index);
+
+  //Returns effect on cc_config according to index
+  QStringList get_effect(int index);
+
+  //Returns wtce on cc_config according to index
+  QStringList get_wtce(int index);
 
   //Returns the side of the p_char character from that characters ini file
   QString get_char_side(QString p_char);
@@ -243,12 +266,16 @@ public:
   //Returns p_char's gender
   QString get_gender(QString p_char);
 
+  //Get the location of p_image, which is either in a theme variant subfolder, a theme folder, or default theme folder
+  QString get_image_path(QString p_image);
+
 private:
   const int RELEASE = 2;
   const int MAJOR_VERSION = 4;
   const int MINOR_VERSION = 8;
 
   QString current_theme = "default";
+  QString theme_variant = "";
 
   QVector<server_type> server_list;
   QVector<server_type> favorite_list;

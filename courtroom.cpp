@@ -206,7 +206,7 @@ void Courtroom::set_window_title(QString p_title)
 void Courtroom::set_scene()
 {
   if (testimony_in_progress)
-    show_testimony();)
+    show_testimony();
 
   //witness is default if pos is invalid
   QString f_background = "witnessempty";

@@ -51,10 +51,14 @@ void NetworkManager::connect_to_master_nosrv()
 
 void NetworkManager::connect_to_server(server_type p_server)
 {
-  server_socket->close();
-  server_socket->abort();
+    disconnect_from_server();
+    server_socket->connectToHost(p_server.ip, p_server.port);
+}
 
-  server_socket->connectToHost(p_server.ip, p_server.port);
+void NetworkManager::disconnect_from_server()
+{
+    server_socket->close();
+    server_socket->abort();
 }
 
 void NetworkManager::ship_ms_packet(QString p_packet)

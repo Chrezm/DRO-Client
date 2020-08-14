@@ -59,6 +59,7 @@ public:
   void connect_to_master();
   void connect_to_master_nosrv();
   void connect_to_server(server_type p_server);
+  void disconnect_from_server();
 
 public slots:
   void ship_ms_packet(QString p_packet);

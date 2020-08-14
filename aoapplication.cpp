@@ -82,14 +82,18 @@ void AOApplication::construct_courtroom()
 
 void AOApplication::destruct_courtroom()
 {
-  if (!courtroom_constructed)
-  {
-    qDebug() << "W: courtroom was attempted destructed when it did not exist";
-    return;
-  }
+    // gracefully close our connection to the current server
+    net_manager->disconnect_from_server();
 
-  delete w_courtroom;
-  courtroom_constructed = false;
+    if (!courtroom_constructed)
+    {
+        qDebug() << "W: courtroom was attempted destructed when it did not exist";
+        return;
+    }
+
+    // destruct courtroom
+    delete w_courtroom;
+    courtroom_constructed = false;
 }
 
 QString AOApplication::get_version_string()

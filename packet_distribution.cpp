@@ -219,7 +219,6 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     loaded_evidence = 0;
     loaded_music = 0;
 
-    destruct_courtroom();
     construct_courtroom();
 
     courtroom_loaded = false;

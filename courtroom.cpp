@@ -94,19 +94,19 @@ void Courtroom::enter_courtroom(int p_cid)
   // forward declaration for a possible update of the chatlog
   bool chatlog_changed = false;
 
-  int chatlog_limit = ao_app->get_chatlog_max_lines();
+  int chatlog_limit = ao_config->log_max_lines();
   // default chatlog_limit?
   chatlog_limit = chatlog_limit <= 0 ? 200 : chatlog_limit; // TODO declare the default somewhere so it's not a magic number
   if (chatlog_limit < m_chatlog_limit) // only update if we need to chop away records
     chatlog_changed = true;
   m_chatlog_limit = chatlog_limit;
 
-  bool chatlog_scrolldown = ao_app->get_chatlog_scrolldown();
+  bool chatlog_scrolldown = ao_config->log_goes_downward_enabled();
   if (m_chatlog_scrolldown != chatlog_scrolldown)
     chatlog_changed = true;
   m_chatlog_scrolldown = chatlog_scrolldown;
 
-  bool chatlog_newline = ao_app->read_chatlog_newline();
+  bool chatlog_newline = ao_config->log_uses_newline_enabled();
   if (m_chatlog_newline != chatlog_newline)
     chatlog_changed = true;
   m_chatlog_newline = chatlog_newline;
@@ -574,7 +574,7 @@ void Courtroom::append_ms_chatmessage(QString f_name, QString f_message)
 void Courtroom::append_server_chatmessage(QString p_name, QString p_message)
 {
   ui_server_chatlog->append_chatmessage(p_name, p_message);
-  if(ao_app->get_enable_logging_enabled())
+  if(ao_config->log_is_recording_enabled())
     save_textlog("(OOC)[" + QTime::currentTime().toString() + "] " + p_name + ": " + p_message);
 }
 
@@ -818,7 +818,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
   else
     append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
 
-  if(ao_app->get_enable_logging_enabled())
+  if(ao_config->log_is_recording_enabled())
     save_textlog("[" + QTime::currentTime().toString() + "] " + f_showname + ": " + m_chatmessage[MESSAGE]);
 
   int objection_mod = m_chatmessage[OBJECTION_MOD].toInt();

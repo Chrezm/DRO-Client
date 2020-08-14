@@ -6,7 +6,7 @@
 
 /*!
     We have to suffer through a lot of boilerplate code
-    but hey, when have has ao2 ever cared?
+    but hey, when has ao2 ever cared?
     Wait, am I using the term wrong? Nice.
 */
 class AOConfigPrivate : public QObject

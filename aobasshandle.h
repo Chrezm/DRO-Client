@@ -6,7 +6,7 @@
 
 #include <bass.h>
 
-#include "aoexception.hpp"
+#include "aoexception.h"
 
 /**
  * @brief The AOBassHandle is a small class to play sounds.

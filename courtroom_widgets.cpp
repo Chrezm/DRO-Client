@@ -126,6 +126,7 @@ void Courtroom::create_widgets()
   ui_ooc_chat_name = new QLineEdit(this);
   ui_ooc_chat_name->setFrame(false);
   ui_ooc_chat_name->setPlaceholderText("Name");
+  ui_ooc_chat_name->setText(ao_config->username());
 
   //ui_area_password = new QLineEdit(this);
   //ui_area_password->setFrame(false);
@@ -185,6 +186,7 @@ void Courtroom::create_widgets()
 
   ui_theme_list = new QComboBox(this);
   ui_confirm_theme = new AOButton(this, ao_app);
+  ui_config_panel = new AOButton(this, ao_app);
   ui_note_button = new AOButton(this, ao_app);
 
   ui_label_images.resize(7);
@@ -286,6 +288,8 @@ void Courtroom::connect_widgets()
 
   connect(ui_ic_chat_message, SIGNAL(returnPressed()), this, SLOT(on_chat_return_pressed()));
 
+  connect(ui_ooc_chat_name, SIGNAL(textEdited(QString)), ao_config, SLOT(set_username(QString)));
+  connect(ao_config, SIGNAL(username_changed(QString)), ui_ooc_chat_name, SLOT(setText(QString)));
   connect(ui_ooc_chat_message, SIGNAL(returnPressed()), this, SLOT(on_ooc_return_pressed()));
 
   connect(ui_music_list, SIGNAL(clicked(QModelIndex)), this, SLOT(on_music_list_clicked()));
@@ -313,8 +317,11 @@ void Courtroom::connect_widgets()
   connect(ui_text_color, SIGNAL(currentIndexChanged(int)), this, SLOT(on_text_color_changed(int)));
 
   connect(ui_music_slider, SIGNAL(valueChanged(int)), this, SLOT(on_music_slider_moved(int)));
+  connect(ao_config, SIGNAL(music_volume_changed(int)), ui_music_slider, SLOT(setValue(int)));
   connect(ui_sfx_slider, SIGNAL(valueChanged(int)), this, SLOT(on_sfx_slider_moved(int)));
+  connect(ao_config, SIGNAL(effects_volume_changed(int)), ui_sfx_slider, SLOT(setValue(int)));
   connect(ui_blip_slider, SIGNAL(valueChanged(int)), this, SLOT(on_blip_slider_moved(int)));
+  connect(ao_config, SIGNAL(blips_volume_changed(int)), ui_blip_slider, SLOT(setValue(int)));
 
   connect(ui_ooc_toggle, SIGNAL(clicked()), this, SLOT(on_ooc_toggle_clicked()));
 
@@ -327,7 +334,11 @@ void Courtroom::connect_widgets()
 
   connect(ui_switch_area_music, SIGNAL(clicked()), this, SLOT(on_switch_area_music_clicked()));
 
+  connect(ui_theme_list, SIGNAL(currentIndexChanged(QString)), ao_config, SLOT(set_theme(QString)));
+  connect(ao_config, SIGNAL(theme_changed(QString)), ui_theme_list, SLOT(setCurrentText(QString)));
+
   connect(ui_confirm_theme, SIGNAL(clicked()), this, SLOT(on_confirm_theme_clicked()));
+  connect(ui_config_panel, SIGNAL(clicked()), this, SLOT(on_config_panel_clicked()));
   connect(ui_note_button, SIGNAL(clicked()), this, SLOT(on_note_button_clicked()));
 
   connect(ui_vp_notepad, SIGNAL(textChanged()), this, SLOT(on_note_text_changed()));
@@ -415,6 +426,7 @@ void Courtroom::reset_widget_names()
             {"switch_area_music", ui_switch_area_music},
             {"theme_list", ui_theme_list},
             {"confirm_theme", ui_confirm_theme},
+            {"config_panel", ui_config_panel},
             {"note_button", ui_note_button},
             // Each ui_label_images[i]
             {"pre", ui_pre},
@@ -569,9 +581,6 @@ void Courtroom::set_widget_layers()
 
 void Courtroom::set_widgets()
 {
-  blip_rate = ao_app->read_blip_rate();
-  blank_blip = ao_app->get_blank_blip();
-
   QString filename = design_ini;
   pos_size_type f_courtroom = ao_app->get_element_dimensions("courtroom", filename);
 
@@ -832,6 +841,7 @@ void Courtroom::set_widgets()
   set_size_and_pos(ui_reload_theme, "reload_theme");
   set_size_and_pos(ui_call_mod, "call_mod");
   set_size_and_pos(ui_confirm_theme, "confirm_theme");
+  set_size_and_pos(ui_config_panel, "config_panel");
   set_size_and_pos(ui_note_button, "note_button");
 
   set_size_and_pos(ui_switch_area_music, "switch_area_music");
@@ -851,6 +861,9 @@ void Courtroom::set_widgets()
 
   ui_confirm_theme->setText("^");
   ui_confirm_theme->setStyleSheet("");
+
+  ui_config_panel->setText("Config");
+  ui_config_panel->setStyleSheet("");
 
   ui_note_button->setText("><:");
   ui_note_button->setStyleSheet("");
@@ -879,9 +892,13 @@ void Courtroom::set_widgets()
     if (!ui_confirm_theme->image_path.isEmpty())
       ui_confirm_theme->setText("");
 
+    ui_config_panel->set_image("configpanel.png");
+    if (!ui_config_panel->image_path.isEmpty())
+        ui_config_panel->setText("");
+
     ui_note_button->set_image("notebutton.png");
     if (!ui_note_button->image_path.isEmpty())
-      ui_note_button->setText("");
+        ui_note_button->setText("");
   }
 
   set_size_and_pos(ui_theme_list, "theme_list");

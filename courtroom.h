@@ -1,6 +1,9 @@
 #ifndef COURTROOM_H
 #define COURTROOM_H
 
+#include "aoconfig.h"
+#include "aoconfigpanel.h"
+
 #include "aoimage.h"
 #include "aobutton.h"
 #include "aocharbutton.h"
@@ -10,11 +13,11 @@
 #include "aomovie.h"
 #include "aocharmovie.h"
 
-#include "aobasshandle.hpp"
+#include "aobasshandle.h"
 #include "aoblipplayer.h"
 #include "aomusicplayer.h"
 #include "aosfxplayer.h"
-#include "aoshoutplayer.hpp"
+#include "aoshoutplayer.h"
 
 #include "aoevidencebutton.h"
 #include "aotextarea.h"
@@ -22,7 +25,7 @@
 #include "aotextedit.h"
 #include "aoevidencedisplay.h"
 #include "aonotepad.h"
-#include "aonotearea.hpp"
+#include "aonotearea.h"
 #include "aolabel.h"
 #include "aotimer.h"
 #include "datatypes.h"
@@ -164,10 +167,6 @@ public:
   void handle_chatmessage_2();
   void handle_chatmessage_3();
 
-  //handles character portrait animation
-  void handle_char_anim(AOCharMovie *charPlayer);
-  void handle_char_anim_2(AOCharMovie *charPlayer);
-
   //adds text to the IC chatlog. p_name first as bold then p_text then a newlin
   //this function keeps the chatlog scrolled to the top unless there's text selected
   // or the user isn't already scrolled to the top
@@ -219,6 +218,7 @@ public:
 
 private:
   AOApplication *ao_app = nullptr;
+  AOConfig *ao_config = nullptr;
 
   int m_courtroom_width = 714;
   int m_courtroom_height = 668;
@@ -249,10 +249,8 @@ private:
   int tick_pos = 0;
   //used to determine how often blips sound
   int blip_pos = 0;
-  int blip_rate = 1;
   int rainbow_counter = 0;
   bool rainbow_appended = false;
-  bool blank_blip = false;
   bool note_shown = false;
   bool contains_add_button = false;
 
@@ -526,10 +524,10 @@ private:
   AOButton *ui_call_mod;
   AOButton *ui_switch_area_music;
 
-
   QComboBox *ui_theme_list;
-
   AOButton *ui_confirm_theme;
+
+  AOButton *ui_config_panel;
 
   AOButton *ui_set_notes;
 
@@ -739,6 +737,7 @@ private slots:
   void on_switch_area_music_clicked();
 
   void on_confirm_theme_clicked();
+  void on_config_panel_clicked();
   void on_note_button_clicked();
 
   void on_set_notes_clicked();

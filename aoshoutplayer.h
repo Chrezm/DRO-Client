@@ -1,7 +1,7 @@
 #ifndef AOSHOUTPLAYER_HPP
 #define AOSHOUTPLAYER_HPP
 
-#include "aoabstractplayer.hpp"
+#include "aoabstractplayer.h"
 
 class AOShoutPlayer : public AOAbstractPlayer
 {

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef AOPIXMAP_H
+#define AOPIXMAP_H
 // qt
 #include <QPixmap>
 
@@ -10,8 +11,8 @@ public:
 
     QPixmap scaleToSize(QSize p_size);
 
-    QPixmap *operator ->();
-
 private:
     QPixmap m_pixmap;
 };
+
+#endif

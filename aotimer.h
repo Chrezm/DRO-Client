@@ -55,4 +55,4 @@ public slots:
   void set_fast_forward_mode();
 };
 
-#endif
+#endif // AOTIMER_H

@@ -1,7 +1,7 @@
 #ifndef AOMUSICPLAYER_H
 #define AOMUSICPLAYER_H
 
-#include "aoabstractplayer.hpp"
+#include "aoabstractplayer.h"
 
 class AOMusicPlayer : public AOAbstractPlayer
 {

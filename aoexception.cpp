@@ -1,4 +1,4 @@
-#include "aoexception.hpp"
+#include "aoexception.h"
 
 AOException::AOException(QString p_msg)
     : m_msg(p_msg)

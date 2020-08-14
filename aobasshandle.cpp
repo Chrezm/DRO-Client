@@ -1,4 +1,4 @@
-#include "aobasshandle.hpp"
+#include "aobasshandle.h"
 
 AOBassHandle::AOBassHandle(QObject *p_parent)
   : QObject(p_parent)

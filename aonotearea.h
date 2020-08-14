@@ -7,7 +7,7 @@
 #include <QVector>
 #include <QVBoxLayout>
 #include <aobutton.h>
-#include <aonotepicker.hpp>
+#include <aonotepicker.h>
 #include <aoimage.h>
 
 #include "aoapplication.h"

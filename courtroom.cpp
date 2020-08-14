@@ -24,6 +24,7 @@
 Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
 {
   ao_app = p_ao_app;
+  ao_config = new AOConfig(this);
 
   //initializing sound device
   BASS_Init(-1, 48000, BASS_DEVICE_LATENCY, 0, NULL);
@@ -93,14 +94,14 @@ void Courtroom::enter_courtroom(int p_cid)
   // forward declaration for a possible update of the chatlog
   bool chatlog_changed = false;
 
-  int chatlog_limit = ao_app->read_config("chatlog_limit").toInt();
+  int chatlog_limit = ao_app->get_chatlog_max_lines();
   // default chatlog_limit?
   chatlog_limit = chatlog_limit <= 0 ? 200 : chatlog_limit; // TODO declare the default somewhere so it's not a magic number
   if (chatlog_limit < m_chatlog_limit) // only update if we need to chop away records
     chatlog_changed = true;
   m_chatlog_limit = chatlog_limit;
 
-  bool chatlog_scrolldown = ao_app->read_config("chatlog_scrolldown") == "true";
+  bool chatlog_scrolldown = ao_app->get_chatlog_scrolldown();
   if (m_chatlog_scrolldown != chatlog_scrolldown)
     chatlog_changed = true;
   m_chatlog_scrolldown = chatlog_scrolldown;
@@ -165,9 +166,7 @@ void Courtroom::enter_courtroom(int p_cid)
 
   ui_char_select_background->hide();
 
-  bool ok; // ok will be set to false and this will return 0 if goes bad
-  chat_tick_interval = ao_app->read_config("chat_tick_interval").toInt(&ok, 10);
-  if(!ok) chat_tick_interval = 60;
+  chat_tick_interval = ao_app->get_chat_tick_interval();
 
   ui_ic_chat_message->setEnabled(m_cid != -1);
   ui_ic_chat_message->setFocus();
@@ -553,19 +552,18 @@ void Courtroom::save_textlog(QString p_text)
 
 void Courtroom::list_themes()
 {
-    QString prev_theme_name = ui_theme_list->currentText();
-  QString themes = ao_app->get_base_path() + "themes/";
-  QDir dir(themes);
-  ui_theme_list->clear();
+    ui_theme_list->blockSignals(true);
+    ui_theme_list->clear();
 
-  QStringList lis = dir.entryList();
-  for(QString s : lis)
-  {
-    if(s != "." && s != "..")
-      ui_theme_list->addItem(s);
-  }
+    for(QString i_folder : QDir(ao_app->get_base_path() + "themes/").entryList())
+    {
+        if (i_folder == "." || i_folder == "..")
+            continue;
+        ui_theme_list->addItem(i_folder);
+    }
 
-  ui_theme_list->setCurrentText(prev_theme_name);
+    ui_theme_list->setCurrentText(ao_config->theme());
+    ui_theme_list->blockSignals(false);
 }
 
 void Courtroom::append_ms_chatmessage(QString f_name, QString f_message)
@@ -576,7 +574,7 @@ void Courtroom::append_ms_chatmessage(QString f_name, QString f_message)
 void Courtroom::append_server_chatmessage(QString p_name, QString p_message)
 {
   ui_server_chatlog->append_chatmessage(p_name, p_message);
-  if(ao_app->read_config("enable_logging") == "true")
+  if(ao_app->get_enable_logging_enabled())
     save_textlog("(OOC)[" + QTime::currentTime().toString() + "] " + p_name + ": " + p_message);
 }
 
@@ -732,40 +730,6 @@ void Courtroom::on_chat_return_pressed()
   ao_app->send_server_packet(new AOPacket("MS", packet_contents));
 }
 
-void Courtroom::handle_char_anim(AOCharMovie *charPlayer)
-{
-  int time = ao_app->read_config("opacity_time").toInt();
-  int op = ao_app->read_config("char_opacity").toInt();
-
-  QGraphicsOpacityEffect *opacity = new QGraphicsOpacityEffect;
-  QPropertyAnimation *anim = new QPropertyAnimation(opacity, "opacity");
-
-  charPlayer->setGraphicsEffect(opacity);
-
-  anim->setDuration(time);
-  anim->setStartValue(1.0);
-  anim->setEndValue(op);
-  anim->setEasingCurve(QEasingCurve::InCubic);
-  anim->start();
-}
-
-void Courtroom::handle_char_anim_2(AOCharMovie *charPlayer)
-{
-  int time = ao_app->read_config("opacity_time").toInt();
-  int op = ao_app->read_config("char_opacity").toInt();
-
-  QGraphicsOpacityEffect *opacity = new QGraphicsOpacityEffect;
-  QPropertyAnimation *anim = new QPropertyAnimation(opacity, "opacity");
-
-  charPlayer->setGraphicsEffect(opacity);
-
-  anim->setDuration(time);
-  anim->setStartValue(op);
-  anim->setEndValue(1.0);
-  anim->setEasingCurve(QEasingCurve::InCubic);
-  anim->start();
-}
-
 void Courtroom::handle_chatmessage(QStringList *p_contents)
 {
   if (p_contents->size() < 15)
@@ -816,7 +780,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
       is_presenting_evidence = false;
       ui_evidence_present->set_image("present_disabled.png");
 
-      m_msg_is_first_person = ao_app->read_config_bool("first_person");
+      m_msg_is_first_person = ao_app->get_first_person_enabled();
   }
 
   QString f_showname;
@@ -854,7 +818,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
   else
     append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
 
-  if(ao_app->read_config("enable_logging") == "true")
+  if(ao_app->get_enable_logging_enabled())
     save_textlog("[" + QTime::currentTime().toString() + "] " + f_showname + ": " + m_chatmessage[MESSAGE]);
 
   int objection_mod = m_chatmessage[OBJECTION_MOD].toInt();
@@ -1515,13 +1479,10 @@ void Courtroom::chat_tick()
     QScrollBar *scroll = ui_vp_message->verticalScrollBar();
     scroll->setValue(scroll->maximum());
 
-    if(blank_blip)
-      qDebug() << "blank_blip found true";
-
-    if ((f_message.at(tick_pos) != ' ' || blank_blip))
+    if ((f_message.at(tick_pos) != ' ' || ao_config->blank_blips_enabled()))
     {
 
-      if (blip_pos % blip_rate == 0)
+      if (blip_pos % ao_app->read_blip_rate() == 0)
       {
         blip_pos = 0;
 
@@ -1700,9 +1661,7 @@ void Courtroom::handle_song(QStringList *p_contents)
 
     if (!mute_map.value(n_char))
     {
-      QString music_change_log = ao_app->read_config("music_change_log");
-
-      if (music_change_log == ("false"))
+      if (ao_app->get_music_change_log_enabled())
       {
         m_music_player->play(f_song);
       }
@@ -1797,7 +1756,7 @@ void Courtroom::on_ooc_return_pressed()
     if (!ok)
       return;
 
-    ui_ooc_chat_name->setText(ooc_name);
+    ao_config->set_username(ooc_name);
   }
 
   if (ooc_message.startsWith("/pos"))
@@ -2231,22 +2190,25 @@ void Courtroom::on_text_color_changed(int p_color)
 
 void Courtroom::on_music_slider_moved(int p_value)
 {
-  m_music_player->set_volume(p_value);
-  ui_ic_chat_message->setFocus();
+    ao_config->set_music_volume(p_value);
+    m_music_player->set_volume(p_value);
+    ui_ic_chat_message->setFocus();
 }
 
 void Courtroom::on_sfx_slider_moved(int p_value)
 {
-  m_sfx_player->set_volume(p_value);
-  m_shout_player->set_volume(p_value);
-  m_cycle_player->set_volume(p_value);
-  ui_ic_chat_message->setFocus();
+    ao_config->set_effects_volume(p_value);
+    m_sfx_player->set_volume(p_value);
+    m_shout_player->set_volume(p_value);
+    m_cycle_player->set_volume(p_value);
+    ui_ic_chat_message->setFocus();
 }
 
 void Courtroom::on_blip_slider_moved(int p_value)
 {
-  m_blip_player->set_volume(p_value);
-  ui_ic_chat_message->setFocus();
+    ao_config->set_blips_volume(p_value);
+    m_blip_player->set_volume(p_value);
+    ui_ic_chat_message->setFocus();
 }
 
 void Courtroom::on_witness_testimony_clicked()
@@ -2308,17 +2270,17 @@ void Courtroom::on_change_character_clicked()
 
 void Courtroom::on_reload_theme_clicked()
 {
-  ao_app->reload_theme();
-  load_shouts();
-  load_effects();
-  load_wtce();
-  load_free_blocks();
+    ao_app->reload_theme();
+    load_shouts();
+    load_effects();
+    load_wtce();
+    load_free_blocks();
 
-  //to update status on the background
-  set_background(current_background);
-  enter_courtroom(m_cid);
-  anim_state = 4;
-  text_state = 3;
+    //to update status on the background
+    set_background(current_background);
+    enter_courtroom(m_cid);
+    anim_state = 4;
+    text_state = 3;
 }
 
 void Courtroom::on_back_to_lobby_clicked()
@@ -2330,7 +2292,7 @@ void Courtroom::on_back_to_lobby_clicked()
 
 void Courtroom::on_confirm_theme_clicked()
 {
-  ao_app->write_theme(ui_theme_list->currentText());
+  ao_app->write_theme(ao_config->theme());
 }
 
 void Courtroom::on_char_select_left_clicked()
@@ -2417,6 +2379,12 @@ void Courtroom::on_evidence_button_clicked()
   {
     ui_evidence->hide();
   }
+}
+
+void Courtroom::on_config_panel_clicked()
+{
+    ao_app->toggle_config_panel();
+    ui_ic_chat_message->setFocus();
 }
 
 void Courtroom::on_note_button_clicked()

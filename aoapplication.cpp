@@ -5,14 +5,19 @@
 #include "networkmanager.h"
 #include "debug_functions.h"
 
+#include "aoconfig.h"
+#include "aoconfigpanel.h"
+
 #include <QDebug>
 #include <QRect>
 #include <QDesktopWidget>
 
-AOApplication::AOApplication(int &argc, char **argv) : QApplication(argc, argv)
+AOApplication::AOApplication(int &argc, char **argv) : QApplication(argc, argv), config(new AOConfig(this))
 {
   net_manager = new NetworkManager(this);
   discord = new AttorneyOnline::Discord();
+  config_panel = new AOConfigPanel;
+  config_panel->hide();
   QObject::connect(net_manager, SIGNAL(ms_connect_finished(bool, bool)),
                    SLOT(ms_connect_finished(bool, bool)));
 }
@@ -22,6 +27,7 @@ AOApplication::~AOApplication()
   destruct_lobby();
   destruct_courtroom();
   delete discord;
+  delete config_panel;
 }
 
 void AOApplication::construct_lobby()
@@ -117,10 +123,57 @@ QString AOApplication::get_current_char()
     return "";
 }
 
+void AOApplication::toggle_config_panel()
+{
+    config_panel->setVisible(!config_panel->isVisible());
+    config_panel->setFocus();
+    config_panel->raise();
+}
+
+bool AOApplication::get_always_pre_enabled()
+{
+    return config->get_bool("always_pre", true);
+}
+
+bool AOApplication::get_first_person_enabled()
+{
+    return config->get_bool("first_person", false);
+}
+
+bool AOApplication::get_chatlog_scrolldown()
+{
+    return config->log_goes_downward_enabled();
+}
+
+int AOApplication::get_chatlog_max_lines()
+{
+    return config->log_max_lines();
+}
+
+int AOApplication::get_chat_tick_interval()
+{
+    return config->get_number("chat_tick_interval", 60);
+}
+
+bool AOApplication::get_chatlog_newline()
+{
+    return config->log_uses_newline_enabled();
+}
+
+bool AOApplication::get_enable_logging_enabled()
+{
+    return config->log_is_recording_enabled();
+}
+
+bool AOApplication::get_music_change_log_enabled()
+{
+    return config->get_bool("music_change_log", true);
+}
+
 void AOApplication::add_favorite_server(int p_server)
 {
-  if (p_server < 0 || p_server >= server_list.size())
-    return;
+    if (p_server < 0 || p_server >= server_list.size())
+        return;
 
   server_type fav_server = server_list.at(p_server);
 

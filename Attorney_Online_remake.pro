@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui multimedia network
+QT += core gui widgets uitools multimedia network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -16,9 +16,12 @@ TEMPLATE = app
 VERSION = 2.4.8.0
 
 SOURCES += main.cpp\
-  aopixmap.cpp \
+    aoconfig.cpp \
+    aoconfigpanel.cpp \
+    aoguiloader.cpp \
+    aopixmap.cpp \
     aotimer.cpp \
-        lobby.cpp \
+    lobby.cpp \
     text_file_functions.cpp \
     path_functions.cpp \
     aoimage.cpp \
@@ -62,9 +65,18 @@ SOURCES += main.cpp\
     courtroom_widgets.cpp
 
 HEADERS  += lobby.h \
+    aoabstractplayer.h \
+    aobasshandle.h \
+    aoconfig.h \
+    aoconfigpanel.h \
+    aoexception.h \
+    aoguiloader.h \
     aoimage.h \
     aolabel.h \
+    aonotearea.h \
+    aonotepicker.h \
     aopixmap.h \
+    aoshoutplayer.h \
     aotimer.h \
     file_functions.h \
     aobutton.h \
@@ -94,13 +106,7 @@ HEADERS  += lobby.h \
     aoevidencedisplay.h \
     discord_rich_presence.h \
     discord-rpc.h \
-    aonotepad.h \
-    aobasshandle.hpp \
-    aoexception.hpp \
-    aoabstractplayer.hpp \
-    aoshoutplayer.hpp \
-    aonotearea.hpp \
-    aonotepicker.hpp
+    aonotepad.h
 
 # 1. You need to get BASS and put the x86 bass DLL/headers in the project root folder
 #    AND the compilation output folder. If you want a static link, you'll probably
@@ -117,6 +123,9 @@ CONFIG += c++11
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 
 RESOURCES += \
-    resources.qrc
+    res.qrc
 
 DISTFILES +=
+
+FORMS += \
+    res/ui/config_panel.ui

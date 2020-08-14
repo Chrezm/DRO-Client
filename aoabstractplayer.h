@@ -5,7 +5,7 @@
 #include <QString>
 
 #include "aoapplication.h"
-#include "aobasshandle.hpp"
+#include "aobasshandle.h"
 
 class AOAbstractPlayer : public QObject
 {

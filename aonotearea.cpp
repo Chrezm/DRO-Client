@@ -1,5 +1,5 @@
-#include "aonotepicker.hpp"
-#include "aonotearea.hpp"
+#include "aonotepicker.h"
+#include "aonotearea.h"
 
 #include "courtroom.h"
 

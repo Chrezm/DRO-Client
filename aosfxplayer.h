@@ -1,7 +1,7 @@
 #ifndef AOSFXPLAYER_H
 #define AOSFXPLAYER_H
 
-#include "aoabstractplayer.hpp"
+#include "aoabstractplayer.h"
 
 class AOSfxPlayer : public AOAbstractPlayer
 {

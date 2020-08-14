@@ -2,124 +2,47 @@
 
 #include "file_functions.h"
 
+#include "aoconfig.h"
+
 #include <QTextStream>
 #include <QStringList>
 #include <QVector>
 #include <QDebug>
 #include <QColor>
 
-QString AOApplication::read_config(QString searchline)
-{
-  QString return_value = "";
-
-  QFile config_file(get_base_path() + "config.ini");
-  if (!config_file.open(QIODevice::ReadOnly))
-      return return_value;
-
-  QTextStream in(&config_file);
-
-  while(!in.atEnd())
-  {
-    QString f_line = in.readLine().trimmed();
-
-    if (!f_line.startsWith(searchline))
-      continue;
-
-    QStringList line_elements = f_line.split("=");
-
-    if (line_elements.at(0).trimmed() != searchline)
-      continue;
-
-    if (line_elements.size() < 2)
-      continue;
-
-    return_value = line_elements.at(1).trimmed();
-    break;
-  }
-
-  config_file.close();
-
-  return return_value;
-}
-
 QString AOApplication::read_theme()
 {
-  QString result = read_config("theme");
-
-  if (result == "")
-    return "default";
-  else
-    return result;
-}
-
-bool AOApplication::read_config_bool(QString p_name)
-{
-    return read_config(p_name) == "true";
+    return config->theme();
 }
 
 int AOApplication::read_blip_rate()
 {
-  QString result = read_config("blip_rate");
-
-  //note: the empty string converted to int will return 0
-  if (result.toInt() <= 0)
-    return 1;
-  else
-    return result.toInt();
+    return config->blip_rate();
 }
 
 bool AOApplication::read_chatlog_newline()
 {
-  return read_config("chatlog_newline") == "true";
+    return config->log_uses_newline_enabled();
 }
 
 int AOApplication::get_default_music()
 {
-  QString f_result = read_config("default_music");
-
-  if (f_result == "")
-    return 50;
-  else return f_result.toInt();
+    return config->music_volume();
 }
 
 int AOApplication::get_default_sfx()
 {
-  QString f_result = read_config("default_sfx");
-
-  if (f_result == "")
-    return 50;
-  else return f_result.toInt();
+    return config->effects_volume();
 }
 
 int AOApplication::get_default_blip()
 {
-  QString f_result = read_config("default_blip");
-
-  if (f_result == "")
-    return 50;
-  else return f_result.toInt();
+    return config->blips_volume();
 }
 
 QStringList AOApplication::get_call_words()
 {
-  QStringList return_value;
-
-  QFile callwords_ini;
-
-  callwords_ini.setFileName(get_base_path() + "callwords.ini");
-
-  if (!callwords_ini.open(QIODevice::ReadOnly))
-    return return_value;
-
-  QTextStream in(&callwords_ini);
-
-  while (!in.atEnd())
-  {
-    QString line = in.readLine();
-    return_value.append(line);
-  }
-
-  return return_value;
+    return config->callwords().split(" ", Qt::SkipEmptyParts);
 }
 
 void AOApplication::write_theme(QString theme)
@@ -898,9 +821,7 @@ int AOApplication::get_text_delay(QString p_char, QString p_emote)
 
 bool AOApplication::get_blank_blip()
 {
-  QString f_result = read_config("blank_blip");
-
-  return f_result.startsWith("true");
+    return config->blank_blips_enabled();
 }
 
 QString AOApplication::read_theme_ini(QString p_identifier, QString p_file)

@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QSettings>
+#include <QVector>
 
 /*!
     We have to suffer through a lot of boilerplate code

@@ -892,7 +892,7 @@ void Courtroom::set_widgets()
     if (!ui_confirm_theme->image_path.isEmpty())
       ui_confirm_theme->setText("");
 
-    ui_config_panel->set_image("configpanel.png");
+    ui_config_panel->set_image("config_panel.png");
     if (!ui_config_panel->image_path.isEmpty())
         ui_config_panel->setText("");
 

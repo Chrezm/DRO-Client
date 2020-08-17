@@ -82,41 +82,39 @@ void AOApplication::construct_courtroom()
 
 void AOApplication::destruct_courtroom()
 {
-    // gracefully close our connection to the current server
-    net_manager->disconnect_from_server();
-
-    if (!courtroom_constructed)
+    // destruct courtroom
+    if (courtroom_constructed)
+    {
+        delete w_courtroom;
+        courtroom_constructed = false;
+    }
+    else
     {
         qDebug() << "W: courtroom was attempted destructed when it did not exist";
-        return;
     }
 
-    // destruct courtroom
-    delete w_courtroom;
-    courtroom_constructed = false;
+    // gracefully close our connection to the current server
+    net_manager->disconnect_from_server();
 }
 
 QString AOApplication::get_version_string()
 {
-  return
-  QString::number(RELEASE) + "." +
-  QString::number(MAJOR_VERSION) + "." +
-  QString::number(MINOR_VERSION);
+    return QString::number(RELEASE) + "." + QString::number(MAJOR_VERSION) + "." + QString::number(MINOR_VERSION);
 }
 
 void AOApplication::reload_theme()
 {
-  current_theme = read_theme();
+    current_theme = read_theme();
 }
 
 void AOApplication::set_theme_variant(QString theme_variant)
 {
-  this->theme_variant = theme_variant;
+    this->theme_variant = theme_variant;
 }
 
 void AOApplication::set_favorite_list()
 {
-  favorite_list = read_serverlist_txt();
+    favorite_list = read_serverlist_txt();
 }
 
 QString AOApplication::get_current_char()
@@ -190,12 +188,11 @@ void AOApplication::add_favorite_server(int p_server)
 
 void AOApplication::server_disconnected()
 {
-  if (courtroom_constructed)
-  {
+    if (!courtroom_constructed)
+        return;
     call_notice("Disconnected from server.");
     construct_lobby();
     destruct_courtroom();
-  }
 }
 
 void AOApplication::loading_cancelled()

@@ -2285,10 +2285,13 @@ void Courtroom::on_reload_theme_clicked()
 
 void Courtroom::on_back_to_lobby_clicked()
 {
-  ao_app->construct_lobby();
-  ao_app->w_lobby->list_servers();
-  ao_app->w_lobby->set_choose_a_server();
-  ao_app->destruct_courtroom();
+    // hide so we don't get the 'disconnected from server' prompt
+    hide();
+
+    ao_app->construct_lobby();
+    ao_app->w_lobby->list_servers();
+    ao_app->w_lobby->set_choose_a_server();
+    ao_app->destruct_courtroom();
 }
 
 void Courtroom::on_confirm_theme_clicked()

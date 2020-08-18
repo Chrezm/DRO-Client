@@ -42,7 +42,11 @@ int AOApplication::get_default_blip()
 
 QStringList AOApplication::get_call_words()
 {
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+    return config->callwords().split(" ", QString::SkipEmptyParts);
+#else
     return config->callwords().split(" ", Qt::SkipEmptyParts);
+#endif
 }
 
 void AOApplication::write_theme(QString theme)

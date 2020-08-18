@@ -11,6 +11,9 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     AOGuiLoader loader;
     loader.load_from_file(":res/ui/config_panel.ui", this);
 
+    // tab
+    setFocusProxy(AO_GUI_WIDGET(QTabWidget, "tab_widget"));
+
     // general
     w_username = AO_GUI_WIDGET(QLineEdit, "username");
     w_callwords = AO_GUI_WIDGET(QLineEdit, "callwords");
@@ -22,9 +25,12 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_log_is_recording = AO_GUI_WIDGET(QCheckBox, "log_recording");
 
     // audio
-    w_effects = AO_GUI_WIDGET(QSpinBox, "effects");
-    w_music = AO_GUI_WIDGET(QSpinBox, "music");
-    w_blips = AO_GUI_WIDGET(QSpinBox, "blips");
+    w_music = AO_GUI_WIDGET(QSlider, "music");
+    w_music_value = AO_GUI_WIDGET(QLabel, "music_value");
+    w_effects = AO_GUI_WIDGET(QSlider, "effects");
+    w_effects_value = AO_GUI_WIDGET(QLabel, "effects_value");
+    w_blips = AO_GUI_WIDGET(QSlider, "blips");
+    w_blips_value = AO_GUI_WIDGET(QLabel, "blips_value");
     w_blip_rate = AO_GUI_WIDGET(QSpinBox, "blip_rate");
     w_blank_blips = AO_GUI_WIDGET(QCheckBox, "blank_blips");
 
@@ -35,21 +41,6 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
             continue;
         w_theme->addItem(i_folder);
     }
-
-    // set values
-    w_username->setText(m_config->username());
-    w_callwords->setText(m_config->callwords());
-    w_theme->setCurrentText(m_config->theme());
-    w_reload_theme->hide();
-    w_log_max_lines->setValue(m_config->log_max_lines());
-    w_log_is_recording->setChecked(m_config->log_is_recording_enabled());
-    w_log_goes_downward->setChecked(m_config->log_goes_downward_enabled());
-    w_log_uses_newline->setChecked(m_config->log_uses_newline_enabled());
-    w_effects->setValue(m_config->effects_volume());
-    w_music->setValue(m_config->music_volume());
-    w_blips->setValue(m_config->blips_volume());
-    w_blip_rate->setValue(m_config->blip_rate());
-    w_blank_blips->setChecked(m_config->blank_blips_enabled());
 
     // input
     connect(m_config, SIGNAL(username_changed(QString)), w_username, SLOT(setText(QString)));
@@ -75,14 +66,47 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(w_log_uses_newline, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_uses_newline(int)));
     connect(w_log_is_recording, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_is_recording(int)));
     connect(w_effects, SIGNAL(valueChanged(int)), m_config, SLOT(set_effects_volume(int)));
+    connect(w_effects, SIGNAL(valueChanged(int)), this, SLOT(on_effects_value_changed(int)));
     connect(w_music, SIGNAL(valueChanged(int)), m_config, SLOT(set_music_volume(int)));
+    connect(w_music, SIGNAL(valueChanged(int)), this, SLOT(on_music_value_changed(int)));
     connect(w_blips, SIGNAL(valueChanged(int)), m_config, SLOT(set_blips_volume(int)));
+    connect(w_blips, SIGNAL(valueChanged(int)), this, SLOT(on_blips_value_changed(int)));
     connect(w_blip_rate, SIGNAL(valueChanged(int)), m_config, SLOT(set_blip_rate(int)));
     connect(w_blank_blips, SIGNAL(stateChanged(int)), m_config, SLOT(set_blank_blips(int)));
+
+    // set values
+    w_username->setText(m_config->username());
+    w_callwords->setText(m_config->callwords());
+    w_theme->setCurrentText(m_config->theme());
+    w_reload_theme->hide();
+    w_log_max_lines->setValue(m_config->log_max_lines());
+    w_log_is_recording->setChecked(m_config->log_is_recording_enabled());
+    w_log_goes_downward->setChecked(m_config->log_goes_downward_enabled());
+    w_log_uses_newline->setChecked(m_config->log_uses_newline_enabled());
+    w_effects->setValue(m_config->effects_volume());
+    w_music->setValue(m_config->music_volume());
+    w_blips->setValue(m_config->blips_volume());
+    w_blip_rate->setValue(m_config->blip_rate());
+    w_blank_blips->setChecked(m_config->blank_blips_enabled());
 }
 
 void AOConfigPanel::on_reload_theme_clicked()
 {
     qDebug() << "reload theme clicked";
     emit reload_theme();
+}
+
+void AOConfigPanel::on_effects_value_changed(int p_num)
+{
+    w_effects_value->setText(QString::number(p_num) + "%");
+}
+
+void AOConfigPanel::on_music_value_changed(int p_num)
+{
+    w_music_value->setText(QString::number(p_num) + "%");
+}
+
+void AOConfigPanel::on_blips_value_changed(int p_num)
+{
+    w_blips_value->setText(QString::number(p_num) + "%");
 }

@@ -91,29 +91,8 @@ void Courtroom::enter_courtroom(int p_cid)
   m_wtce_current = 0;
   reset_judge_wtce_buttons();
 
-  // forward declaration for a possible update of the chatlog
-  bool chatlog_changed = false;
-
-  int chatlog_limit = ao_config->log_max_lines();
-  // default chatlog_limit?
-  chatlog_limit = chatlog_limit <= 0 ? 200 : chatlog_limit; // TODO declare the default somewhere so it's not a magic number
-  if (chatlog_limit < m_chatlog_limit) // only update if we need to chop away records
-    chatlog_changed = true;
-  m_chatlog_limit = chatlog_limit;
-
-  bool chatlog_scrolldown = ao_config->log_goes_downward_enabled();
-  if (m_chatlog_scrolldown != chatlog_scrolldown)
-    chatlog_changed = true;
-  m_chatlog_scrolldown = chatlog_scrolldown;
-
-  bool chatlog_newline = ao_config->log_uses_newline_enabled();
-  if (m_chatlog_newline != chatlog_newline)
-    chatlog_changed = true;
-  m_chatlog_newline = chatlog_newline;
-
-  // refresh the log if needed
-  if (chatlog_changed)
-    update_ic_log(chatlog_changed);
+  // setup chat
+  on_chat_config_changed();
 
   set_evidence_page();
 
@@ -564,11 +543,6 @@ void Courtroom::list_themes()
 
     ui_theme_list->setCurrentText(ao_config->theme());
     ui_theme_list->blockSignals(false);
-}
-
-void Courtroom::append_ms_chatmessage(QString f_name, QString f_message)
-{
-  ui_ms_chatlog->append_chatmessage(f_name, f_message);
 }
 
 void Courtroom::append_server_chatmessage(QString p_name, QString p_message)
@@ -1090,6 +1064,33 @@ void Courtroom::handle_chatmessage_3()
     }
   }
 
+}
+
+void Courtroom::on_chat_config_changed()
+{
+    // forward declaration for a possible update of the chatlog
+    bool chatlog_changed = false;
+
+    int chatlog_limit = ao_config->log_max_lines();
+    // default chatlog_limit?
+    chatlog_limit = chatlog_limit <= 0 ? 200 : chatlog_limit; // TODO declare the default somewhere so it's not a magic number
+    if (chatlog_limit < m_chatlog_limit) // only update if we need to chop away records
+        chatlog_changed = true;
+    m_chatlog_limit = chatlog_limit;
+
+    bool chatlog_scrolldown = ao_config->log_goes_downward_enabled();
+    if (m_chatlog_scrolldown != chatlog_scrolldown)
+        chatlog_changed = true;
+    m_chatlog_scrolldown = chatlog_scrolldown;
+
+    bool chatlog_newline = ao_config->log_uses_newline_enabled();
+    if (m_chatlog_newline != chatlog_newline)
+        chatlog_changed = true;
+    m_chatlog_newline = chatlog_newline;
+
+    // refresh the log if needed
+    if (chatlog_changed)
+        update_ic_log(chatlog_changed);
 }
 
 void Courtroom::update_ic_log(bool p_reset_log)
@@ -1850,34 +1851,11 @@ void Courtroom::on_ooc_return_pressed()
 
   AOPacket *f_packet = new AOPacket("CT", packet_contents);
 
-  if (server_ooc)
-    ao_app->send_server_packet(f_packet);
-  else
-    ao_app->send_ms_packet(f_packet);
+  ao_app->send_server_packet(f_packet);
 
   ui_ooc_chat_message->clear();
 
   ui_ooc_chat_message->setFocus();
-}
-
-void Courtroom::on_ooc_toggle_clicked()
-{
-  if (server_ooc)
-  {
-    ui_ms_chatlog->show();
-    ui_server_chatlog->hide();
-    ui_ooc_toggle->setText("Master");
-
-    server_ooc = false;
-  }
-  else
-  {
-    ui_ms_chatlog->hide();
-    ui_server_chatlog->show();
-    ui_ooc_toggle->setText("Server");
-
-    server_ooc = true;
-  }
 }
 
 void Courtroom::on_music_search_edited(QString p_text)

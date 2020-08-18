@@ -157,7 +157,6 @@ public:
   void set_free_blocks();
 
   //these are for OOC chat
-  void append_ms_chatmessage(QString f_name, QString f_message);
   void append_server_chatmessage(QString p_name, QString p_message);
 
   //these functions handle chatmessages sequentially.
@@ -370,9 +369,6 @@ private:
   int evidence_rows = 3;
   int max_evidence_on_page = 18;
 
-  //whether the ooc chat is server or master chat, true is server
-  bool server_ooc = true;
-
   int current_clock = -1;
   int timer_number = 0;
 
@@ -429,7 +425,6 @@ private:
   QTextEdit* ui_ic_chatlog = nullptr;
   record_type_array m_ic_records;
 
-  AOTextArea *ui_ms_chatlog;
   AOTextArea *ui_server_chatlog;
 
   QListWidget *ui_mute_list;
@@ -511,8 +506,6 @@ private:
 //  AOButton* ui_shout_got_it       = nullptr; // 5
 //  AOButton* ui_shout_cross_swords = nullptr; // 6
 //  AOButton* ui_shout_counter_alt  = nullptr; // 7
-
-  AOButton *ui_ooc_toggle;
 
   AOButton *ui_witness_testimony;
   AOButton *ui_cross_examination;
@@ -646,6 +639,7 @@ private slots:
   void on_mute_list_clicked(QModelIndex p_index);
 
   void on_chat_return_pressed();
+  void on_chat_config_changed();
 
   void on_ooc_return_pressed();
 
@@ -722,8 +716,6 @@ private slots:
   void on_music_slider_moved(int p_value);
   void on_sfx_slider_moved(int p_value);
   void on_blip_slider_moved(int p_value);
-
-  void on_ooc_toggle_clicked();
 
   void on_witness_testimony_clicked();
   void on_cross_examination_clicked();

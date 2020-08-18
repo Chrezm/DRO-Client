@@ -7,6 +7,9 @@
 #include <QPushButton>
 #include <QSpinBox>
 #include <QCheckBox>
+#include <QSlider>
+#include <QTabWidget>
+#include <QLabel>
 // src
 #include "aoguiloader.h"
 #include "aoconfig.h"
@@ -28,9 +31,12 @@ class AOConfigPanel : public QWidget
     QCheckBox *w_log_is_recording = nullptr;
 
     // audio
-    QSpinBox *w_effects = nullptr;
-    QSpinBox *w_music = nullptr;
-    QSpinBox *w_blips = nullptr;
+    QSlider *w_effects = nullptr;
+    QLabel *w_effects_value = nullptr;
+    QSlider *w_music = nullptr;
+    QLabel *w_music_value = nullptr;
+    QSlider *w_blips = nullptr;
+    QLabel *w_blips_value = nullptr;
     QSpinBox *w_blip_rate = nullptr;
     QCheckBox *w_blank_blips = nullptr;
 
@@ -42,6 +48,9 @@ signals:
 
 private slots:
     void on_reload_theme_clicked();
+    void on_effects_value_changed(int p_num);
+    void on_music_value_changed(int p_num);
+    void on_blips_value_changed(int p_num);
 };
 
 #endif // AOCONFIGPANEL_H

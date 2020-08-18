@@ -128,8 +128,11 @@ QString AOApplication::get_current_char()
 void AOApplication::toggle_config_panel()
 {
     config_panel->setVisible(!config_panel->isVisible());
-    config_panel->setFocus();
-    config_panel->raise();
+    if (config_panel->isVisible())
+    {
+        config_panel->setFocus();
+        config_panel->raise();
+    }
 }
 
 bool AOApplication::get_always_pre_enabled()

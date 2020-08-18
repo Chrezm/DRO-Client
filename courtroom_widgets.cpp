@@ -100,11 +100,6 @@ void Courtroom::create_widgets()
   ui_ic_chatlog = new QTextEdit(this);
   ui_ic_chatlog->setReadOnly(true);
 
-  ui_ms_chatlog = new AOTextArea(this);
-  ui_ms_chatlog->setReadOnly(true);
-  ui_ms_chatlog->setOpenExternalLinks(true);
-  ui_ms_chatlog->hide();
-
   ui_server_chatlog = new AOTextArea(this);
   ui_server_chatlog->setReadOnly(true);
   ui_server_chatlog->setOpenExternalLinks(true);
@@ -176,8 +171,6 @@ void Courtroom::create_widgets()
   ui_wtce_up->setProperty("cycle_id", 5);
   ui_wtce_down = new AOButton(this, ao_app);
   ui_wtce_down->setProperty("cycle_id", 4);
-
-  ui_ooc_toggle = new AOButton(this, ao_app);
 
   ui_change_character = new AOButton(this, ao_app);
   ui_reload_theme = new AOButton(this, ao_app);
@@ -265,6 +258,8 @@ void Courtroom::connect_widgets()
 {
   connect(keepalive_timer, SIGNAL(timeout()), this, SLOT(ping_server()));
 
+  connect(ao_config, SIGNAL(theme_changed(QString)), this, SLOT(on_reload_theme_clicked()));
+
   connect(ui_vp_objection, SIGNAL(done()), this, SLOT(objection_done()));
   connect(ui_vp_player_char, SIGNAL(done()), this, SLOT(preanim_done()));
 
@@ -316,14 +311,16 @@ void Courtroom::connect_widgets()
 
   connect(ui_text_color, SIGNAL(currentIndexChanged(int)), this, SLOT(on_text_color_changed(int)));
 
+  connect(ao_config, SIGNAL(log_max_lines_changed(int)), this, SLOT(on_chat_config_changed()));
+  connect(ao_config, SIGNAL(log_goes_downward_changed(bool)), this, SLOT(on_chat_config_changed()));
+  connect(ao_config, SIGNAL(log_uses_newline_changed(bool)), this, SLOT(on_chat_config_changed()));
+
   connect(ui_music_slider, SIGNAL(valueChanged(int)), this, SLOT(on_music_slider_moved(int)));
   connect(ao_config, SIGNAL(music_volume_changed(int)), ui_music_slider, SLOT(setValue(int)));
   connect(ui_sfx_slider, SIGNAL(valueChanged(int)), this, SLOT(on_sfx_slider_moved(int)));
   connect(ao_config, SIGNAL(effects_volume_changed(int)), ui_sfx_slider, SLOT(setValue(int)));
   connect(ui_blip_slider, SIGNAL(valueChanged(int)), this, SLOT(on_blip_slider_moved(int)));
   connect(ao_config, SIGNAL(blips_volume_changed(int)), ui_blip_slider, SLOT(setValue(int)));
-
-  connect(ui_ooc_toggle, SIGNAL(clicked()), this, SLOT(on_ooc_toggle_clicked()));
 
   connect(ui_music_search, SIGNAL(textChanged(QString)), this, SLOT(on_music_search_edited(QString)));
   connect(ui_sfx_search, SIGNAL(textChanged(QString)), this, SLOT(on_sfx_search_edited(QString)));
@@ -383,7 +380,6 @@ void Courtroom::reset_widget_names()
             {"vp_wtce", ui_vp_wtce},
             {"vp_objection", ui_vp_objection},
             {"ic_chatlog", ui_ic_chatlog},
-            {"ms_chatlog", ui_ms_chatlog},
             {"server_chatlog", ui_server_chatlog},
             {"mute_list", ui_mute_list},
             {"area_list", ui_area_list},
@@ -419,7 +415,6 @@ void Courtroom::reset_widget_names()
             // Each ui_wtce[i]
             {"wtce_up", ui_wtce_up},
             {"wtce_down", ui_wtce_down},
-            {"ooc_toggle", ui_ooc_toggle},
             {"change_character", ui_change_character},
             {"reload_theme", ui_reload_theme},
             {"call_mod", ui_call_mod},
@@ -657,8 +652,6 @@ void Courtroom::set_widgets()
 
   set_size_and_pos(ui_ic_chatlog, "ic_chatlog");
 
-  set_size_and_pos(ui_ms_chatlog, "ms_chatlog");
-
   set_size_and_pos(ui_server_chatlog, "server_chatlog");
 
   set_size_and_pos(ui_mute_list, "mute_list");
@@ -831,9 +824,6 @@ void Courtroom::set_widgets()
     set_size_and_pos(ui_free_blocks[i], free_block_names[i]);
   }
   set_free_blocks();
-
-  set_size_and_pos(ui_ooc_toggle, "ooc_toggle");
-  ui_ooc_toggle->setText("Server");
 
   set_size_and_pos(ui_call_mod, "call_mod");
 
@@ -1538,7 +1528,6 @@ void Courtroom::set_fonts()
   set_font(ui_vp_showname, "showname");
   set_font(ui_vp_message, "message");
   set_font(ui_ic_chatlog, "ic_chatlog");
-  set_font(ui_ms_chatlog, "ms_chatlog");
   set_font(ui_server_chatlog, "server_chatlog");
   set_font(ui_music_list, "music_list");
   set_font(ui_area_list, "area_list");

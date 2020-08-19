@@ -72,6 +72,7 @@ void AOApplication::construct_courtroom()
   }
 
   w_courtroom = new Courtroom(this);
+  connect(w_courtroom, SIGNAL(closing()), this, SLOT(on_courtroom_closing()));
   courtroom_constructed = true;
 
   QRect screenGeometry = QApplication::desktop()->screenGeometry();
@@ -130,8 +131,12 @@ void AOApplication::toggle_config_panel()
     config_panel->setVisible(!config_panel->isVisible());
     if (config_panel->isVisible())
     {
+        QRect screenGeometry = QApplication::desktop()->screenGeometry();
+        int x = (screenGeometry.width()-config_panel->width()) / 2;
+        int y = (screenGeometry.height()-config_panel->height()) / 2;
         config_panel->setFocus();
         config_panel->raise();
+        config_panel->move(x, y);
     }
 }
 
@@ -232,4 +237,9 @@ void AOApplication::ms_connect_finished(bool connected, bool will_retry)
                  "Please check your Internet connection and firewall, and please try again.");
     }
   }
+}
+
+void AOApplication::on_courtroom_closing()
+{
+    config_panel->hide();
 }

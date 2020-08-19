@@ -310,6 +310,7 @@ private:
 
 private slots:
     void ms_connect_finished(bool connected, bool will_retry);
+    void on_courtroom_closing();
 
 public slots:
     void server_disconnected();

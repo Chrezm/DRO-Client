@@ -1141,9 +1141,12 @@ void Courtroom::check_effects()
   for(int i = 0; i < ui_effects.size(); ++i)
   {
     QStringList paths{
+      char_path + effect_names.at(i) + ".webp",
       char_path + effect_names.at(i) + ".gif",
+      theme_variant_path + effect_names.at(i) + ".webp",
       theme_variant_path + effect_names.at(i) + ".gif",
       theme_variant_path + effect_names.at(i) + ".apng",
+      theme_path + effect_names.at(i) + ".webp",
       theme_path + effect_names.at(i) + ".gif",
       theme_path + effect_names.at(i) + ".apng"
     };
@@ -1169,9 +1172,12 @@ void Courtroom::check_free_blocks()
   for(int i = 0; i < ui_free_blocks.size(); ++i)
   {
     QStringList paths{
+      char_path + free_block_names.at(i) + ".webp",
       char_path + free_block_names.at(i) + ".gif",
+      theme_variant_path + free_block_names.at(i) + ".webp",
       theme_variant_path + free_block_names.at(i) + ".gif",
       theme_variant_path + free_block_names.at(i) + ".apng",
+      theme_path + free_block_names.at(i) + ".webp",
       theme_path + free_block_names.at(i) + ".gif",
       theme_path + free_block_names.at(i) + ".apng"
     };
@@ -1197,9 +1203,12 @@ void Courtroom::check_shouts()
   for(int i = 0; i < ui_shouts.size(); ++i)
   {
     QStringList paths{
+      char_path + shout_names.at(i) + ".webp",
       char_path + shout_names.at(i) + ".gif",
+      theme_variant_path + shout_names.at(i) + ".webp",
       theme_variant_path + shout_names.at(i) + ".gif",
       theme_variant_path + shout_names.at(i) + ".apng",
+      theme_path + shout_names.at(i) + ".webp",
       theme_path + shout_names.at(i) + ".gif",
       theme_path + shout_names.at(i) + ".apng"
     };
@@ -1225,9 +1234,12 @@ void Courtroom::check_wtce()
   for(int i = 0; i < ui_wtce.size(); ++i)
   {
     QStringList paths{
+      char_path + wtce_names.at(i) + ".webp",
       char_path + wtce_names.at(i) + ".gif",
+      theme_variant_path + wtce_names.at(i) + ".webp",
       theme_variant_path + wtce_names.at(i) + ".gif",
       theme_variant_path + wtce_names.at(i) + ".apng",
+      theme_path + wtce_names.at(i) + ".webp",
       theme_path + wtce_names.at(i) + ".gif",
       theme_path + wtce_names.at(i) + ".apng"
     };

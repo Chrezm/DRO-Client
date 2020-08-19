@@ -40,6 +40,9 @@ class AOConfigPanel : public QWidget
     QSpinBox *w_blip_rate = nullptr;
     QCheckBox *w_blank_blips = nullptr;
 
+    // save
+    QPushButton *w_save = nullptr;
+
 public:
     AOConfigPanel(QWidget *p_parent = nullptr);
 

@@ -37,34 +37,11 @@ class AOConfigPrivate : public QObject
 public:
     AOConfigPrivate() : QObject(qApp), cfg(QDir::currentPath() + "/base/config.ini", QSettings::IniFormat)
     {
-        username          = cfg.value("username").toString();
-        callwords         = cfg.value("callwords").toString();
-        theme             = cfg.value("theme", "default").toString();
-        log_max_lines     = cfg.value("chatlog_limit", 200).toInt();
-        log_goes_downward = cfg.value("chatlog_scrolldown", true).toBool();
-        log_uses_newline  = cfg.value("chatlog_newline").toBool();
-        log_is_recording  = cfg.value("enable_logging").toBool();
-        effects_volume    = cfg.value("default_sfx", 50).toInt();
-        music_volume      = cfg.value("default_music", 50).toInt();
-        blips_volume      = cfg.value("default_blip", 50).toInt();
-        blip_rate         = cfg.value("blip_rate", 1000000000).toInt();
-        blank_blips       = cfg.value("blank_blips").toBool();
+        read_file();
     }
     ~AOConfigPrivate()
     {
-        cfg.setValue("username", username);
-        cfg.setValue("callwords", callwords);
-        cfg.setValue("theme", theme);
-        cfg.setValue("chatlog_limit", log_max_lines);
-        cfg.setValue("chatlog_scrolldown", log_goes_downward);
-        cfg.setValue("chatlog_newline", log_uses_newline);
-        cfg.setValue("enable_logging", log_is_recording);
-        cfg.setValue("default_sfx", effects_volume);
-        cfg.setValue("default_music", music_volume);
-        cfg.setValue("default_blip", blips_volume);
-        cfg.setValue("blip_rate", blip_rate);
-        cfg.setValue("blank_blips", blank_blips);
-        cfg.sync();
+        save_file();
     }
 
     // setters
@@ -152,6 +129,37 @@ public slots:
             return;
         blank_blips = p_enabled;
         invoke_parents("blank_blips_changed", Q_ARG(bool, p_enabled));
+    }
+    void read_file()
+    {
+        username          = cfg.value("username").toString();
+        callwords         = cfg.value("callwords").toString();
+        theme             = cfg.value("theme", "default").toString();
+        log_max_lines     = cfg.value("chatlog_limit", 200).toInt();
+        log_goes_downward = cfg.value("chatlog_scrolldown", true).toBool();
+        log_uses_newline  = cfg.value("chatlog_newline").toBool();
+        log_is_recording  = cfg.value("enable_logging").toBool();
+        effects_volume    = cfg.value("default_sfx", 50).toInt();
+        music_volume      = cfg.value("default_music", 50).toInt();
+        blips_volume      = cfg.value("default_blip", 50).toInt();
+        blip_rate         = cfg.value("blip_rate", 1000000000).toInt();
+        blank_blips       = cfg.value("blank_blips").toBool();
+    }
+    void save_file()
+    {
+        cfg.setValue("username", username);
+        cfg.setValue("callwords", callwords);
+        cfg.setValue("theme", theme);
+        cfg.setValue("chatlog_limit", log_max_lines);
+        cfg.setValue("chatlog_scrolldown", log_goes_downward);
+        cfg.setValue("chatlog_newline", log_uses_newline);
+        cfg.setValue("enable_logging", log_is_recording);
+        cfg.setValue("default_sfx", effects_volume);
+        cfg.setValue("default_music", music_volume);
+        cfg.setValue("default_blip", blips_volume);
+        cfg.setValue("blip_rate", blip_rate);
+        cfg.setValue("blank_blips", blank_blips);
+        cfg.sync();
     }
 
 private:
@@ -340,6 +348,11 @@ void AOConfig::set_blank_blips(bool p_enabled)
 void AOConfig::set_blank_blips(int p_state)
 {
     set_blank_blips(p_state == Qt::Checked);
+}
+
+void AOConfig::save_file()
+{
+    d->save_file();
 }
 
 // moc

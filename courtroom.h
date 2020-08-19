@@ -215,6 +215,9 @@ public:
   int adapt_numbered_items(QVector<T*> &item_vector, QString config_item_number,
                            QString item_name);
 
+signals:
+    void closing();
+
 private:
   AOApplication *ao_app = nullptr;
   AOConfig *ao_config = nullptr;
@@ -760,6 +763,10 @@ private slots:
   void on_spectator_clicked();
 
   void ping_server();
+
+  // QWidget interface
+protected:
+  void closeEvent(QCloseEvent *event) override;
 };
 
 template <typename T>

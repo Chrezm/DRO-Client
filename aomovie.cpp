@@ -58,7 +58,7 @@ void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme)
   for(auto &f_file : f_paths)
   {
     bool found = false;
-    for (auto &ext : decltype(f_vec){".apng", ".gif", ".png"})
+    for (auto &ext : decltype(f_vec){".webp", ".apng", ".gif", ".png"})
     {
       QString fullPath = f_file + ext;
       found = file_exists(fullPath);

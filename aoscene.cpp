@@ -19,7 +19,7 @@ void AOScene::set_image(QString p_image)
     // background specific path
     QString background_path = ao_app->get_background_path() + p_image;
 
-    for (auto &ext : QVector<QString>{".apng", ".gif", ".png"})
+    for (auto &ext : QVector<QString>{".webp", ".apng", ".gif", ".png"})
     {
         QString full_background_path = background_path + ext;
 

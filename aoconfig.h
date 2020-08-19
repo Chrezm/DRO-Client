@@ -30,6 +30,10 @@ public:
     int blip_rate();
     bool blank_blips_enabled();
 
+    // io
+public slots:
+    void save_file();
+
     // setters
 public slots:
     void set_username(QString p_string);

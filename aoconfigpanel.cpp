@@ -14,6 +14,9 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     // tab
     setFocusProxy(AO_GUI_WIDGET(QTabWidget, "tab_widget"));
 
+    // save
+    w_save = AO_GUI_WIDGET(QPushButton, "save");
+
     // general
     w_username = AO_GUI_WIDGET(QLineEdit, "username");
     w_callwords = AO_GUI_WIDGET(QLineEdit, "callwords");
@@ -57,6 +60,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(m_config, SIGNAL(blank_blips_changed(bool)), w_blank_blips, SLOT(setChecked(bool)));
 
     // output
+    connect(w_save, SIGNAL(clicked()), m_config, SLOT(save_file()));
     connect(w_username, SIGNAL(textEdited(QString)), m_config, SLOT(set_username(QString)));
     connect(w_callwords, SIGNAL(textEdited(QString)), m_config, SLOT(set_callwords(QString)));
     connect(w_theme, SIGNAL(currentIndexChanged(QString)), m_config, SLOT(set_theme(QString)));

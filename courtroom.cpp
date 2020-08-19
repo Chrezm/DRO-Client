@@ -236,7 +236,7 @@ void Courtroom::set_scene()
     }
 
     QString bg_path = get_background_path();
-    QVector<QString> exts{".apng", ".gif", ".png"};
+    QVector<QString> exts{".webp", ".apng", ".gif", ".png"};
 
     bool has_all_desks;
     if (file_exists(bg_path + "defensedesk", exts) == "")
@@ -1263,14 +1263,14 @@ void Courtroom::play_preanim()
 
   sfx_delay_timer->start(sfx_delay);
 
+  // set state
+  anim_state = 1;
+
   if (!m_msg_is_first_person)
   {
-      QString f_anim_path = ao_app->get_character_path(f_char) + f_preanim.toLower() + ".gif";
-      if (file_exists(f_anim_path) && preanim_duration >= 0)
+      QString f_anim_path = ao_app->get_character_path(f_char) + f_preanim.toLower();
+      if (ui_vp_player_char->play_pre(f_char, f_preanim, preanim_duration, true))
       {
-          anim_state = 1;
-          ui_vp_player_char->play_pre(f_char, f_preanim, preanim_duration, true);
-
           if (text_delay >= 0)
               text_delay_timer->start(text_delay);
 
@@ -1284,7 +1284,6 @@ void Courtroom::play_preanim()
   }
 
   // no animation, continue
-  anim_state = 1;
   preanim_done();
 }
 
@@ -2399,9 +2398,15 @@ void Courtroom::ping_server()
   ao_app->send_server_packet(new AOPacket("CH#" + QString::number(m_cid) + "#%"));
 }
 
+void Courtroom::closeEvent(QCloseEvent *event)
+{
+    emit closing();
+    QMainWindow::closeEvent(event);
+}
+
 void Courtroom::on_sfx_list_clicked()
 {
-  ui_ic_chat_message->setFocus();
+    ui_ic_chat_message->setFocus();
 }
 
 void Courtroom::on_set_notes_clicked()

@@ -378,8 +378,9 @@ void Lobby::on_server_list_clicked(QModelIndex p_model)
         f_server = ao_app->get_favorite_list().at(p_model.row());
     }
 
+    ui_player_count->setText(nullptr);
     ui_description->moveCursor(QTextCursor::Start);
-    ui_description->setText("Connected to " + f_server.name + "\n\n");
+    ui_description->setText("Connecting to " + f_server.name + "\n\n");
     ui_description->append(f_server.desc);
     ui_description->ensureCursorVisible();
 
@@ -446,4 +447,12 @@ void Lobby::set_player_count(int players_online, int max_players)
 {
     QString f_string = "Online: " + QString::number(players_online) + "/" + QString::number(max_players);
     ui_player_count->setText(f_string);
+
+    // Replace "Connecting to" with "Connected to" if "Connecting to" appears at the beginning.
+    QString description = ui_description->toPlainText();
+    QString connecting_to = "Connecting to";
+    if (description.startsWith(connecting_to))
+        description = description.replace(0, connecting_to.length(), "Connected to");
+
+    ui_description->setText(description);
 }

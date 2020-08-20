@@ -355,7 +355,6 @@ void Lobby::on_about_clicked()
 
 void Lobby::on_server_list_clicked(QModelIndex p_model)
 {
-    server_type f_server;
     int n_server = p_model.row();
 
     if (n_server < 0)
@@ -368,23 +367,23 @@ void Lobby::on_server_list_clicked(QModelIndex p_model)
         if (n_server >= f_server_list.size())
             return;
 
-        f_server = f_server_list.at(p_model.row());
+        f_last_server = f_server_list.at(p_model.row());
     }
     else
     {
         if (n_server >= ao_app->get_favorite_list().size())
             return;
 
-        f_server = ao_app->get_favorite_list().at(p_model.row());
+        f_last_server = ao_app->get_favorite_list().at(p_model.row());
     }
 
     ui_player_count->setText(nullptr);
     ui_description->moveCursor(QTextCursor::Start);
-    ui_description->setText("Connecting to " + f_server.name + "\n\n");
-    ui_description->append(f_server.desc);
+    ui_description->setText("Connecting to " + f_last_server.name + "...\n\n");
+    ui_description->append(f_last_server.desc);
     ui_description->ensureCursorVisible();
 
-    ao_app->net_manager->connect_to_server(f_server);
+    ao_app->net_manager->connect_to_server(f_last_server);
 }
 
 void Lobby::on_chatfield_return_pressed()
@@ -448,11 +447,7 @@ void Lobby::set_player_count(int players_online, int max_players)
     QString f_string = "Online: " + QString::number(players_online) + "/" + QString::number(max_players);
     ui_player_count->setText(f_string);
 
-    // Replace "Connecting to" with "Connected to" if "Connecting to" appears at the beginning.
-    QString description = ui_description->toPlainText();
-    QString connecting_to = "Connecting to";
-    if (description.startsWith(connecting_to))
-        description = description.replace(0, connecting_to.length(), "Connected to");
-
-    ui_description->setText(description);
+    ui_description->setText("Connected to " + f_last_server.name + "\n\n");
+    ui_description->append(f_last_server.desc);
+    ui_description->ensureCursorVisible();
 }

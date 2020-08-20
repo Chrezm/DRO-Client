@@ -74,6 +74,8 @@ private:
     QProgressBar *ui_progress_bar;
     AOButton *ui_cancel;
 
+    server_type f_last_server;
+
     void set_size_and_pos(QWidget *p_widget, QString p_identifier);
 
 private slots:

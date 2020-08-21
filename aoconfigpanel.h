@@ -33,6 +33,8 @@ class AOConfigPanel : public QWidget
     // audio
     QSlider *w_effects = nullptr;
     QLabel *w_effects_value = nullptr;
+    QSlider *w_system = nullptr;
+    QLabel *w_system_value = nullptr;
     QSlider *w_music = nullptr;
     QLabel *w_music_value = nullptr;
     QSlider *w_blips = nullptr;
@@ -52,6 +54,7 @@ signals:
 private slots:
     void on_reload_theme_clicked();
     void on_effects_value_changed(int p_num);
+    void on_system_value_changed(int p_num);
     void on_music_value_changed(int p_num);
     void on_blips_value_changed(int p_num);
 };

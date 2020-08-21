@@ -28,10 +28,12 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_log_is_recording = AO_GUI_WIDGET(QCheckBox, "log_recording");
 
     // audio
-    w_music = AO_GUI_WIDGET(QSlider, "music");
-    w_music_value = AO_GUI_WIDGET(QLabel, "music_value");
     w_effects = AO_GUI_WIDGET(QSlider, "effects");
     w_effects_value = AO_GUI_WIDGET(QLabel, "effects_value");
+    w_system = AO_GUI_WIDGET(QSlider, "system");
+    w_system_value = AO_GUI_WIDGET(QLabel, "system_value");
+    w_music = AO_GUI_WIDGET(QSlider, "music");
+    w_music_value = AO_GUI_WIDGET(QLabel, "music_value");
     w_blips = AO_GUI_WIDGET(QSlider, "blips");
     w_blips_value = AO_GUI_WIDGET(QLabel, "blips_value");
     w_blip_rate = AO_GUI_WIDGET(QSpinBox, "blip_rate");
@@ -54,6 +56,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(m_config, SIGNAL(log_uses_newline_changed(bool)), w_log_uses_newline, SLOT(setChecked(bool)));
     connect(m_config, SIGNAL(log_is_recording_changed(bool)), w_log_is_recording, SLOT(setChecked(bool)));
     connect(m_config, SIGNAL(effects_volume_changed(int)), w_effects, SLOT(setValue(int)));
+    connect(m_config, SIGNAL(system_volume_changed(int)), w_system, SLOT(setValue(int)));
     connect(m_config, SIGNAL(music_volume_changed(int)), w_music, SLOT(setValue(int)));
     connect(m_config, SIGNAL(blips_volume_changed(int)), w_blips, SLOT(setValue(int)));
     connect(m_config, SIGNAL(blip_rate_changed(int)), w_blip_rate, SLOT(setValue(int)));
@@ -71,6 +74,8 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(w_log_is_recording, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_is_recording(int)));
     connect(w_effects, SIGNAL(valueChanged(int)), m_config, SLOT(set_effects_volume(int)));
     connect(w_effects, SIGNAL(valueChanged(int)), this, SLOT(on_effects_value_changed(int)));
+    connect(w_system, SIGNAL(valueChanged(int)), m_config, SLOT(set_system_volume(int)));
+    connect(w_system, SIGNAL(valueChanged(int)), this, SLOT(on_system_value_changed(int)));
     connect(w_music, SIGNAL(valueChanged(int)), m_config, SLOT(set_music_volume(int)));
     connect(w_music, SIGNAL(valueChanged(int)), this, SLOT(on_music_value_changed(int)));
     connect(w_blips, SIGNAL(valueChanged(int)), m_config, SLOT(set_blips_volume(int)));
@@ -88,6 +93,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_log_goes_downward->setChecked(m_config->log_goes_downward_enabled());
     w_log_uses_newline->setChecked(m_config->log_uses_newline_enabled());
     w_effects->setValue(m_config->effects_volume());
+    w_system->setValue(m_config->system_volume());
     w_music->setValue(m_config->music_volume());
     w_blips->setValue(m_config->blips_volume());
     w_blip_rate->setValue(m_config->blip_rate());
@@ -103,6 +109,11 @@ void AOConfigPanel::on_reload_theme_clicked()
 void AOConfigPanel::on_effects_value_changed(int p_num)
 {
     w_effects_value->setText(QString::number(p_num) + "%");
+}
+
+void AOConfigPanel::on_system_value_changed(int p_num)
+{
+    w_system_value->setText(QString::number(p_num) + "%");
 }
 
 void AOConfigPanel::on_music_value_changed(int p_num)

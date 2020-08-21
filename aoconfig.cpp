@@ -29,6 +29,7 @@ class AOConfigPrivate : public QObject
     bool log_uses_newline;
     bool log_is_recording;
     int effects_volume;
+    int system_volume;
     int music_volume;
     int blips_volume;
     int blip_rate;
@@ -102,6 +103,13 @@ public slots:
         effects_volume = p_number;
         invoke_parents("effects_volume_changed", Q_ARG(int, p_number));
     }
+    void set_system_volume(int p_number)
+    {
+        if (system_volume == p_number)
+            return;
+        system_volume = p_number;
+        invoke_parents("system_volume_changed", Q_ARG(int, p_number));
+    }
     void set_music_volume(int p_number)
     {
         if (music_volume == p_number)
@@ -140,6 +148,7 @@ public slots:
         log_uses_newline  = cfg.value("chatlog_newline").toBool();
         log_is_recording  = cfg.value("enable_logging").toBool();
         effects_volume    = cfg.value("default_sfx", 50).toInt();
+        system_volume     = cfg.value("default_system", 50).toInt();
         music_volume      = cfg.value("default_music", 50).toInt();
         blips_volume      = cfg.value("default_blip", 50).toInt();
         blip_rate         = cfg.value("blip_rate", 1000000000).toInt();
@@ -155,6 +164,7 @@ public slots:
         cfg.setValue("chatlog_newline", log_uses_newline);
         cfg.setValue("enable_logging", log_is_recording);
         cfg.setValue("default_sfx", effects_volume);
+        cfg.setValue("default_system", system_volume);
         cfg.setValue("default_music", music_volume);
         cfg.setValue("default_blip", blips_volume);
         cfg.setValue("blip_rate", blip_rate);
@@ -250,6 +260,11 @@ int AOConfig::effects_volume()
     return d->effects_volume;
 }
 
+int AOConfig::system_volume()
+{
+    return d->system_volume;
+}
+
 int AOConfig::music_volume()
 {
     return d->music_volume;
@@ -323,6 +338,11 @@ void AOConfig::set_log_is_recording(int p_state)
 void AOConfig::set_effects_volume(int p_number)
 {
     d->set_effects_volume(p_number);
+}
+
+void AOConfig::set_system_volume(int p_number)
+{
+    d->set_system_volume(p_number);
 }
 
 void AOConfig::set_music_volume(int p_number)

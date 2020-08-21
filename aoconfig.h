@@ -25,6 +25,7 @@ public:
     bool log_uses_newline_enabled();
     bool log_is_recording_enabled();
     int effects_volume();
+    int system_volume();
     int music_volume();
     int blips_volume();
     int blip_rate();
@@ -47,6 +48,7 @@ public slots:
     void set_log_is_recording(bool p_enabled);
     void set_log_is_recording(int p_state);
     void set_effects_volume(int p_number);
+    void set_system_volume(int p_number);
     void set_music_volume(int p_number);
     void set_blips_volume(int p_number);
     void set_blip_rate(int p_number);
@@ -63,6 +65,7 @@ signals:
     void log_uses_newline_changed(bool);
     void log_is_recording_changed(bool);
     void effects_volume_changed(int);
+    void system_volume_changed(int);
     void music_volume_changed(int);
     void blips_volume_changed(int);
     void blip_rate_changed(int);

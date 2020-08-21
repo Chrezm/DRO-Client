@@ -17,11 +17,9 @@ AOEvidenceDisplay::AOEvidenceDisplay(QWidget *p_parent, AOApplication *p_ao_app)
   connect(evidence_movie, SIGNAL(frameChanged(int)), this, SLOT(frame_change(int)));
 }
 
-void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_side, int p_volume)
+void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_side)
 {
   this->reset();
-
-  sfx_player->set_volume(p_volume);
 
   QString f_evidence_path = ao_app->get_evidence_path() + p_evidence_image;
 

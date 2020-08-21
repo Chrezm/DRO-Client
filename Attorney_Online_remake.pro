@@ -21,6 +21,7 @@ SOURCES += main.cpp\
     aoguiloader.cpp \
     aopixmap.cpp \
     aotimer.cpp \
+    audio_functions.cpp \
     lobby.cpp \
     text_file_functions.cpp \
     path_functions.cpp \

@@ -29,7 +29,7 @@
    <item>
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -202,13 +202,62 @@
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
+        <widget class="QLabel" name="system_label">
+         <property name="text">
+          <string>System:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QSlider" name="system">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="maximum">
+            <number>100</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="system_value">
+           <property name="minimumSize">
+            <size>
+             <width>40</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="sizeIncrement">
+            <size>
+             <width>40</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>0%</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0">
         <widget class="QLabel" name="music_label">
          <property name="text">
           <string>Music:</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
+       <item row="1" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
           <widget class="QSlider" name="music">
@@ -250,14 +299,14 @@
          </item>
         </layout>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="effects_label">
          <property name="text">
           <string>Effects:</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
+       <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QSlider" name="effects">
@@ -293,14 +342,14 @@
          </item>
         </layout>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLabel" name="blips_label">
          <property name="text">
           <string>Blips:</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="1">
+       <item row="3" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_4">
          <item>
           <widget class="QSlider" name="blips">
@@ -336,14 +385,14 @@
          </item>
         </layout>
        </item>
-       <item row="3" column="0">
+       <item row="4" column="0">
         <widget class="QLabel" name="blip_rate_label">
          <property name="text">
           <string>Blip rate:</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
+       <item row="4" column="1">
         <widget class="QSpinBox" name="blip_rate">
          <property name="minimum">
           <number>1</number>
@@ -356,14 +405,14 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
+       <item row="5" column="0">
         <widget class="QLabel" name="blank_blips_label">
          <property name="text">
           <string>Blank blips:</string>
          </property>
         </widget>
        </item>
-       <item row="4" column="1">
+       <item row="5" column="1">
         <widget class="QCheckBox" name="blank_blips">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Minimum">

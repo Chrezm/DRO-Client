@@ -44,18 +44,20 @@ void Courtroom::create_widgets()
 
   char_button_mapper = new QSignalMapper(this);
 
-  m_blip_player = new AOBlipPlayer(this, ao_app);
-  m_blip_player->set_volume(0);
-  m_sfx_player = new AOSfxPlayer(this, ao_app);
-  m_sfx_player->set_volume(0);
-  m_shout_player = new AOShoutPlayer(this, ao_app);
-  m_shout_player->set_volume(0);
-  m_mod_player = new AOSfxPlayer(this, ao_app);
-  m_mod_player->set_volume(50);
-  m_cycle_player = new AOSfxPlayer(this, ao_app);
-  m_cycle_player->set_volume(0);
+  m_effects_player = new AOSfxPlayer(this, ao_app);
+  m_effects_player->set_volume(ao_config->effects_volume());
+  m_shouts_player = new AOShoutPlayer(this, ao_app);
+  m_shouts_player->set_volume(ao_config->effects_volume());
+  connect(ao_config, SIGNAL(effects_volume_changed(int)), this, SLOT(on_config_effects_volume_changed(int)));
+  m_system_player = new AOSfxPlayer(this, ao_app);
+  m_system_player->set_volume(ao_config->system_volume());
+  connect(ao_config, SIGNAL(system_volume_changed(int)), this, SLOT(on_config_system_volume_changed(int)));
   m_music_player = new AOMusicPlayer(this, ao_app);
-  m_music_player->set_volume(0);
+  m_music_player->set_volume(ao_config->music_volume());
+  connect(ao_config, SIGNAL(music_volume_changed(int)), this, SLOT(on_config_music_volume_changed(int)));
+  m_blips_player = new AOBlipPlayer(this, ao_app);
+  m_blips_player->set_volume(ao_config->blips_volume());
+  connect(ao_config, SIGNAL(blips_volume_changed(int)), this, SLOT(on_config_blips_volume_changed(int)));
 
   ui_background = new AOImage(this, ao_app);
 
@@ -147,10 +149,6 @@ void Courtroom::create_widgets()
   ui_defense_bar = new AOImage(this, ao_app);
   ui_prosecution_bar = new  AOImage(this, ao_app);
 
-  ui_music_label = new AOLabel(this, ao_app);
-  ui_sfx_label = new AOLabel(this, ao_app);
-  ui_blip_label = new AOLabel(this, ao_app);
-
   load_shouts(); // Reads from theme, deletes old shouts if needed and creates new ones
 
   ui_shout_up = new AOButton(this, ao_app);
@@ -204,9 +202,6 @@ void Courtroom::create_widgets()
   ui_checks.push_back(ui_flip);
   ui_checks.push_back(ui_guard);
   ui_checks.push_back(ui_hidden);
-  ui_labels.push_back(ui_music_label);
-  ui_labels.push_back(ui_sfx_label);
-  ui_labels.push_back(ui_blip_label);
   //
 
   ui_mute = new AOButton(this, ao_app);
@@ -225,18 +220,6 @@ void Courtroom::create_widgets()
   ui_text_color->addItem("Blue");
   if (ao_app->yellow_text_enabled)
     ui_text_color->addItem("Yellow");
-
-  ui_music_slider = new QSlider(Qt::Horizontal, this);
-  ui_music_slider->setRange(0, 100);
-  ui_music_slider->setValue(ao_app->get_default_music());
-
-  ui_sfx_slider = new QSlider(Qt::Horizontal, this);
-  ui_sfx_slider->setRange(0, 100);
-  ui_sfx_slider->setValue(ao_app->get_default_sfx());
-
-  ui_blip_slider = new QSlider(Qt::Horizontal, this);
-  ui_blip_slider->setRange(0, 100);
-  ui_blip_slider->setValue(ao_app->get_default_blip());
 
   ui_evidence_button = new AOButton(this, ao_app);
 
@@ -314,13 +297,6 @@ void Courtroom::connect_widgets()
   connect(ao_config, SIGNAL(log_max_lines_changed(int)), this, SLOT(on_chat_config_changed()));
   connect(ao_config, SIGNAL(log_goes_downward_changed(bool)), this, SLOT(on_chat_config_changed()));
   connect(ao_config, SIGNAL(log_uses_newline_changed(bool)), this, SLOT(on_chat_config_changed()));
-
-  connect(ui_music_slider, SIGNAL(valueChanged(int)), this, SLOT(on_music_slider_moved(int)));
-  connect(ao_config, SIGNAL(music_volume_changed(int)), ui_music_slider, SLOT(setValue(int)));
-  connect(ui_sfx_slider, SIGNAL(valueChanged(int)), this, SLOT(on_sfx_slider_moved(int)));
-  connect(ao_config, SIGNAL(effects_volume_changed(int)), ui_sfx_slider, SLOT(setValue(int)));
-  connect(ui_blip_slider, SIGNAL(valueChanged(int)), this, SLOT(on_blip_slider_moved(int)));
-  connect(ao_config, SIGNAL(blips_volume_changed(int)), ui_blip_slider, SLOT(setValue(int)));
 
   connect(ui_music_search, SIGNAL(textChanged(QString)), this, SLOT(on_music_search_edited(QString)));
   connect(ui_sfx_search, SIGNAL(textChanged(QString)), this, SLOT(on_sfx_search_edited(QString)));
@@ -403,9 +379,6 @@ void Courtroom::reset_widget_names()
             {"pos_dropdown", ui_pos_dropdown},
             {"defense_bar", ui_defense_bar},
             {"prosecution_bar", ui_prosecution_bar},
-            {"music_label", ui_music_label},
-            {"sfx_label", ui_sfx_label},
-            {"blip_label", ui_blip_label},
             // Each ui_shouts[i]
             {"shout_up", ui_shout_up},
             {"shout_down", ui_shout_down},
@@ -434,9 +407,6 @@ void Courtroom::reset_widget_names()
             {"prosecution_plus", ui_prosecution_plus},
             {"prosecution_minus", ui_prosecution_minus},
             {"text_color", ui_text_color},
-            {"music_slider", ui_music_slider},
-            {"sfx_slider", ui_sfx_slider},
-            {"blip_slider", ui_blip_slider},
             {"evidence_button", ui_evidence_button},
             {"notepad_image", ui_vp_notepad_image},
             {"notepad", ui_vp_notepad},
@@ -725,13 +695,6 @@ void Courtroom::set_widgets()
   set_size_and_pos(ui_prosecution_bar, "prosecution_bar");
   ui_prosecution_bar->set_image("prosecutionbar" + QString::number(prosecution_bar_state) + ".png");
 
-  set_size_and_pos(ui_music_label, "music_label");
-  ui_music_label->setText("Music");
-  set_size_and_pos(ui_sfx_label, "sfx_label");
-  ui_sfx_label->setText("Sfx");
-  set_size_and_pos(ui_blip_label, "blip_label");
-  ui_blip_label->setText("Blips");
-
 //  set_size_and_pos(ui_shouts[0], "hold_it");
 //  ui_shouts[0]->show();
 //  set_size_and_pos(ui_shouts[1], "objection");
@@ -964,10 +927,6 @@ void Courtroom::set_widgets()
   ui_prosecution_minus->set_image("prominus.png");
 
   set_size_and_pos(ui_text_color, "text_color");
-
-  set_size_and_pos(ui_music_slider, "music_slider");
-  set_size_and_pos(ui_sfx_slider, "sfx_slider");
-  set_size_and_pos(ui_blip_slider, "blip_slider");
 
   set_size_and_pos(ui_evidence_button, "evidence_button");
   ui_evidence_button->set_image("evidencebutton.png");

@@ -133,11 +133,8 @@ void Courtroom::enter_courtroom(int p_cid)
 
   ui_sfx_list->setCurrentItem(ui_sfx_list->item(0)); // prevents undefined errors
 
-  m_music_player->set_volume(ui_music_slider->value());
-  m_sfx_player->set_volume(ui_sfx_slider->value());
-  m_cycle_player->set_volume(ui_sfx_slider->value());
-  m_shout_player->set_volume(ui_sfx_slider->value());
-  m_blip_player->set_volume(ui_blip_slider->value());
+  // unmute audio
+  set_audio_mute_enabled(false);
 
   testimony_in_progress = false;
 
@@ -158,10 +155,7 @@ void Courtroom::done_received()
 {
   m_cid = -1;
 
-  m_music_player->set_volume(0);
-  m_sfx_player->set_volume(0);
-  m_shout_player->set_volume(0);
-  m_blip_player->set_volume(0);
+  set_audio_mute_enabled(true);
 
   set_char_select_page();
 
@@ -554,7 +548,7 @@ void Courtroom::append_server_chatmessage(QString p_name, QString p_message)
 
 void Courtroom::on_chat_return_pressed()
 {
-  if (ui_ic_chat_message->text() == "" || is_muted)
+  if (ui_ic_chat_message->text() == "" || is_client_muted)
     return;
 
   if ((anim_state < 3 || text_state < 2) &&
@@ -810,7 +804,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
     if(objection_mod >= 1 && objection_mod <= ui_shouts.size() && ui_shouts.size() > 0) // check to prevent crashing
     {
       ui_vp_objection->play(shout_names.at(objection_mod-1), f_char, f_custom_theme);
-      m_shout_player->play(shout_names.at(objection_mod-1) + ".wav", f_char);
+      m_shouts_player->play(shout_names.at(objection_mod-1) + ".wav", f_char);
     }
     else
       qDebug() << "W: Shout identifier unknown" << objection_mod;
@@ -925,7 +919,7 @@ void Courtroom::handle_chatmessage_3()
     QString f_image = local_evidence_list.at(f_evi_id - 1).image;
     //def jud and hlp should display the evidence icon on the RIGHT side
     bool is_left_side = !(f_side == "def" || f_side == "hlp" || f_side == "jud");
-    ui_vp_evidence_display->show_evidence(f_image, is_left_side, ui_sfx_slider->value());
+    ui_vp_evidence_display->show_evidence(f_image, is_left_side);
   }
 
   int emote_mod = m_chatmessage[EMOTE_MOD].toInt();
@@ -1015,7 +1009,7 @@ void Courtroom::handle_chatmessage_3()
   {
     if (overlay_sfx == "")
       overlay_sfx = ao_app->get_sfx("effect_flash");
-    m_sfx_player->play(overlay_sfx);
+    m_effects_player->play(overlay_sfx);
     ui_vp_effect->set_play_once(true);
     if (overlay_name == "")
       overlay_name = "effect_flash";
@@ -1043,7 +1037,7 @@ void Courtroom::handle_chatmessage_3()
     if (overlay_sfx == "")
       overlay_sfx = ao_app->get_sfx(s_eff);
     //    qDebug() << overlay_sfx << ao_app->get_sfx(s_eff);
-    m_sfx_player->play(overlay_sfx);
+    m_effects_player->play(overlay_sfx);
     ui_vp_effect->set_play_once(once);
     if (overlay_name == "")
       overlay_name = s_eff;
@@ -1057,7 +1051,7 @@ void Courtroom::handle_chatmessage_3()
   {
     if (f_message.contains(word, Qt::CaseInsensitive))
     {
-      m_mod_player->play(ao_app->get_sfx("word_call"));
+      m_system_player->play(ao_app->get_sfx("word_call"));
       ao_app->alert(this);
 
       break;
@@ -1352,7 +1346,7 @@ void Courtroom::start_chat_ticking()
   QString f_gender = ao_app->get_gender(m_chatmessage[CHAR_NAME]);
 
   //  m_blip_player->set_file(f_gender);
-  m_blip_player->set_blips("sfx-blip" + f_gender + ".wav");
+  m_blips_player->set_blips("sfx-blip" + f_gender + ".wav");
 
   //means text is currently ticking
   text_state = 1;
@@ -1488,7 +1482,7 @@ void Courtroom::chat_tick()
 
         // play blip
         //        m_blip_player->play();
-        m_blip_player->blip_tick();
+        m_blips_player->blip_tick();
       }
 
       ++blip_pos;
@@ -1529,7 +1523,7 @@ void Courtroom::play_sfx()
 
   QString f_ext = file_exists(general_path + sfx_name, extensions);
 
-  m_sfx_player->play(sfx_name + f_ext);
+  m_effects_player->play(sfx_name + f_ext);
 }
 
 void Courtroom::set_text_color()
@@ -1596,7 +1590,7 @@ void Courtroom::set_mute(bool p_muted, int p_cid)
   ui_muted->resize(ui_ic_chat_message->width(), ui_ic_chat_message->height());
   ui_muted->set_image("muted.png");
 
-  is_muted = p_muted;
+  is_client_muted = p_muted;
   ui_ic_chat_message->setEnabled(!p_muted);
 }
 
@@ -1691,7 +1685,7 @@ void Courtroom::handle_wtce(QString p_wtce)
     p_wtce.chop(1); // looking for the 'testimony' part
     if (p_wtce == "testimony")
     {
-      m_sfx_player->play(ao_app->get_sfx(wtce_names[index-1]));
+      m_effects_player->play(ao_app->get_sfx(wtce_names[index-1]));
       ui_vp_wtce->play(wtce_names[index-1]);
       if (index == 1)
       {
@@ -1725,7 +1719,7 @@ void Courtroom::mod_called(QString p_ip)
   ui_server_chatlog->append(p_ip);
   if (ui_guard->isChecked())
   {
-    m_mod_player->play(ao_app->get_sfx("mod_call"));
+    m_system_player->play(ao_app->get_sfx("mod_call"));
     ao_app->alert(this);
   }
 }
@@ -1780,15 +1774,15 @@ void Courtroom::on_ooc_return_pressed()
   }
   else if (ooc_message.startsWith("/rollp"))
   {
-   m_sfx_player->play(ao_app->get_sfx("dice"));
+   m_effects_player->play(ao_app->get_sfx("dice"));
   }
   else if (ooc_message.startsWith("/roll"))
   {
-   m_sfx_player->play(ao_app->get_sfx("dice"));
+   m_effects_player->play(ao_app->get_sfx("dice"));
   }
   else if (ooc_message.startsWith("/coinflip"))
   {
-   m_sfx_player->play(ao_app->get_sfx("coinflip"));
+   m_effects_player->play(ao_app->get_sfx("coinflip"));
   }
   else if (ooc_message.startsWith("/variant"))
   {
@@ -1981,7 +1975,7 @@ void Courtroom::on_area_list_clicked()
 
 void Courtroom::on_music_list_double_clicked(QModelIndex p_model)
 {
-  if (is_muted)
+  if (is_client_muted)
     return;
 
   QString p_song = ui_music_list->item(p_model.row())->text();
@@ -2055,7 +2049,7 @@ void Courtroom::on_cycle_clicked()
   }
 
   if (ao_app->read_theme_ini("enable_cycle_ding", cc_config_ini) == "true")
-    m_cycle_player->play(ao_app->get_sfx("cycle"));
+    m_system_player->play(ao_app->get_sfx("cycle"));
 
   set_shouts();
   ui_ic_chat_message->setFocus();
@@ -2165,32 +2159,9 @@ void Courtroom::on_text_color_changed(int p_color)
   ui_ic_chat_message->setFocus();
 }
 
-void Courtroom::on_music_slider_moved(int p_value)
-{
-    ao_config->set_music_volume(p_value);
-    m_music_player->set_volume(p_value);
-    ui_ic_chat_message->setFocus();
-}
-
-void Courtroom::on_sfx_slider_moved(int p_value)
-{
-    ao_config->set_effects_volume(p_value);
-    m_sfx_player->set_volume(p_value);
-    m_shout_player->set_volume(p_value);
-    m_cycle_player->set_volume(p_value);
-    ui_ic_chat_message->setFocus();
-}
-
-void Courtroom::on_blip_slider_moved(int p_value)
-{
-    ao_config->set_blips_volume(p_value);
-    m_blip_player->set_volume(p_value);
-    ui_ic_chat_message->setFocus();
-}
-
 void Courtroom::on_witness_testimony_clicked()
 {
-  if (is_muted)
+  if (is_client_muted)
     return;
 
   ao_app->send_server_packet(new AOPacket("RT#testimony1#%"));
@@ -2200,7 +2171,7 @@ void Courtroom::on_witness_testimony_clicked()
 
 void Courtroom::on_cross_examination_clicked()
 {
-  if (is_muted)
+  if (is_client_muted)
     return;
 
   ao_app->send_server_packet(new AOPacket("RT#testimony2#%"));
@@ -2219,7 +2190,7 @@ void Courtroom::reset_judge_wtce_buttons() // kind of an unnecessary function, b
 void Courtroom::on_wtce_clicked()
 {
 //  qDebug() << "AA: wtce clicked!";
-  if (is_muted)
+  if (is_client_muted)
     return;
 
   AOButton* f_sig = static_cast<AOButton*>(sender());
@@ -2234,10 +2205,7 @@ void Courtroom::on_wtce_clicked()
 
 void Courtroom::on_change_character_clicked()
 {
-  m_music_player->set_volume(0);
-  m_sfx_player->set_volume(0);
-  m_sfx_player->set_volume(0);
-  m_blip_player->set_volume(0);
+  set_audio_mute_enabled(true);
 
   set_char_select();
 

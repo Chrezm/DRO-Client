@@ -1244,16 +1244,8 @@ void Courtroom::play_preanim()
   QString f_preanim = m_chatmessage[PRE_EMOTE];
 
   //all time values in char.inis are multiplied by a constant(time_mod) to get the actual time
-  int ao2_duration = ao_app->get_ao2_preanim_duration(f_char, f_preanim);
   int text_delay = ao_app->get_text_delay(f_char, f_preanim) * time_mod;
   int sfx_delay = m_chatmessage[SFX_DELAY].toInt() * 60;
-
-  int preanim_duration;
-
-  if (ao2_duration < 0)
-    preanim_duration = ao_app->get_preanim_duration(f_char, f_preanim);
-  else
-    preanim_duration = ao2_duration;
 
   sfx_delay_timer->start(sfx_delay);
 
@@ -1263,7 +1255,7 @@ void Courtroom::play_preanim()
   if (!m_msg_is_first_person)
   {
       QString f_anim_path = ao_app->get_character_path(f_char) + f_preanim.toLower();
-      if (ui_vp_player_char->play_pre(f_char, f_preanim, preanim_duration, true))
+      if (ui_vp_player_char->play_pre(f_char, f_preanim, true))
       {
           if (text_delay >= 0)
               text_delay_timer->start(text_delay);

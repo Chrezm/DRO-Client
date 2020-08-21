@@ -249,12 +249,6 @@ public:
     //Returns the value of shouts from the specified p_char's ini file
     QString get_char_shouts(QString p_char);
 
-    //Returns the preanim duration of p_char's p_emote
-    int get_preanim_duration(QString p_char, QString p_emote);
-
-    //Same as above, but only returns if it has a % in front(refer to Preanims section in the manual)
-    int get_ao2_preanim_duration(QString p_char, QString p_emote);
-
     //Not in use
     int get_text_delay(QString p_char, QString p_emote);
 

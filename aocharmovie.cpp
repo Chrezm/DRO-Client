@@ -14,11 +14,11 @@ AOCharMovie::AOCharMovie(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(p_
 
     m_movie = new QMovie(this);
 
-    preanim_timer = new QTimer(this);
-    preanim_timer->setSingleShot(true);
+    m_frame_timer = new QTimer(this);
+    m_frame_timer->setSingleShot(true);
 
     connect(m_movie, SIGNAL(frameChanged(int)), this, SLOT(frame_change(int)));
-    connect(preanim_timer, SIGNAL(timeout()), this, SLOT(timer_done()));
+    connect(m_frame_timer, SIGNAL(timeout()), this, SLOT(timer_done()));
 }
 
 void AOCharMovie::play(QString p_char, QString p_emote, QString emote_prefix, bool show)
@@ -75,7 +75,7 @@ void AOCharMovie::play(QString p_char, QString p_emote, QString emote_prefix, bo
     m_movie->start();
 }
 
-bool AOCharMovie::play_pre(QString p_char, QString p_emote, int duration, bool show)
+bool AOCharMovie::play_pre(QString p_char, QString p_emote, bool show)
 {
     QString f_file_path = ao_app->get_character_path(p_char) + p_emote.toLower();
     bool f_file_exist = false;
@@ -99,45 +99,8 @@ bool AOCharMovie::play_pre(QString p_char, QString p_emote, int duration, bool s
     {
         m_movie->stop();
         this->clear();
+        play_once = true;
         m_movie->setFileName(f_file_path);
-        m_movie->jumpToFrame(0);
-
-        int full_duration = duration * time_mod;
-        int real_duration = 0;
-
-        play_once = false;
-
-        for (int n_frame = 0; n_frame < m_movie->frameCount(); ++n_frame)
-        {
-            real_duration += m_movie->nextFrameDelay();
-            m_movie->jumpToFrame(n_frame + 1);
-        }
-        qDebug() << "full_duration: " << full_duration;
-        qDebug() << "real_duration: " << real_duration;
-
-        double percentage_modifier = 100.0;
-
-        if (real_duration != 0 && duration != 0)
-        {
-            double modifier     = full_duration / static_cast<double>(real_duration);
-            percentage_modifier = 100 / modifier;
-
-            if (percentage_modifier > 100.0)
-                percentage_modifier = 100.0;
-        }
-        qDebug() << "% mod: " << percentage_modifier;
-
-        if (full_duration == 0 || full_duration >= real_duration)
-        {
-            play_once = true;
-        }
-        else
-        {
-            play_once = false;
-            preanim_timer->start(full_duration);
-        }
-
-        m_movie->setSpeed(static_cast<int>(percentage_modifier));
         play(p_char, p_emote, "", show);
     }
 
@@ -150,10 +113,8 @@ void AOCharMovie::play_talking(QString p_char, QString p_emote, bool show)
 
     m_movie->stop();
     this->clear();
-    m_movie->setFileName(gif_path);
-
     play_once = false;
-    m_movie->setSpeed(100);
+    m_movie->setFileName(gif_path);
     play(p_char, p_emote, "(b)", show);
 }
 
@@ -161,12 +122,10 @@ void AOCharMovie::play_idle(QString p_char, QString p_emote, bool show)
 {
     QString gif_path = ao_app->get_character_path(p_char) + "(a)" + p_emote.toLower();
 
-    m_movie->stop();
     this->clear();
-    m_movie->setFileName(gif_path);
-
+    m_movie->stop();
     play_once = false;
-    m_movie->setSpeed(100);
+    m_movie->setFileName(gif_path);
     play(p_char, p_emote, "(a)", show);
 }
 
@@ -174,7 +133,7 @@ void AOCharMovie::stop()
 {
     //for all intents and purposes, stopping is the same as hiding. at no point do we want a frozen gif to display
     m_movie->stop();
-    preanim_timer->stop();
+    m_frame_timer->stop();
     this->hide();
 }
 
@@ -195,7 +154,7 @@ void AOCharMovie::frame_change(int n_frame)
 
     if (m_movie->frameCount() - 1 == n_frame && play_once)
     {
-        preanim_timer->start(m_movie->nextFrameDelay());
+        m_frame_timer->start(m_movie->nextFrameDelay());
         m_movie->stop();
     }
 }

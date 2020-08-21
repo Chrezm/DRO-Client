@@ -677,24 +677,6 @@ QString AOApplication::get_char_shouts(QString p_char)
   return f_result.toLower();
 }
 
-int AOApplication::get_preanim_duration(QString p_char, QString p_emote)
-{
-  QString f_result = read_char_ini(p_char, p_emote, "[Time]", "[Emotions]");
-
-  if (f_result == "")
-    return -1;
-  else return f_result.toInt();
-}
-
-int AOApplication::get_ao2_preanim_duration(QString p_char, QString p_emote)
-{
-  QString f_result = read_char_ini(p_char, "%" + p_emote, "[Time]", "[Emotions]");
-
-  if (f_result == "")
-    return -1;
-  else return f_result.toInt();
-}
-
 int AOApplication::get_emote_number(QString p_char)
 {
   QString f_result = read_char_ini(p_char, "number", "[Emotions]", "[Offsets]");

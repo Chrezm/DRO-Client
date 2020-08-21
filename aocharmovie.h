@@ -17,7 +17,7 @@ public:
   AOCharMovie(QWidget *p_parent, AOApplication *p_ao_app);
 
   void play(QString p_char, QString p_emote, QString emote_prefix, bool show);
-  bool play_pre(QString p_char, QString p_emote, int duration, bool show);
+  bool play_pre(QString p_char, QString p_emote, bool show);
   void play_talking(QString p_char, QString p_emote, bool show);
   void play_idle(QString p_char, QString p_emote, bool show);
 
@@ -32,7 +32,7 @@ private:
 
   QMovie *m_movie;
   QVector<QImage> movie_frames;
-  QTimer *preanim_timer;
+  QTimer *m_frame_timer;
 
   const int time_mod = 62;
 

@@ -890,7 +890,6 @@ void Courtroom::handle_chatmessage_2() // handles IC
   else
     ui_vp_player_char->set_flipped(false);
 
-
   switch (emote_mod)
   {
   case 1: case 2: case 6:

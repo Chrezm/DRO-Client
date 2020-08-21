@@ -44,7 +44,7 @@ signals:
   void done();
 
 private slots:
-  void frame_change(int n_frame);
+  void on_frame_changed(int n_frame);
   void timer_done();
 };
 

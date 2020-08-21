@@ -17,7 +17,7 @@ AOCharMovie::AOCharMovie(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(p_
     m_frame_timer = new QTimer(this);
     m_frame_timer->setSingleShot(true);
 
-    connect(m_movie, SIGNAL(frameChanged(int)), this, SLOT(frame_change(int)));
+    connect(m_movie, SIGNAL(frameChanged(int)), this, SLOT(on_frame_changed(int)));
     connect(m_frame_timer, SIGNAL(timeout()), this, SLOT(timer_done()));
 }
 
@@ -66,11 +66,11 @@ void AOCharMovie::play(QString p_char, QString p_emote, QString emote_prefix, bo
             movie_frames.append(f_image);
         f_image = reader->read();
     }
-
     delete reader;
 
     this->show();
-    if (!show) this->hide();
+    if (!show)
+        this->hide();
 
     m_movie->start();
 }
@@ -144,18 +144,26 @@ void AOCharMovie::combo_resize(int w, int h)
     m_movie->setScaledSize(f_size);
 }
 
-void AOCharMovie::frame_change(int n_frame)
+void AOCharMovie::on_frame_changed(int p_frame_num)
 {
-    if (movie_frames.size() > n_frame)
+    if (movie_frames.size() > p_frame_num)
     {
-        AOPixmap f_pixmap = QPixmap::fromImage(movie_frames.at(n_frame));
+        AOPixmap f_pixmap = QPixmap::fromImage(movie_frames.at(p_frame_num));
         this->setPixmap(f_pixmap.scaleToSize(this->size()));
     }
 
-    if (m_movie->frameCount() - 1 == n_frame && play_once)
+    // pre-anim only
+    if (play_once)
     {
-        m_frame_timer->start(m_movie->nextFrameDelay());
-        m_movie->stop();
+        int f_frame_count = m_movie->frameCount();
+        if (f_frame_count == 0 || p_frame_num == (f_frame_count - 1))
+        {
+            int f_frame_delay = m_movie->nextFrameDelay();
+            if (f_frame_delay < 0)
+                f_frame_delay = 0;
+            m_frame_timer->start(f_frame_delay);
+            m_movie->stop();
+        }
     }
 }
 

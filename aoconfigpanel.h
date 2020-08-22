@@ -51,6 +51,9 @@ public:
 signals:
     void reload_theme();
 
+private:
+    void refresh_theme_list();
+
 private slots:
     void on_reload_theme_clicked();
     void on_effects_value_changed(int p_num);

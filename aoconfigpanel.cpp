@@ -40,12 +40,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_blank_blips = AO_GUI_WIDGET(QCheckBox, "blank_blips");
 
     // themes
-    for (QString i_folder : QDir(QDir::currentPath() + "/base/themes").entryList())
-    {
-        if (i_folder == "." || i_folder == "..")
-            continue;
-        w_theme->addItem(i_folder);
-    }
+    refresh_theme_list();
 
     // input
     connect(m_config, SIGNAL(username_changed(QString)), w_username, SLOT(setText(QString)));
@@ -99,9 +94,32 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_blank_blips->setChecked(m_config->blank_blips_enabled());
 }
 
+void AOConfigPanel::refresh_theme_list()
+{
+    const QString p_prev_text = w_theme->currentText();
+
+    // block signals
+    w_theme->blockSignals(true);
+
+    // themes
+    for (QString i_folder : QDir(QDir::currentPath() + "/base/themes").entryList())
+    {
+        if (i_folder == "." || i_folder == "..")
+            continue;
+        w_theme->addItem(i_folder);
+    }
+
+    // restore previous selection
+    w_theme->setCurrentText(p_prev_text);
+
+    // unblock
+    w_theme->blockSignals(false);
+}
+
 void AOConfigPanel::on_reload_theme_clicked()
 {
     qDebug() << "reload theme clicked";
+    refresh_theme_list();
     emit reload_theme();
 }
 

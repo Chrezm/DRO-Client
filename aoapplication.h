@@ -91,7 +91,7 @@ public:
     QVector<server_type> &get_server_list() { return server_list; }
 
     //reads the theme from config.ini and sets it accordingly
-    void reload_theme();
+    void set_theme_name(QString p_name);
 
     //Returns the character the player has currently selected
     QString get_current_char();
@@ -121,7 +121,7 @@ public:
     QString read_note(QString filename);
 
     //Reads the theme from config.ini and loads it into the current_theme variable
-    QString read_theme();
+    QString get_theme();
 
     //Returns the blip rate from config.ini
     int read_blip_rate();
@@ -184,7 +184,7 @@ public:
     void write_theme(QString theme);
 
     //Set the theme variant
-    void set_theme_variant(QString theme_variant);
+    void set_theme_variant(QString m_theme_variant);
 
     //Returns the contents of serverlist.txt
     QVector<server_type> read_serverlist_txt();
@@ -291,13 +291,15 @@ public:
     //Get the location of p_image, which is either in a theme variant subfolder, a theme folder, or default theme folder
     QString get_image_path(QString p_image);
 
+signals:
+    void reload_theme();
+
 private:
     const int RELEASE       = 2;
     const int MAJOR_VERSION = 4;
     const int MINOR_VERSION = 8;
 
-    QString current_theme = "default";
-    QString theme_variant = "";
+    QString m_theme_variant = "";
 
     QVector<server_type> server_list;
     QVector<server_type> favorite_list;
@@ -305,6 +307,8 @@ private:
 private slots:
     void ms_connect_finished(bool connected, bool will_retry);
     void on_courtroom_closing();
+    void on_config_theme_changed();
+    void on_config_reload_theme_requested();
 
 public slots:
     void server_disconnected();

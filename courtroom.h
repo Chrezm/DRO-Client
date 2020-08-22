@@ -138,8 +138,6 @@ public:
 
     void list_sfx();
 
-    void list_themes();
-
     void list_note_files();
 
     void set_note_files();
@@ -499,12 +497,8 @@ private:
     AOButton *ui_nonstop;
 
     AOButton *ui_change_character;
-    AOButton *ui_reload_theme;
     AOButton *ui_call_mod;
     AOButton *ui_switch_area_music;
-
-    QComboBox *ui_theme_list;
-    AOButton *ui_confirm_theme;
 
     AOButton *ui_config_panel;
 
@@ -701,12 +695,11 @@ private slots:
     void on_wtce_clicked();
 
     void on_change_character_clicked();
-    void on_reload_theme_clicked();
+    void on_app_reload_theme_requested();
     void on_call_mod_clicked();
 
     void on_switch_area_music_clicked();
 
-    void on_confirm_theme_clicked();
     void on_config_panel_clicked();
     void on_note_button_clicked();
 

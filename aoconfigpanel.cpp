@@ -87,7 +87,6 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_username->setText(m_config->username());
     w_callwords->setText(m_config->callwords());
     w_theme->setCurrentText(m_config->theme());
-    w_reload_theme->hide();
     w_log_max_lines->setValue(m_config->log_max_lines());
     w_log_is_recording->setChecked(m_config->log_is_recording_enabled());
     w_log_goes_downward->setChecked(m_config->log_goes_downward_enabled());

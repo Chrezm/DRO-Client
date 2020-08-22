@@ -10,7 +10,7 @@
 #include <QDebug>
 #include <QColor>
 
-QString AOApplication::read_theme()
+QString AOApplication::get_theme()
 {
     return config->theme();
 }
@@ -47,58 +47,6 @@ QStringList AOApplication::get_call_words()
 #else
     return config->callwords().split(" ", Qt::SkipEmptyParts);
 #endif
-}
-
-void AOApplication::write_theme(QString theme)
-{
-    QString filename = get_base_path() + "config.ini";
-    QFile config_file(filename);
-
-    if(!config_file.open(QIODevice::ReadOnly | QIODevice::Text))
-    {
-        qDebug() << "Couldn't open config.ini";
-        return;
-    }
-
-    QTextStream in(&config_file);
-
-    QByteArray t = "";
-
-    while(!in.atEnd())
-    {
-        QString f_line = in.readLine();
-        if(!f_line.startsWith("theme"))
-        {
-            t += f_line + "\n";
-            continue;
-        }
-
-        QStringList line_elements = f_line.split("=");
-
-        if(line_elements.at(0).trimmed() != "theme")
-        {
-            t += f_line + "\n";
-            continue;
-        }
-
-        if(line_elements.size() < 2)
-        {
-            t += f_line +"\n";
-            continue;
-        }
-        t += "theme = " + theme + "\n";
-    }
-    config_file.close();
-
-    QFile ex(filename);
-    if(!ex.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text))
-    {
-        qDebug() << "Couldn't open config.ini";
-        return;
-    }
-
-    ex.write(t);
-    ex.close();
 }
 
 QString AOApplication::read_note(QString filename)

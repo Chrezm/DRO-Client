@@ -129,7 +129,6 @@ void Courtroom::enter_courtroom(int p_cid)
   list_music();
   list_areas();
   list_sfx();
-  list_themes();
 
   ui_sfx_list->setCurrentItem(ui_sfx_list->item(0)); // prevents undefined errors
 
@@ -336,7 +335,7 @@ void Courtroom::handle_clock(QString time)
 void Courtroom::handle_theme_variant(QString theme_variant)
 {
   ao_app->set_theme_variant(theme_variant);
-  on_reload_theme_clicked();
+  on_app_reload_theme_requested();
 }
 void Courtroom::list_music()
 {
@@ -521,22 +520,6 @@ void Courtroom::save_textlog(QString p_text)
   QString f_file = ao_app->get_base_path() + icchatlogsfilename;
 
   ao_app->append_note(p_text, f_file);
-}
-
-void Courtroom::list_themes()
-{
-    ui_theme_list->blockSignals(true);
-    ui_theme_list->clear();
-
-    for(QString i_folder : QDir(ao_app->get_base_path() + "themes/").entryList())
-    {
-        if (i_folder == "." || i_folder == "..")
-            continue;
-        ui_theme_list->addItem(i_folder);
-    }
-
-    ui_theme_list->setCurrentText(ao_config->theme());
-    ui_theme_list->blockSignals(false);
 }
 
 void Courtroom::append_server_chatmessage(QString p_name, QString p_message)
@@ -2204,9 +2187,8 @@ void Courtroom::on_change_character_clicked()
   ui_spectator->hide();
 }
 
-void Courtroom::on_reload_theme_clicked()
+void Courtroom::on_app_reload_theme_requested()
 {
-    ao_app->reload_theme();
     load_shouts();
     load_effects();
     load_wtce();
@@ -2228,11 +2210,6 @@ void Courtroom::on_back_to_lobby_clicked()
     ao_app->w_lobby->list_servers();
     ao_app->w_lobby->set_choose_a_server();
     ao_app->destruct_courtroom();
-}
-
-void Courtroom::on_confirm_theme_clicked()
-{
-  ao_app->write_theme(ao_config->theme());
 }
 
 void Courtroom::on_char_select_left_clicked()

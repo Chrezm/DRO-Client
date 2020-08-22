@@ -12,14 +12,19 @@
 #include <QRect>
 #include <QDesktopWidget>
 
-AOApplication::AOApplication(int &argc, char **argv) : QApplication(argc, argv), config(new AOConfig(this))
+AOApplication::AOApplication(int &argc, char **argv) : QApplication(argc, argv)
 {
-  net_manager = new NetworkManager(this);
-  discord = new AttorneyOnline::Discord();
-  config_panel = new AOConfigPanel;
-  config_panel->hide();
-  QObject::connect(net_manager, SIGNAL(ms_connect_finished(bool, bool)),
-                   SLOT(ms_connect_finished(bool, bool)));
+    discord = new AttorneyOnline::Discord();
+
+    net_manager = new NetworkManager(this);
+    connect(net_manager, SIGNAL(ms_connect_finished(bool, bool)), SLOT(ms_connect_finished(bool, bool)));
+
+    config = new AOConfig(this);
+    connect(config, SIGNAL(theme_changed(QString)), this, SLOT(on_config_theme_changed()));
+
+    config_panel = new AOConfigPanel;
+    connect(config_panel, SIGNAL(reload_theme()), this, SLOT(on_config_reload_theme_requested()));
+    config_panel->hide();
 }
 
 AOApplication::~AOApplication()
@@ -103,14 +108,20 @@ QString AOApplication::get_version_string()
     return QString::number(RELEASE) + "." + QString::number(MAJOR_VERSION) + "." + QString::number(MINOR_VERSION);
 }
 
-void AOApplication::reload_theme()
+void AOApplication::set_theme_variant(QString p_variant)
 {
-    current_theme = read_theme();
+    m_theme_variant = p_variant;
+    emit reload_theme();
 }
 
-void AOApplication::set_theme_variant(QString theme_variant)
+void AOApplication::on_config_theme_changed()
 {
-    this->theme_variant = theme_variant;
+    emit reload_theme();
+}
+
+void AOApplication::on_config_reload_theme_requested()
+{
+    emit reload_theme();
 }
 
 void AOApplication::set_favorite_list()

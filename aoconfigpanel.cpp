@@ -100,6 +100,7 @@ void AOConfigPanel::refresh_theme_list()
 
     // block signals
     w_theme->blockSignals(true);
+    w_theme->clear();
 
     // themes
     for (QString i_folder : QDir(QDir::currentPath() + "/base/themes").entryList())

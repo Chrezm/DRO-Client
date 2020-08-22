@@ -78,6 +78,7 @@ void AOApplication::construct_courtroom()
 
   w_courtroom = new Courtroom(this);
   connect(w_courtroom, SIGNAL(closing()), this, SLOT(on_courtroom_closing()));
+  connect(w_courtroom, SIGNAL(destroyed()), this, SLOT(on_courtroom_destroyed()));
   courtroom_constructed = true;
 
   QRect screenGeometry = QApplication::desktop()->screenGeometry();
@@ -251,6 +252,11 @@ void AOApplication::ms_connect_finished(bool connected, bool will_retry)
 }
 
 void AOApplication::on_courtroom_closing()
+{
+    config_panel->hide();
+}
+
+void AOApplication::on_courtroom_destroyed()
 {
     config_panel->hide();
 }

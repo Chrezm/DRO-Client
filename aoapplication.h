@@ -307,6 +307,7 @@ private:
 private slots:
     void ms_connect_finished(bool connected, bool will_retry);
     void on_courtroom_closing();
+    void on_courtroom_destroyed();
     void on_config_theme_changed();
     void on_config_reload_theme_requested();
 

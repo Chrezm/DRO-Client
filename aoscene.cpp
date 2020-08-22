@@ -30,6 +30,10 @@ void AOScene::set_image(QString p_image)
         }
     }
 
+    // do not update the movie if we're using the same file
+    if (m_movie && m_movie->fileName() == target_path)
+        return;
+
     // clear previous
     this->clear();
 

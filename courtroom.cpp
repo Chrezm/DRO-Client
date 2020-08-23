@@ -825,27 +825,10 @@ void Courtroom::handle_chatmessage_2() // handles IC
     f_showname = m_chatmessage[SHOWNAME];
   }
 
-  /*
+  // Check if char.ini has color property, which overrides the theme's default showname color
   QString f_color = ao_app->read_char_ini(real_name, "color", "[Options]", "[Time]");
-  if (f_color == "")
-    f_color = "rgb(" + ao_app->read_theme_ini("showname_color" , "courtroom_fonts.ini") + ")";
-*/
-  set_qtextedit_font(ui_vp_showname, "showname");
-  /*
-  // is the font bold or not? // taken directly from function up there lol // kinda hacky
-  int bold = ao_app->get_font_property("showname_bold", fonts_ini);
-  QString is_bold = "";
-  if(bold == 1) is_bold = "bold";
+  set_qtextedit_font(ui_vp_showname, "showname", f_color);
 
-  ui_vp_showname->setStyleSheet("background-color: rgba(0, 0, 0, 0);"
-                                "color: " + f_color + ";font: " + is_bold);
-  QTextCharFormat ui_vp_showname_format = ui_vp_showname->currentCharFormat();
-  if (ao_app->read_theme_ini("enable_vp_message_outline", cc_config_ini) == "true")
-    ui_vp_showname_format.setTextOutline(QPen(Qt::black, 1));
-  else
-    ui_vp_showname_format.setTextOutline(Qt::NoPen);
-  ui_vp_showname->setCurrentCharFormat(ui_vp_showname_format);
-  */
   ui_vp_showname->setText(f_showname);
   ui_vp_showname->setAlignment(Qt::AlignVCenter);
 

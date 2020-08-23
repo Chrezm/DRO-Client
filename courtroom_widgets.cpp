@@ -1445,30 +1445,43 @@ void Courtroom::set_dropdowns()
 
 void Courtroom::set_font(QWidget *widget, QString p_identifier)
 {
-  QString design_file = fonts_ini;
-  QString class_name = widget->metaObject()->className();
+    set_font(widget, p_identifier, "");
+}
 
-  int f_weight = ao_app->get_font_property(p_identifier, design_file);
-  QString font_name = ao_app->get_font_name("font_" + p_identifier, design_file);
-  widget->setFont(QFont(font_name, f_weight));
+void Courtroom::set_font(QWidget *widget, QString p_identifier, QString override_color)
+{
+    QString design_file = fonts_ini;
+    QString class_name = widget->metaObject()->className();
 
-  QColor f_color = ao_app->get_color(p_identifier + "_color", design_file);
+    int f_weight = ao_app->get_font_property(p_identifier, design_file);
+    QString font_name = ao_app->get_font_name("font_" + p_identifier, design_file);
+    widget->setFont(QFont(font_name, f_weight));
 
-  int bold = ao_app->get_font_property(p_identifier + "_bold", design_file);
-  QString is_bold = (bold == 1 ? "bold" : "");
+    if (override_color.isEmpty())
+    {
+      QString color = ao_app->read_theme_ini(p_identifier + "_color", "courtroom_fonts.ini");
+      if (color.isEmpty())
+          color = "255, 255, 255";
+      override_color = "rgba(" + color + ", 255)";
+    }
 
-  QString style_sheet_string = class_name + " { background-color: rgba(0, 0, 0, 0);\n" +
-                               "color: rgba(" +
-                               QString::number(f_color.red()) + ", " +
-                               QString::number(f_color.green()) + ", " +
-                               QString::number(f_color.blue()) + ", 255);\n"
-                                                                 "font: " + is_bold + "; }";
-  widget->setStyleSheet(style_sheet_string);
+    int bold = ao_app->get_font_property(p_identifier + "_bold", design_file);
+    QString is_bold = (bold == 1 ? "bold" : "");
+
+    QString style_sheet_string = class_name + " { background-color: rgba(0, 0, 0, 0);\n" +
+                                 "color: " + override_color + ";\n"
+                                 "font: " + is_bold + "; }";
+    widget->setStyleSheet(style_sheet_string);
 }
 
 void Courtroom::set_qtextedit_font(QTextEdit *widget, QString p_identifier)
 {
-  set_font(widget, p_identifier);
+    set_qtextedit_font(widget, p_identifier, "");
+}
+
+void Courtroom::set_qtextedit_font(QTextEdit *widget, QString p_identifier, QString override_color)
+{
+  set_font(widget, p_identifier, override_color);
 
   QString design_file = fonts_ini;
   QTextCharFormat widget_format = widget->currentCharFormat();

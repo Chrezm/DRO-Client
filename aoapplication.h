@@ -183,6 +183,9 @@ public:
     //Overwrites config.ini with new theme
     void write_theme(QString theme);
 
+    //Get the theme variant
+    QString get_theme_variant();
+
     //Set the theme variant
     void set_theme_variant(QString m_theme_variant);
 

@@ -115,6 +115,11 @@ void AOApplication::set_theme_variant(QString p_variant)
     emit reload_theme();
 }
 
+QString AOApplication::get_theme_variant()
+{
+    return m_theme_variant;
+}
+
 void AOApplication::on_config_theme_changed()
 {
     emit reload_theme();

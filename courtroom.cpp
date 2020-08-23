@@ -307,7 +307,7 @@ void Courtroom::handle_music_anim()
   QString file_b = fonts_ini;
   pos_size_type res_a = ao_app->get_element_dimensions("music_name", file_a);
   pos_size_type res_b = ao_app->get_element_dimensions("music_area", file_a);
-  float speed = static_cast<float>(ao_app->get_font_size("music_name_speed", file_b));
+  float speed = static_cast<float>(ao_app->get_font_property("music_name_speed", file_b));
 
   QFont f_font = ui_vp_music_name->font();
   QFontMetrics fm(f_font);
@@ -827,7 +827,7 @@ void Courtroom::handle_chatmessage_2() // handles IC
     f_color = "rgb(" + ao_app->read_theme_ini("showname_color" , "courtroom_fonts.ini") + ")";
 
   // is the font bold or not? // taken directly from function up there lol // kinda hacky
-  int bold = ao_app->get_font_size("showname_bold", fonts_ini);
+  int bold = ao_app->get_font_property("showname_bold", fonts_ini);
   QString is_bold = "";
   if(bold == 1) is_bold = "bold";
 
@@ -1337,8 +1337,6 @@ void Courtroom::chat_tick()
     vp_message_format.setTextOutline(Qt::NoPen);
 
   QString f_message = m_chatmessage[MESSAGE];
-//  QString parsed_message = parse_message(f_message);
-//  qDebug() << "parsed:" << parsed_message;
 
   if (tick_pos >= f_message.size())
   {
@@ -1358,8 +1356,6 @@ void Courtroom::chat_tick()
   else
   {
     QString f_character = f_message.at(tick_pos);
-    //f_character = f_character.toHtmlEscaped();
-    //qDebug() << f_character;
 
     if (f_character == " ")
       ui_vp_message->insertPlainText(" ");

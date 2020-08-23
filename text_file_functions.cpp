@@ -239,12 +239,12 @@ pos_size_type AOApplication::get_element_dimensions(QString p_identifier, QStrin
   return return_value;
 }
 
-int AOApplication::get_font_size(QString p_identifier, QString p_file)
+int AOApplication::get_font_property(QString p_identifier, QString p_file)
 {
   QString f_result = read_theme_ini(p_identifier, p_file);
 
   if (f_result.isEmpty())
-    return 10;
+    return 0;
   return f_result.toInt();
 }
 

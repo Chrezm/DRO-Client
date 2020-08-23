@@ -201,14 +201,14 @@ void Lobby::set_stylesheets()
 void Lobby::set_font(QWidget *widget, QString p_identifier)
 {
     QString design_file = "lobby_fonts.ini";
-    int f_weight        = ao_app->get_font_size(p_identifier, design_file);
+    int f_weight        = ao_app->get_font_property(p_identifier, design_file);
     QString class_name  = widget->metaObject()->className();
 
     QString font_name = ao_app->get_font_name("font_" + p_identifier, design_file);
 
     QFont font(font_name, f_weight);
 
-    bool use = (bool)ao_app->get_font_size("use_custom_fonts", design_file);
+    bool use = (bool)ao_app->get_font_property("use_custom_fonts", design_file);
 
     if (use)
     {
@@ -216,8 +216,8 @@ void Lobby::set_font(QWidget *widget, QString p_identifier)
 
         QColor f_color = ao_app->get_color(p_identifier + "_color", design_file);
 
-        bool bold   = (bool)ao_app->get_font_size(p_identifier + "_bold", design_file);   // is the font bold or not?
-        bool center = (bool)ao_app->get_font_size(p_identifier + "_center", design_file); // should it be centered?
+        bool bold   = (bool)ao_app->get_font_property(p_identifier + "_bold", design_file);   // is the font bold or not?
+        bool center = (bool)ao_app->get_font_property(p_identifier + "_center", design_file); // should it be centered?
 
         QString is_bold = "";
         if (bold) is_bold = "bold";

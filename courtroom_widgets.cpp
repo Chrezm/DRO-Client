@@ -1442,7 +1442,7 @@ void Courtroom::set_dropdowns()
 void Courtroom::set_font(QWidget *widget, QString p_identifier)
 {
   QString design_file = fonts_ini;
-  int f_weight = ao_app->get_font_size(p_identifier, design_file);
+  int f_weight = ao_app->get_font_property(p_identifier, design_file);
   QString class_name = widget->metaObject()->className();
 
   QString font_name = ao_app->get_font_name("font_" + p_identifier, design_file);
@@ -1451,7 +1451,7 @@ void Courtroom::set_font(QWidget *widget, QString p_identifier)
 
   QColor f_color = ao_app->get_color(p_identifier + "_color", design_file);
 
-  int bold = ao_app->get_font_size(p_identifier + "_bold", design_file); // is the font bold or not?
+  int bold = ao_app->get_font_property(p_identifier + "_bold", design_file); // is the font bold or not?
 
   QString is_bold = "";
   if(bold == 1) is_bold = "bold";

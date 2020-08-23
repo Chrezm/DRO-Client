@@ -18,6 +18,7 @@ VERSION = 2.4.8.0
 SOURCES += main.cpp\
     aoconfig.cpp \
     aoconfigpanel.cpp \
+    aoevidencedescription.cpp \
     aoguiloader.cpp \
     aopixmap.cpp \
     aotimer.cpp \
@@ -52,7 +53,6 @@ SOURCES += main.cpp\
     charselect.cpp \
     aotextarea.cpp \
     aolineedit.cpp \
-    aotextedit.cpp \
     aoevidencedisplay.cpp \
     discord_rich_presence.cpp \
     aonotepad.cpp \
@@ -70,6 +70,7 @@ HEADERS  += lobby.h \
     aobasshandle.h \
     aoconfig.h \
     aoconfigpanel.h \
+    aoevidencedescription.h \
     aoexception.h \
     aoguiloader.h \
     aoimage.h \
@@ -103,7 +104,6 @@ HEADERS  += lobby.h \
     aoevidencebutton.h \
     aotextarea.h \
     aolineedit.h \
-    aotextedit.h \
     aoevidencedisplay.h \
     discord_rich_presence.h \
     discord-rpc.h \

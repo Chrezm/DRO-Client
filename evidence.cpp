@@ -28,7 +28,7 @@ void Courtroom::construct_evidence()
   ui_evidence_image_button->setText("Choose..");
   ui_evidence_x = new AOButton(ui_evidence_overlay, ao_app);
 
-  ui_evidence_description = new AOTextEdit(ui_evidence_overlay);
+  ui_evidence_description = new AOEvidenceDescription(ui_evidence_overlay);
   ui_evidence_description->setStyleSheet("background-color: rgba(0, 0, 0, 0);"
                                          "color: white;");
 

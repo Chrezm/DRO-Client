@@ -833,7 +833,15 @@ void Courtroom::handle_chatmessage_2() // handles IC
 
   ui_vp_showname->setStyleSheet("background-color: rgba(0, 0, 0, 0);"
                                 "color: " + f_color + ";font: " + is_bold);
+  QTextCharFormat ui_vp_showname_format = ui_vp_showname->currentCharFormat();
+  if (ao_app->read_theme_ini("enable_vp_message_outline", cc_config_ini) == "true")
+    ui_vp_showname_format.setTextOutline(QPen(Qt::black, 1));
+  else
+    ui_vp_showname_format.setTextOutline(Qt::NoPen);
+  ui_vp_showname->setCurrentCharFormat(ui_vp_showname_format);
+
   ui_vp_showname->setText(f_showname);
+  ui_vp_showname->setAlignment(Qt::AlignVCenter);
 
   ui_vp_message->clear();
   ui_vp_chatbox->hide();

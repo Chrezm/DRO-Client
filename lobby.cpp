@@ -6,7 +6,9 @@
 #include "networkmanager.h"
 
 #include <QDebug>
+#include <QDir>
 #include <QScrollBar>
+#include <QTextEdit>
 
 Lobby::Lobby(AOApplication *p_ao_app) : QMainWindow()
 {
@@ -20,10 +22,18 @@ Lobby::Lobby(AOApplication *p_ao_app) : QMainWindow()
     ui_refresh        = new AOButton(this, ao_app);
     ui_add_to_fav     = new AOButton(this, ao_app);
     ui_connect        = new AOButton(this, ao_app);
-    ui_version        = new QLabel(this);
+    ui_version        = new QTextEdit(this);
+    ui_version->setFrameStyle(QFrame::NoFrame);
+    ui_version->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui_version->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui_version->setReadOnly(true);
     ui_about          = new AOButton(this, ao_app);
     ui_server_list    = new QListWidget(this);
-    ui_player_count   = new QLabel(this);
+    ui_player_count   = new QTextEdit(this);
+    ui_player_count->setFrameStyle(QFrame::NoFrame);
+    ui_player_count->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui_player_count->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui_player_count->setReadOnly(true);
     ui_description    = new AOTextArea(this);
     ui_chatbox        = new AOTextArea(this);
     ui_chatbox->setOpenExternalLinks(true);
@@ -66,8 +76,9 @@ void Lobby::set_widgets()
         qDebug() << "W: did not find lobby width or height in " << filename;
 
         // Most common symptom of bad config files and missing assets.
-        call_notice("It doesn't look like your client is set up correctly.\n"
-                    "Did you download all resources correctly from tiny.cc/getao, "
+        call_notice("It doesn't look like your client is set up correctly "
+                    "at " + QDir::currentPath() + "\n"
+                    "Did you download all resources correctly from the DRO Discord "
                     "including the large 'base' folder?");
 
         this->resize(517, 666);
@@ -444,6 +455,7 @@ void Lobby::set_player_count(int players_online, int max_players)
 {
     QString f_string = "Online: " + QString::number(players_online) + "/" + QString::number(max_players);
     ui_player_count->setText(f_string);
+    ui_player_count->setAlignment(Qt::AlignHCenter);
 
     ui_description->setText("Connected to " + f_last_server.name + "\n\n");
     ui_description->append(f_last_server.desc);

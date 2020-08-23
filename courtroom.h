@@ -23,7 +23,7 @@
 #include "aosfxplayer.h"
 #include "aoshoutplayer.h"
 #include "aotextarea.h"
-#include "aotextedit.h"
+#include "aoevidencedescription.h"
 #include "aotimer.h"
 #include "datatypes.h"
 
@@ -390,7 +390,7 @@ private:
     QTextEdit *ui_vp_notepad;
 
     AOImage *ui_vp_chatbox   = nullptr;
-    QLabel *ui_vp_showname   = nullptr;
+    QTextEdit *ui_vp_showname   = nullptr;
     QTextEdit *ui_vp_message = nullptr;
     AOImage *ui_vp_testimony = nullptr;
     AOMovie *ui_vp_effect    = nullptr;
@@ -544,7 +544,7 @@ private:
     AOLineEdit *ui_evidence_image_name;
     AOButton *ui_evidence_image_button;
     AOButton *ui_evidence_x;
-    AOTextEdit *ui_evidence_description;
+    AOEvidenceDescription *ui_evidence_description;
 
     AOImage *ui_char_select_background;
 

@@ -85,7 +85,11 @@ void Courtroom::create_widgets()
   ui_vp_evidence_display = new AOEvidenceDisplay(this, ao_app);
 
   ui_vp_chatbox = new AOImage(this, ao_app);
-  ui_vp_showname = new QLabel(ui_vp_chatbox);
+  ui_vp_showname = new QTextEdit(ui_vp_chatbox);
+  ui_vp_showname->setFrameStyle(QFrame::NoFrame);
+  ui_vp_showname->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  ui_vp_showname->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  ui_vp_showname->setReadOnly(true);
   ui_vp_message = new QTextEdit(ui_vp_chatbox);
   ui_vp_message->setFrameStyle(QFrame::NoFrame);
   ui_vp_message->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

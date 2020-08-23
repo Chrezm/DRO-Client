@@ -1,6 +1,7 @@
 #ifndef AOTIMER_H
 #define AOTIMER_H
 
+#include <QTextEdit>
 #include <QWidget>
 #include <QTime>
 #include <QTimer>
@@ -21,16 +22,14 @@ class ManualTimer {
     void perform_timestep() {current_time = current_time.addMSecs(timestep_length);}
 };
 
-class AOTimer : public AOLabel
+class AOTimer : public QTextEdit
 {
   Q_OBJECT
 
 public:
-  AOTimer(QWidget* p_parent, AOApplication *p_ao_app);
+  AOTimer(QWidget *p_parent);
 
 private:
-  AOApplication *ao_app = nullptr;
-
   ManualTimer old_manual_timer; // Pre-update manual timer
   ManualTimer manual_timer;
   QTimer firing_timer;

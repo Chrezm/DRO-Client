@@ -146,6 +146,9 @@ void Courtroom::enter_courtroom(int p_cid)
   ui_ic_chat_message->setEnabled(m_cid != -1);
   ui_ic_chat_message->setFocus();
 
+  for (int i = 0; i < ui_timers.length(); ++i)
+      ui_timers[i]->redraw();
+
   set_widget_names();
   set_widget_layers();
 }

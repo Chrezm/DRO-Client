@@ -1,11 +1,15 @@
 #include "aotimer.h"
 #include <QDebug>
 
-AOTimer::AOTimer(QWidget* p_parent, AOApplication *p_ao_app) : AOLabel(p_parent, p_ao_app)
+AOTimer::AOTimer(QWidget* p_parent) : QTextEdit(p_parent)
 {
   // Adapted from: https://stackoverflow.com/questions/36679708/how-to-make-a-chronometer-in-qt-c
-  ao_app = p_ao_app;
-  this->setStyleSheet("QLabel { color : white; }");
+  setStyleSheet("QLabel { color : white; }");
+  setFrameStyle(QFrame::NoFrame);
+  setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+  setReadOnly(true);
+
   connect(&firing_timer, SIGNAL(timeout()), this, SLOT(update_time()));
 
   set_time(start_time);

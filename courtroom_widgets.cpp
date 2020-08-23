@@ -229,7 +229,7 @@ void Courtroom::create_widgets()
   ui_vp_notepad->setFrameStyle(QFrame::NoFrame);
 
   ui_timers.resize(1);
-  ui_timers[0] = new AOTimer(this, ao_app);
+  ui_timers[0] = new AOTimer(this);
 
   construct_evidence();
 
@@ -1023,7 +1023,7 @@ void Courtroom::move_widget(QWidget *p_widget, QString p_identifier)
 
 template<typename T>
 int Courtroom::adapt_numbered_items(QVector<T*> &item_vector, QString config_item_number,
-                                      QString item_name)
+                                    QString item_name)
 {
   // &item_vector must be a vector of size at least 1!
 
@@ -1048,7 +1048,7 @@ int Courtroom::adapt_numbered_items(QVector<T*> &item_vector, QString config_ite
     item_vector.resize(new_item_number);
     for (int i=current_item_number; i<new_item_number; i++)
     {
-      item_vector[i] = new T(this, ao_app);
+      item_vector[i] = new T(this);
       item_vector[i]->stackUnder(item_vector[i-1]);
       // index i-1 exists as i >= current_item_number == item_vector.size() >= 1
     }
@@ -1484,7 +1484,7 @@ void Courtroom::set_fonts()
   set_qtextedit_font(ui_vp_showname, "showname");
   set_qtextedit_font(ui_vp_message, "message");
   set_qtextedit_font(ui_ic_chatlog, "ic_chatlog");
-  set_qtextedit_font(ui_server_chatlog, "server_chatlog");
+  set_font(ui_server_chatlog, "server_chatlog"); // Chatlog does not support qtextedit because html
   set_font(ui_music_list, "music_list");
   set_font(ui_area_list, "area_list");
   set_font(ui_sfx_list, "sfx_list");
@@ -1492,7 +1492,7 @@ void Courtroom::set_fonts()
   set_qtextedit_font(ui_vp_notepad, "notepad");
   for (int i=0; i<timer_number; i++)
   {
-    set_font(ui_timers[i], "timer_"+QString::number(i));
+    set_qtextedit_font(ui_timers[i], "timer_"+QString::number(i));
   }
 }
 

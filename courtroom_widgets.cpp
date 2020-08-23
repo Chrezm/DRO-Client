@@ -1446,19 +1446,16 @@ void Courtroom::set_dropdowns()
 void Courtroom::set_font(QWidget *widget, QString p_identifier)
 {
   QString design_file = fonts_ini;
-  int f_weight = ao_app->get_font_property(p_identifier, design_file);
   QString class_name = widget->metaObject()->className();
 
+  int f_weight = ao_app->get_font_property(p_identifier, design_file);
   QString font_name = ao_app->get_font_name("font_" + p_identifier, design_file);
-
   widget->setFont(QFont(font_name, f_weight));
 
   QColor f_color = ao_app->get_color(p_identifier + "_color", design_file);
 
-  int bold = ao_app->get_font_property(p_identifier + "_bold", design_file); // is the font bold or not?
-
-  QString is_bold = "";
-  if(bold == 1) is_bold = "bold";
+  int bold = ao_app->get_font_property(p_identifier + "_bold", design_file);
+  QString is_bold = (bold == 1 ? "bold" : "");
 
   QString style_sheet_string = class_name + " { background-color: rgba(0, 0, 0, 0);\n" +
                                "color: rgba(" +
@@ -1466,21 +1463,33 @@ void Courtroom::set_font(QWidget *widget, QString p_identifier)
                                QString::number(f_color.green()) + ", " +
                                QString::number(f_color.blue()) + ", 255);\n"
                                                                  "font: " + is_bold + "; }";
-
   widget->setStyleSheet(style_sheet_string);
+}
+
+void Courtroom::set_qtextedit_font(QTextEdit *widget, QString p_identifier)
+{
+  set_font(widget, p_identifier);
+
+  QString design_file = fonts_ini;
+  QTextCharFormat widget_format = widget->currentCharFormat();
+  if (ao_app->get_font_property(p_identifier + "_outline", design_file) == 1)
+    widget_format.setTextOutline(QPen(Qt::black, 1));
+  else
+    widget_format.setTextOutline(Qt::NoPen);
+  widget->setCurrentCharFormat(widget_format);
 }
 
 void Courtroom::set_fonts()
 {
-  set_font(ui_vp_showname, "showname");
-  set_font(ui_vp_message, "message");
-  set_font(ui_ic_chatlog, "ic_chatlog");
-  set_font(ui_server_chatlog, "server_chatlog");
+  set_qtextedit_font(ui_vp_showname, "showname");
+  set_qtextedit_font(ui_vp_message, "message");
+  set_qtextedit_font(ui_ic_chatlog, "ic_chatlog");
+  set_qtextedit_font(ui_server_chatlog, "server_chatlog");
   set_font(ui_music_list, "music_list");
   set_font(ui_area_list, "area_list");
   set_font(ui_sfx_list, "sfx_list");
-  set_font(ui_vp_music_name, "music_name");
-  set_font(ui_vp_notepad, "notepad");
+  set_qtextedit_font(ui_vp_music_name, "music_name");
+  set_qtextedit_font(ui_vp_notepad, "notepad");
   for (int i=0; i<timer_number; i++)
   {
     set_font(ui_timers[i], "timer_"+QString::number(i));

@@ -72,8 +72,10 @@ public:
 
     //sets position of widgets based on theme ini files
     void set_widgets();
-    //sets font size based on theme ini files
+    //sets font properties based on theme ini files
     void set_font(QWidget *widget, QString p_identifier);
+    //sets font properties for QTextEdit (same as above but also text outline)
+    void set_qtextedit_font(QTextEdit *widget, QString p_identifier);
     //helper function that calls above function on the relevant widgets
     void set_fonts();
 

@@ -822,10 +822,13 @@ void Courtroom::handle_chatmessage_2() // handles IC
     f_showname = m_chatmessage[SHOWNAME];
   }
 
+  /*
   QString f_color = ao_app->read_char_ini(real_name, "color", "[Options]", "[Time]");
   if (f_color == "")
     f_color = "rgb(" + ao_app->read_theme_ini("showname_color" , "courtroom_fonts.ini") + ")";
-
+*/
+  set_qtextedit_font(ui_vp_showname, "showname");
+  /*
   // is the font bold or not? // taken directly from function up there lol // kinda hacky
   int bold = ao_app->get_font_property("showname_bold", fonts_ini);
   QString is_bold = "";
@@ -839,7 +842,7 @@ void Courtroom::handle_chatmessage_2() // handles IC
   else
     ui_vp_showname_format.setTextOutline(Qt::NoPen);
   ui_vp_showname->setCurrentCharFormat(ui_vp_showname_format);
-
+  */
   ui_vp_showname->setText(f_showname);
   ui_vp_showname->setAlignment(Qt::AlignVCenter);
 
@@ -1339,7 +1342,7 @@ void Courtroom::chat_tick()
   //note: this is called fairly often(every 60 ms when char is talking)
   //do not perform heavy operations here
   QTextCharFormat vp_message_format = ui_vp_message->currentCharFormat();
-  if (ao_app->read_theme_ini("enable_vp_message_outline", cc_config_ini) == "true")
+  if (ao_app->get_font_property("message_outline", fonts_ini) == 1)
     vp_message_format.setTextOutline(QPen(Qt::black, 1));
   else
     vp_message_format.setTextOutline(Qt::NoPen);

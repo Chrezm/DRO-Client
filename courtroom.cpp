@@ -1093,17 +1093,30 @@ void Courtroom::update_ic_log(bool p_reset_log)
     }
 
     // prepare the formats we need
+    // default color
+    QColor default_color = ao_app->get_color("ic_chatlog_color", fonts_ini);
+    QColor not_found_color = QColor(255, 255, 255);
+
     QTextCharFormat name_format = ui_ic_chatlog->currentCharFormat();
     name_format.setFontWeight(QFont::Bold);
-    name_format.setForeground(ao_app->get_color("chatlog_showname_color", fonts_ini));
+    QColor showname_color = ao_app->get_color("ic_chatlog_showname_color", fonts_ini);
+    if (showname_color == not_found_color)
+        showname_color = default_color;
+    name_format.setForeground(showname_color);
 
     QTextCharFormat line_format = ui_ic_chatlog->currentCharFormat();
     line_format.setFontWeight(QFont::Normal);
-    line_format.setForeground(ao_app->get_color("chatlog_message_color", fonts_ini));
+    QColor message_color = ao_app->get_color("ic_chatlog_message_color", fonts_ini);
+    if (message_color == not_found_color)
+        message_color = default_color;
+    line_format.setForeground(message_color);
 
     QTextCharFormat system_format = ui_ic_chatlog->currentCharFormat();
     system_format.setFontWeight(QFont::Normal);
-    system_format.setForeground(ao_app->get_color("system_msg", fonts_ini));
+    QColor system_color = ao_app->get_color("ic_chatlog_system_color", fonts_ini);
+    if (system_color == not_found_color)
+        system_color = not_found_color;
+    system_format.setForeground(system_color);
 
     // need vscroll bar for cache
     QScrollBar *vscrollbar = ui_ic_chatlog->verticalScrollBar();

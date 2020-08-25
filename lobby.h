@@ -35,6 +35,7 @@ public:
     void set_stylesheets();
     void set_fonts();
     void set_font(QWidget *widget, QString p_identifier);
+    void set_qtextedit_font(QTextEdit *widget, QString p_identifier);
     void show_loading_overlay() { ui_loading_background->show(); }
     void hide_loading_overlay() { ui_loading_background->hide(); }
     QString get_chatlog();

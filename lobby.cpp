@@ -181,12 +181,12 @@ void Lobby::set_size_and_pos(QWidget *p_widget, QString p_identifier)
 
 void Lobby::set_fonts()
 {
-    set_font(ui_player_count, "player_count");
-    set_font(ui_description, "description");
+    set_qtextedit_font(ui_player_count, "player_count");
+    set_qtextedit_font(ui_description, "description");
     set_font(ui_chatbox, "chatbox");
     set_font(ui_chatname, "chatname");
     set_font(ui_chatmessage, "chatmessage");
-    set_font(ui_loading_text, "loading_text");
+    set_qtextedit_font(ui_loading_text, "loading_text");
     set_font(ui_server_list, "server_list");
 }
 
@@ -212,42 +212,49 @@ void Lobby::set_stylesheets()
 void Lobby::set_font(QWidget *widget, QString p_identifier)
 {
     QString design_file = "lobby_fonts.ini";
+
+    if (!(bool)ao_app->get_font_property("use_custom_fonts", design_file))
+        return;
+
     int f_weight        = ao_app->get_font_property(p_identifier, design_file);
     QString class_name  = widget->metaObject()->className();
 
     QString font_name = ao_app->get_font_name("font_" + p_identifier, design_file);
-
     QFont font(font_name, f_weight);
+    widget->setFont(font);
 
-    bool use = (bool)ao_app->get_font_property("use_custom_fonts", design_file);
+    QColor f_color = ao_app->get_color(p_identifier + "_color", design_file);
 
-    if (use)
-    {
-        widget->setFont(font);
+    bool bold   = (bool)ao_app->get_font_property(p_identifier + "_bold", design_file);
+    QString is_bold = "";
+    if (bold) is_bold = "bold";
 
-        QColor f_color = ao_app->get_color(p_identifier + "_color", design_file);
+    bool center = (bool)ao_app->get_font_property(p_identifier + "_center", design_file);
+    QString is_center = "";
+    if (center) is_center = "qproperty-alignment: AlignCenter;";
 
-        bool bold   = (bool)ao_app->get_font_property(p_identifier + "_bold", design_file);   // is the font bold or not?
-        bool center = (bool)ao_app->get_font_property(p_identifier + "_center", design_file); // should it be centered?
+    QString style_sheet_string = class_name + " { background-color: rgba(0, 0, 0, 0);\n" +
+                                 "color: rgba(" +
+                                 QString::number(f_color.red()) + ", " +
+                                 QString::number(f_color.green()) + ", " +
+                                 QString::number(f_color.blue()) + ", 255);\n" +
+                                 is_center + "\n" +
+                                 "font: " + is_bold + "; }";
 
-        QString is_bold = "";
-        if (bold) is_bold = "bold";
+    widget->setStyleSheet(style_sheet_string);
+}
 
-        QString is_center = "";
-        if (center) is_center = "qproperty-alignment: AlignCenter;";
+void Lobby::set_qtextedit_font(QTextEdit *widget, QString p_identifier)
+{
+  set_font(widget, p_identifier);
 
-        QString style_sheet_string = class_name + " { background-color: rgba(0, 0, 0, 0);\n" +
-                                     "color: rgba(" +
-                                     QString::number(f_color.red()) + ", " +
-                                     QString::number(f_color.green()) + ", " +
-                                     QString::number(f_color.blue()) + ", 255);\n" +
-                                     is_center + "\n" +
-                                     "font: " + is_bold + "; }";
-
-        widget->setStyleSheet(style_sheet_string);
-    }
-
-    return;
+  QString design_file = "lobby_fonts.ini";
+  QTextCharFormat widget_format = widget->currentCharFormat();
+  if (ao_app->get_font_property(p_identifier + "_outline", design_file) == 1)
+    widget_format.setTextOutline(QPen(Qt::black, 1));
+  else
+    widget_format.setTextOutline(Qt::NoPen);
+  widget->setCurrentCharFormat(widget_format);
 }
 
 void Lobby::set_loading_text(QString p_text)

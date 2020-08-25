@@ -581,9 +581,6 @@ void Courtroom::set_widgets()
   ui_vp_notepad_image->hide();
 
   set_size_and_pos(ui_vp_notepad, "notepad");
-  ui_vp_notepad->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  ui_vp_notepad->verticalScrollBar()->hide();
-  ui_vp_notepad->verticalScrollBar()->resize(0, 0);
   ui_vp_notepad->hide();
 
   set_size_and_pos(ui_vp_showname, "showname");

@@ -504,12 +504,19 @@ void Courtroom::list_note_files()
 
 void Courtroom::load_note()
 {
+  //Do not attempt to load anything if no file was chosen. This makes it so that notepad text
+  //is kept in client if the user has decided not to choose a file to save to. Of course, this is
+  //ephimeral storage, it will be erased after the client closes or when the user decides to load
+  //a file.
+  if (current_file.isEmpty())
+      return;
   QString f_text = ao_app->read_note(current_file);
   ui_vp_notepad->setText(f_text);
 }
 
 void Courtroom::save_note()
 {
+
   QString f_text = ui_vp_notepad->toPlainText();
 
   ao_app->write_note(f_text, current_file);

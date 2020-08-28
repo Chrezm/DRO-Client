@@ -40,7 +40,7 @@ int AOApplication::get_default_blip()
     return config->blips_volume();
 }
 
-QStringList AOApplication::get_call_words()
+QStringList AOApplication::get_callwords()
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
     return config->callwords().split(" ", QString::SkipEmptyParts);

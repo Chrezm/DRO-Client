@@ -1027,15 +1027,19 @@ void Courtroom::handle_chatmessage_3()
   }
 
   QString f_message = m_chatmessage[MESSAGE];
-  QStringList call_words = ao_app->get_call_words();
+  QStringList callwords = ao_app->get_callwords();
 
-  for (QString word : call_words)
+  for (QString word : callwords)
   {
     if (f_message.contains(word, Qt::CaseInsensitive))
     {
       m_system_player->play(ao_app->get_sfx("word_call"));
       ao_app->alert(this);
-
+      ui_server_chatlog->append_chatmessage(
+            "CLIENT",
+            "[" + QTime::currentTime().toString("HH:mm") + "] " +
+            ui_vp_showname->text() + " has called you via your callword \"" + word +
+            "\": \"" + f_message + "\"");
       break;
     }
   }

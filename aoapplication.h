@@ -134,7 +134,7 @@ public:
     QString get_username();
 
     // returns a list of call words
-    QStringList get_call_words();
+    QStringList get_callwords();
 
     // returns whatever preanimations should always play or not
     bool get_always_pre_enabled();

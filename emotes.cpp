@@ -13,12 +13,12 @@ void Courtroom::construct_emotes()
 
     ui_emote_dropdown = new QComboBox(this);
     ui_pos_dropdown = new QComboBox(this);
-    ui_pos_dropdown->addItem("wit");
-    ui_pos_dropdown->addItem("def");
-    ui_pos_dropdown->addItem("pro");
-    ui_pos_dropdown->addItem("jud");
-    ui_pos_dropdown->addItem("hld");
-    ui_pos_dropdown->addItem("hlp");
+    ui_pos_dropdown->addItem("wit", "wit");
+    ui_pos_dropdown->addItem("def", "def");
+    ui_pos_dropdown->addItem("pro", "pro");
+    ui_pos_dropdown->addItem("jud", "jud");
+    ui_pos_dropdown->addItem("hld", "hld");
+    ui_pos_dropdown->addItem("hlp", "hlp");
 
     reconstruct_emotes();
 }

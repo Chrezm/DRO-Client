@@ -40,6 +40,7 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
 
 void Courtroom::enter_courtroom(int p_cid)
 {
+  bool changed_character = (m_cid != p_cid);
   m_cid = p_cid;
 
   QString f_char;
@@ -97,6 +98,9 @@ void Courtroom::enter_courtroom(int p_cid)
   set_evidence_page();
 
   QString side = ao_app->get_char_side(f_char);
+  int index = ui_pos_dropdown->findData(side);
+  if (index != -1 && changed_character)
+    ui_pos_dropdown->setCurrentIndex(index);
 
   // enable judge mechanics
   set_judge_enabled(side == "jud");

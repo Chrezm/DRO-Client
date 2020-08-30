@@ -1414,6 +1414,10 @@ void Courtroom::chat_tick()
     else if (ao_app->read_theme_ini("enable_highlighting", cc_config_ini) == "true")
     {
       bool highlight_found = false;
+      // Do != "false" rather than == "true" for the sake of backwards compatibility with themes
+      // that do not have this option yet. Can improve later
+      bool show_highlight_characters = ao_app->read_theme_ini("show_highlight_characters",
+                                                              cc_config_ini) != "false";
       QVector<QStringList> f_vec = ao_app->get_highlight_color();
       if(m_color_stack.isEmpty()) m_color_stack.push("");
 
@@ -1451,7 +1455,7 @@ void Courtroom::chat_tick()
         }
       }
 
-      if (!highlight_found)
+      if (!highlight_found || show_highlight_characters)
         ui_vp_message->textCursor().insertText(f_character, vp_message_format);
 
       m_string_color = m_future_string_color;

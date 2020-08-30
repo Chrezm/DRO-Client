@@ -802,13 +802,14 @@ void Courtroom::set_widgets()
   ui_config_panel->setText("Config");
   ui_config_panel->setStyleSheet("");
 
-  ui_note_button->setText("><:");
+  ui_note_button->setText("Notes");
   ui_note_button->setStyleSheet("");
 
   if (ao_app->read_theme_ini("enable_button_images", cc_config_ini) == "true")
   {
     // Set files, ask questions later
-    // set_image first tries the theme variant folder, then the theme folder, then falls back to the default theme
+    // set_image first tries the theme variant folder, then the theme folder, then falls back to
+    // the default theme
     ui_change_character->set_image("changecharacter.png");
     if (!ui_change_character->image_path.isEmpty())
       ui_change_character->setText("");

@@ -12,23 +12,22 @@ AOButton::AOButton(QWidget *parent, AOApplication *p_ao_app) : QPushButton(paren
 
 void AOButton::set_image(QString p_image)
 {
-  QString f_image_name = p_image.left(p_image.lastIndexOf(QChar('.')));
-  QString some_image_path = ao_app->get_image_path(p_image);
-  QString some_hover_image_path = ao_app->get_image_path(p_image + "_hover.png");
+  image_path = ao_app->get_image_path(p_image);
+  // Get the path of the found image without the extension
+  QString image_name = p_image.left(p_image.lastIndexOf(QChar('.')));
+  QString hover_image_path = ao_app->get_image_path(image_name + "_hover.png");
 
-  if (file_exists(some_image_path))
+  if (file_exists(image_path))
   {
-    image_path = some_image_path;
-
-    if (file_exists(some_hover_image_path))
-      this->setStyleSheet("QPushButton {border-image:url(\"" + some_image_path + "\");}"
-                          "QPushButton:hover {border-image:url(\"" + some_hover_image_path + "\");}");
+    if (file_exists(hover_image_path))
+      this->setStyleSheet("QPushButton {border-image:url(\"" + image_path + "\");}"
+                          "QPushButton:hover {border-image:url(\"" + hover_image_path + "\");}");
     else
-      this->setStyleSheet("border-image:url(\"" + some_image_path + "\")");
+      this->setStyleSheet("border-image:url(\"" + image_path + "\")");
   }
   else
   {
     image_path = "";
-    this->setStyleSheet("border-image:url(\"" + some_image_path + "\")");
+    this->setStyleSheet("border-image:url(\"" + image_path + "\")");
   }
 }

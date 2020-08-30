@@ -1398,7 +1398,7 @@ void Courtroom::chat_tick()
           m_color_stack.push(col[1]);
           m_string_color = m_color_stack.top();
           highlight_found = true;
-          render_character = (col[2] == "1");
+          render_character = (col[2] != "0");
           break;
         }
       }
@@ -1422,7 +1422,7 @@ void Courtroom::chat_tick()
           if(m_color_stack.size() > 1) m_color_stack.pop();
           m_future_string_color = m_color_stack.top();
           highlight_found = true;
-          render_character = (col[2] == "1");
+          render_character = (col[2] != "0");
           break;
         }
       }

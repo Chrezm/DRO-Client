@@ -29,7 +29,7 @@
    <item>
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -52,12 +52,12 @@
        <item row="1" column="0">
         <widget class="QLabel" name="callwords_label">
          <property name="text">
-          <string>Callwords:</string>
+          <string>Callwords (separate by spaces):</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
          </property>
         </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="callwords"/>
        </item>
        <item row="2" column="1">
         <widget class="Line" name="line">
@@ -123,7 +123,7 @@
        <item row="5" column="0">
         <widget class="QLabel" name="always_pre_label">
          <property name="text">
-          <string>Pre-animation always selected</string>
+          <string>Pre-animation always selected:</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -140,7 +140,7 @@
        <item row="6" column="0">
         <widget class="QLabel" name="chat_tick_interval_label">
          <property name="text">
-          <string>Chat tick interval</string>
+          <string>Chat tick interval:</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -159,6 +159,9 @@
           <number>999</number>
          </property>
         </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="callwords"/>
        </item>
       </layout>
      </widget>

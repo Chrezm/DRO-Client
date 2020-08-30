@@ -355,7 +355,18 @@ QVector<QStringList> AOApplication::get_highlight_color()
       {
         if((line.startsWith("[") && line.endsWith("]")))
           break;
-        f_vec.append(line.split("="));
+        // Syntax
+        // OpenercharCloserchar = Color, Shown
+        // Shown is 1 if the character should be displayed in IC, 0 otherwise. If not present,
+        // assume 1.
+        QString chars = line.split("=")[0].trimmed();
+        QString chars_parameters = line.mid(line.indexOf("=")+1);
+        QStringList parameters = chars_parameters.split(",");
+        for (int i=0; i<parameters.size(); i++)
+          parameters[i] = parameters[i].trimmed();
+        if (parameters.size() == 1)
+          parameters.append("1");
+        f_vec.append({chars, parameters[0], parameters[1]});
       }
     }
 

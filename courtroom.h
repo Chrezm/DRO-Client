@@ -189,8 +189,6 @@ public:
 
     void play_preanim();
 
-    QString parse_message(QString message);
-
     //plays the witness testimony or cross examination animation based on argument
     void handle_wtce(QString p_wtce);
 

@@ -1286,35 +1286,6 @@ void Courtroom::realization_done()
   ui_vp_effect->stop();
 }
 
-QString Courtroom::parse_message(QString message)
-{
-  QVector<QStringList> f_vec = ao_app->get_highlight_color();
-
-  for(int i=0; i<message.length(); ++i)
-  {
-    for(const auto& col : f_vec)
-    {
-      if(message.at(i) == col[0].trimmed().at(0))
-      {
-        for(int j=i+1; j<message.length(); ++j)
-        {
-          if(message.at(j) == col[0].trimmed().at(1))
-          {
-            QString html_color = col[1].trimmed();
-            message.remove(j, 1);
-            message.insert(j, QString("</font>"));
-            message.remove(i, 1);
-            message.insert(i, QString("<font color=\"" + html_color + "\">"));
-          }
-        }
-        break;
-      }
-    }
-  }
-
-  return message;
-}
-
 void Courtroom::start_chat_ticking()
 {
   ui_vp_message->clear();
@@ -1414,20 +1385,20 @@ void Courtroom::chat_tick()
     else if (ao_app->read_theme_ini("enable_highlighting", cc_config_ini) == "true")
     {
       bool highlight_found = false;
-      // Do != "false" rather than == "true" for the sake of backwards compatibility with themes
-      // that do not have this option yet. Can improve later
-      bool show_highlight_characters = ao_app->read_theme_ini("show_highlight_characters",
-                                                              cc_config_ini) != "false";
+      bool render_character = true;
+      // render_character should only be false if the character is a highlight character
+      // specifically marked as a character that should not be rendered.
       QVector<QStringList> f_vec = ao_app->get_highlight_color();
       if(m_color_stack.isEmpty()) m_color_stack.push("");
 
       for(const auto& col : f_vec)
       {
-        if(f_character == col[0].trimmed()[0] && m_string_color != col[1].trimmed())
+        if(f_character == col[0][0] && m_string_color != col[1])
         {
-          m_color_stack.push(col[1].trimmed());
+          m_color_stack.push(col[1]);
           m_string_color = m_color_stack.top();
           highlight_found = true;
+          render_character = (col[2] == "1");
           break;
         }
       }
@@ -1446,16 +1417,17 @@ void Courtroom::chat_tick()
 
       for(const auto& col : f_vec)
       {
-        if(f_character == col[0].trimmed()[1] && !highlight_found)
+        if(f_character == col[0][1] && !highlight_found)
         {
           if(m_color_stack.size() > 1) m_color_stack.pop();
           m_future_string_color = m_color_stack.top();
           highlight_found = true;
+          render_character = (col[2] == "1");
           break;
         }
       }
 
-      if (!highlight_found || show_highlight_characters)
+      if (render_character)
         ui_vp_message->textCursor().insertText(f_character, vp_message_format);
 
       m_string_color = m_future_string_color;

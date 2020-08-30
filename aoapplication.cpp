@@ -174,7 +174,7 @@ int AOApplication::get_chatlog_max_lines()
 
 int AOApplication::get_chat_tick_interval()
 {
-    return config->get_number("chat_tick_interval", 60);
+    return config->chat_tick_interval();
 }
 
 bool AOApplication::get_chatlog_newline()

@@ -23,6 +23,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_theme = AO_GUI_WIDGET(QComboBox, "theme");
     w_reload_theme = AO_GUI_WIDGET(QPushButton, "theme_reload");
     w_always_pre = AO_GUI_WIDGET(QCheckBox, "always_pre");
+    w_chat_tick_interval = AO_GUI_WIDGET(QSpinBox, "chat_tick_interval");
 
     // IC Chatlog
     w_log_max_lines = AO_GUI_WIDGET(QSpinBox, "log_length");
@@ -51,6 +52,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(m_config, SIGNAL(callwords_changed(QString)), w_callwords, SLOT(setText(QString)));
     connect(m_config, SIGNAL(theme_changed(QString)), w_theme, SLOT(setCurrentText(QString)));
     connect(m_config, SIGNAL(always_pre_changed(bool)), w_always_pre, SLOT(setChecked(bool)));
+    connect(m_config, SIGNAL(chat_tick_interval_changed(int)), w_chat_tick_interval, SLOT(setValue(int)));
     connect(m_config, SIGNAL(log_max_lines_changed(int)), w_log_max_lines, SLOT(setValue(int)));
     connect(m_config, SIGNAL(log_goes_downward_changed(bool)), w_log_goes_downward, SLOT(setChecked(bool)));
     connect(m_config, SIGNAL(log_uses_newline_changed(bool)), w_log_uses_newline, SLOT(setChecked(bool)));
@@ -70,6 +72,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(w_theme, SIGNAL(currentIndexChanged(QString)), m_config, SLOT(set_theme(QString)));
     connect(w_reload_theme, SIGNAL(clicked()), this, SLOT(on_reload_theme_clicked()));
     connect(w_always_pre, SIGNAL(stateChanged(int)), m_config, SLOT(set_always_pre(int)));
+    connect(w_chat_tick_interval, SIGNAL(valueChanged(int)), m_config, SLOT(set_chat_tick_interval(int)));
     connect(w_log_max_lines, SIGNAL(valueChanged(int)), m_config, SLOT(set_log_max_lines(int)));
     connect(w_log_goes_downward, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_goes_downward(int)));
     connect(w_log_uses_newline, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_uses_newline(int)));
@@ -91,6 +94,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_callwords->setText(m_config->callwords());
     w_theme->setCurrentText(m_config->theme());
     w_always_pre->setChecked(m_config->always_pre_enabled());
+    w_chat_tick_interval->setValue(m_config->chat_tick_interval());
     w_log_max_lines->setValue(m_config->log_max_lines());
     w_log_goes_downward->setChecked(m_config->log_goes_downward_enabled());
     w_log_uses_newline->setChecked(m_config->log_uses_newline_enabled());

@@ -244,9 +244,8 @@ private:
     //triggers ping_server() every 60 seconds
     QTimer *keepalive_timer;
 
-    //determines how fast messages tick onto screen
+    //maintains a timer for how fast messages tick onto screen
     QTimer *chat_tick_timer;
-    int chat_tick_interval = 60;
     //which tick position(character in chat message) we are at
     int tick_pos = 0;
     //used to determine how often blips sound

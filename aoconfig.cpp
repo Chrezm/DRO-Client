@@ -25,6 +25,7 @@ class AOConfigPrivate : public QObject
     QString callwords;
     QString theme;
     bool always_pre;
+    int chat_tick_interval;
     int log_max_lines;
     bool log_goes_downward;
     bool log_uses_newline;
@@ -72,12 +73,18 @@ public slots:
     }
     void set_always_pre(bool p_enabled)
     {
-      if (always_pre == p_enabled)
-          return;
-      always_pre = p_enabled;
-      invoke_parents("always_pre_changed", Q_ARG(bool, p_enabled));
+        if (always_pre == p_enabled)
+            return;
+        always_pre = p_enabled;
+        invoke_parents("always_pre_changed", Q_ARG(bool, p_enabled));
     }
-
+    void set_chat_tick_interval(int p_number)
+    {
+        if (chat_tick_interval == p_number)
+            return;
+        chat_tick_interval = p_number;
+        invoke_parents("chat_tick_interval_changed", Q_ARG(int, p_number));
+    }
     void set_log_max_lines(int p_number)
     {
         if (log_max_lines == p_number)
@@ -157,21 +164,22 @@ public slots:
     }
     void read_file()
     {
-        username          = cfg.value("username").toString();
-        callwords         = cfg.value("callwords").toString();
-        theme             = cfg.value("theme", "default").toString();
-        always_pre        = cfg.value("always_pre", true).toBool();
-        log_max_lines     = cfg.value("chatlog_limit", 200).toInt();
-        log_goes_downward = cfg.value("chatlog_scrolldown", true).toBool();
-        log_uses_newline  = cfg.value("chatlog_newline", false).toBool();
-        log_music         = cfg.value("music_change_log", true).toBool();
-        log_is_recording  = cfg.value("enable_logging", true).toBool();
-        effects_volume    = cfg.value("default_sfx", 50).toInt();
-        system_volume     = cfg.value("default_system", 50).toInt();
-        music_volume      = cfg.value("default_music", 50).toInt();
-        blips_volume      = cfg.value("default_blip", 50).toInt();
-        blip_rate         = cfg.value("blip_rate", 1000000000).toInt();
-        blank_blips       = cfg.value("blank_blips").toBool();
+        username           = cfg.value("username").toString();
+        callwords          = cfg.value("callwords").toString();
+        theme              = cfg.value("theme", "default").toString();
+        always_pre         = cfg.value("always_pre", true).toBool();
+        chat_tick_interval = cfg.value("chat_tick_interval", 60).toInt();
+        log_max_lines      = cfg.value("chatlog_limit", 200).toInt();
+        log_goes_downward  = cfg.value("chatlog_scrolldown", true).toBool();
+        log_uses_newline   = cfg.value("chatlog_newline", false).toBool();
+        log_music          = cfg.value("music_change_log", true).toBool();
+        log_is_recording   = cfg.value("enable_logging", true).toBool();
+        effects_volume     = cfg.value("default_sfx", 50).toInt();
+        system_volume      = cfg.value("default_system", 50).toInt();
+        music_volume       = cfg.value("default_music", 50).toInt();
+        blips_volume       = cfg.value("default_blip", 50).toInt();
+        blip_rate          = cfg.value("blip_rate", 1000000000).toInt();
+        blank_blips        = cfg.value("blank_blips").toBool();
     }
     void save_file()
     {
@@ -179,6 +187,7 @@ public slots:
         cfg.setValue("callwords", callwords);
         cfg.setValue("theme", theme);
         cfg.setValue("always_pre", always_pre);
+        cfg.setValue("chat_tick_interval", chat_tick_interval);
         cfg.setValue("chatlog_limit", log_max_lines);
         cfg.setValue("chatlog_scrolldown", log_goes_downward);
         cfg.setValue("chatlog_newline", log_uses_newline);
@@ -261,6 +270,11 @@ bool AOConfig::always_pre_enabled()
     return d->always_pre;
 }
 
+int AOConfig::chat_tick_interval()
+{
+    return d->chat_tick_interval;
+}
+
 int AOConfig::log_max_lines()
 {
     return d->log_max_lines;
@@ -339,6 +353,11 @@ void AOConfig::set_always_pre(int p_state)
 void AOConfig::set_always_pre(bool p_enabled)
 {
     d->set_always_pre(p_enabled);
+}
+
+void AOConfig::set_chat_tick_interval(int p_number)
+{
+    d->set_chat_tick_interval(p_number);
 }
 
 void AOConfig::set_log_max_lines(int p_number)

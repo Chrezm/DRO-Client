@@ -141,8 +141,6 @@ void Courtroom::enter_courtroom(int p_cid)
 
   ui_char_select_background->hide();
 
-  chat_tick_interval = ao_app->get_chat_tick_interval();
-
   ui_ic_chat_message->setEnabled(m_cid != -1);
   ui_ic_chat_message->setFocus();
 
@@ -1343,7 +1341,7 @@ void Courtroom::start_chat_ticking()
 
   tick_pos = 0;
   blip_pos = 0;
-  chat_tick_timer->start(chat_tick_interval);
+  chat_tick_timer->start(ao_app->get_chat_tick_interval());
 
   QString f_gender = ao_app->get_gender(m_chatmessage[CHAR_NAME]);
 

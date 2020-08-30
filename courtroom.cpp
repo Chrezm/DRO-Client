@@ -1700,7 +1700,7 @@ void Courtroom::set_character_position(QString p_pos, bool refresh_dropdown)
 void Courtroom::mod_called(QString p_ip)
 {
   ui_server_chatlog->append(p_ip);
-  if (ui_guard->isChecked())
+  if (ao_app->get_server_alerts_enabled())
   {
     m_system_player->play(ao_app->get_sfx("mod_call"));
     ao_app->alert(this);

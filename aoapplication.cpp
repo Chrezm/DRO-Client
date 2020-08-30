@@ -162,6 +162,11 @@ bool AOApplication::get_first_person_enabled()
     return config->get_bool("first_person", false);
 }
 
+bool AOApplication::get_server_alerts_enabled()
+{
+    return config->server_alerts_enabled();
+}
+
 bool AOApplication::get_chatlog_scrolldown()
 {
     return config->log_goes_downward_enabled();

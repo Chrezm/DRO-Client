@@ -142,6 +142,10 @@ public:
     // returns whatever the client should simulate first person dialog
     bool get_first_person_enabled();
 
+    // returns whether server alerts (ones that trigger a client alert other than callwords)
+    // should actually tigger a server alert or not
+    bool get_server_alerts_enabled();
+
     // returns if chatlog goes downward
     bool get_chatlog_scrolldown();
 

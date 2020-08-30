@@ -29,7 +29,7 @@
    <item>
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -162,6 +162,20 @@
        </item>
        <item row="1" column="1">
         <widget class="QLineEdit" name="callwords"/>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="server_alerts_label">
+         <property name="text">
+          <string>Server alerts:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <widget class="QCheckBox" name="server_alerts">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>

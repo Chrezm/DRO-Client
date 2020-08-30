@@ -27,6 +27,7 @@ class AOConfigPanel : public QWidget
     QPushButton *w_reload_theme = nullptr;
     QCheckBox *w_always_pre = nullptr;
     QSpinBox *w_chat_tick_interval = nullptr;
+    QCheckBox *w_server_alerts = nullptr;
 
     // IC Chatlog
     QSpinBox *w_log_max_lines = nullptr;

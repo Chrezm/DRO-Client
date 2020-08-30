@@ -22,6 +22,7 @@ public:
     QString theme();
     bool always_pre_enabled();
     int chat_tick_interval();
+    bool server_alerts_enabled();
     int log_max_lines();
     bool log_goes_downward_enabled();
     bool log_uses_newline_enabled();
@@ -46,6 +47,8 @@ public slots:
     void set_always_pre(bool p_enabled);
     void set_always_pre(int p_state);
     void set_chat_tick_interval(int p_number);
+    void set_server_alerts(bool p_enabled);
+    void set_server_alerts(int p_state);
     void set_log_max_lines(int p_number);
     void set_log_goes_downward(bool p_enabled);
     void set_log_goes_downward(int p_state);

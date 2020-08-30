@@ -26,6 +26,7 @@ class AOConfigPrivate : public QObject
     QString theme;
     bool always_pre;
     int chat_tick_interval;
+    bool server_alerts;
     int log_max_lines;
     bool log_goes_downward;
     bool log_uses_newline;
@@ -84,6 +85,13 @@ public slots:
             return;
         chat_tick_interval = p_number;
         invoke_parents("chat_tick_interval_changed", Q_ARG(int, p_number));
+    }
+    void set_server_alerts(bool p_enabled)
+    {
+        if (server_alerts == p_enabled)
+            return;
+        server_alerts = p_enabled;
+        invoke_parents("server_alerts_changed", Q_ARG(bool, p_enabled));
     }
     void set_log_max_lines(int p_number)
     {
@@ -169,6 +177,7 @@ public slots:
         theme              = cfg.value("theme", "default").toString();
         always_pre         = cfg.value("always_pre", true).toBool();
         chat_tick_interval = cfg.value("chat_tick_interval", 60).toInt();
+        server_alerts      = cfg.value("server_alerts", true).toBool();
         log_max_lines      = cfg.value("chatlog_limit", 200).toInt();
         log_goes_downward  = cfg.value("chatlog_scrolldown", true).toBool();
         log_uses_newline   = cfg.value("chatlog_newline", false).toBool();
@@ -188,6 +197,7 @@ public slots:
         cfg.setValue("theme", theme);
         cfg.setValue("always_pre", always_pre);
         cfg.setValue("chat_tick_interval", chat_tick_interval);
+        cfg.setValue("server_alerts", server_alerts);
         cfg.setValue("chatlog_limit", log_max_lines);
         cfg.setValue("chatlog_scrolldown", log_goes_downward);
         cfg.setValue("chatlog_newline", log_uses_newline);
@@ -275,6 +285,11 @@ int AOConfig::chat_tick_interval()
     return d->chat_tick_interval;
 }
 
+bool AOConfig::server_alerts_enabled()
+{
+    return d->server_alerts;
+}
+
 int AOConfig::log_max_lines()
 {
     return d->log_max_lines;
@@ -358,6 +373,16 @@ void AOConfig::set_always_pre(bool p_enabled)
 void AOConfig::set_chat_tick_interval(int p_number)
 {
     d->set_chat_tick_interval(p_number);
+}
+
+void AOConfig::set_server_alerts(int p_state)
+{
+    set_server_alerts(p_state == Qt::Checked);
+}
+
+void AOConfig::set_server_alerts(bool p_enabled)
+{
+    d->set_server_alerts(p_enabled);
 }
 
 void AOConfig::set_log_max_lines(int p_number)

@@ -154,7 +154,7 @@ void AOApplication::toggle_config_panel()
 
 bool AOApplication::get_always_pre_enabled()
 {
-    return config->get_bool("always_pre", true);
+    return config->always_pre_enabled();
 }
 
 bool AOApplication::get_first_person_enabled()

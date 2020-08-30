@@ -20,6 +20,7 @@ public:
     QString username();
     QString callwords();
     QString theme();
+    bool always_pre_enabled();
     int log_max_lines();
     bool log_goes_downward_enabled();
     bool log_uses_newline_enabled();
@@ -41,6 +42,8 @@ public slots:
     void set_username(QString p_string);
     void set_callwords(QString p_string);
     void set_theme(QString p_string);
+    void set_always_pre(bool p_enabled);
+    void set_always_pre(int p_state);
     void set_log_max_lines(int p_number);
     void set_log_goes_downward(bool p_enabled);
     void set_log_goes_downward(int p_state);
@@ -63,6 +66,7 @@ signals:
     void username_changed(QString);
     void callwords_changed(QString);
     void theme_changed(QString);
+    void always_pre_changed(bool);
     void log_max_lines_changed(int);
     void log_goes_downward_changed(bool);
     void log_uses_newline_changed(bool);

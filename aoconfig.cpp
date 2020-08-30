@@ -24,6 +24,7 @@ class AOConfigPrivate : public QObject
     QString username;
     QString callwords;
     QString theme;
+    bool always_pre;
     int log_max_lines;
     bool log_goes_downward;
     bool log_uses_newline;
@@ -69,6 +70,14 @@ public slots:
         theme = p_string;
         invoke_parents("theme_changed", Q_ARG(QString, p_string));
     }
+    void set_always_pre(bool p_enabled)
+    {
+      if (always_pre == p_enabled)
+          return;
+      always_pre = p_enabled;
+      invoke_parents("always_pre_changed", Q_ARG(bool, p_enabled));
+    }
+
     void set_log_max_lines(int p_number)
     {
         if (log_max_lines == p_number)
@@ -151,9 +160,10 @@ public slots:
         username          = cfg.value("username").toString();
         callwords         = cfg.value("callwords").toString();
         theme             = cfg.value("theme", "default").toString();
+        always_pre        = cfg.value("always_pre", true).toBool();
         log_max_lines     = cfg.value("chatlog_limit", 200).toInt();
         log_goes_downward = cfg.value("chatlog_scrolldown", true).toBool();
-        log_uses_newline  = cfg.value("chatlog_newline").toBool();
+        log_uses_newline  = cfg.value("chatlog_newline", false).toBool();
         log_music         = cfg.value("music_change_log", true).toBool();
         log_is_recording  = cfg.value("enable_logging", true).toBool();
         effects_volume    = cfg.value("default_sfx", 50).toInt();
@@ -168,6 +178,7 @@ public slots:
         cfg.setValue("username", username);
         cfg.setValue("callwords", callwords);
         cfg.setValue("theme", theme);
+        cfg.setValue("always_pre", always_pre);
         cfg.setValue("chatlog_limit", log_max_lines);
         cfg.setValue("chatlog_scrolldown", log_goes_downward);
         cfg.setValue("chatlog_newline", log_uses_newline);
@@ -245,6 +256,11 @@ QString AOConfig::theme()
     return d->theme;
 }
 
+bool AOConfig::always_pre_enabled()
+{
+    return d->always_pre;
+}
+
 int AOConfig::log_max_lines()
 {
     return d->log_max_lines;
@@ -313,6 +329,16 @@ void AOConfig::set_callwords(QString p_string)
 void AOConfig::set_theme(QString p_string)
 {
     d->set_theme(p_string);
+}
+
+void AOConfig::set_always_pre(int p_state)
+{
+    set_always_pre(p_state == Qt::Checked);
+}
+
+void AOConfig::set_always_pre(bool p_enabled)
+{
+    d->set_always_pre(p_enabled);
 }
 
 void AOConfig::set_log_max_lines(int p_number)

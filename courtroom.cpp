@@ -1735,8 +1735,6 @@ void Courtroom::on_ooc_return_pressed()
 
     ao_config->set_username(ooc_name);
   }
-  else if (ooc_message.startsWith("/login"))
-    ui_guard->show();
   else if (ooc_message.startsWith("/rainbow") && ao_app->yellow_text_enabled && !rainbow_appended)
   {
     ui_text_color->addItem("Rainbow");
@@ -2280,11 +2278,6 @@ void Courtroom::on_pre_clicked()
 }
 
 void Courtroom::on_flip_clicked()
-{
-  ui_ic_chat_message->setFocus();
-}
-
-void Courtroom::on_guard_clicked()
 {
   ui_ic_chat_message->setFocus();
 }

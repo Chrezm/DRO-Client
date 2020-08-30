@@ -510,13 +510,12 @@ private:
 
     QCheckBox *ui_pre;
     QCheckBox *ui_flip;
-    QCheckBox *ui_guard;
     QCheckBox *ui_hidden;
 
-    QVector<QCheckBox *> ui_checks; // 0 = pre, 1 = flip, 2 = guard, 3 = hidden
+    QVector<QCheckBox *> ui_checks; // 0 = pre, 1 = flip, 2 = hidden
     QVector<AOLabel *> ui_labels;   // 0 = music, 1 = sfx, 2 = blip
     QVector<AOImage *> ui_label_images;
-    QVector<QString> label_images = {"Pre", "Flip", "Guard", "Hidden", "Music", "SFX", "Blip"};
+    QVector<QString> label_images = {"Pre", "Flip", "Hidden", "Music", "SFX", "Blip"};
 
     AOButton *ui_effect_flash = nullptr;
     AOButton *ui_effect_gloom = nullptr;
@@ -711,8 +710,6 @@ private slots:
 
     void on_pre_clicked();
     void on_flip_clicked();
-    void on_guard_clicked();
-
     void on_hidden_clicked();
 
     void on_sfx_list_clicked();

@@ -33,8 +33,14 @@ void AOScene::set_image(QString p_image)
     // do not update the movie if we're using the same file
     if (m_reader->fileName() == target_path)
         return;
+
     m_reader->stop();
+    delete m_reader;
+
+    m_reader = new QMovie(this);
+    m_reader->setScaledSize(size());
     m_reader->setFileName(target_path);
+    setMovie(m_reader);
     m_reader->start();
 }
 

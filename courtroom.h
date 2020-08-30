@@ -427,14 +427,11 @@ private:
     QListWidget *ui_music_list;
     QListWidget *ui_sfx_list;
 
-    //  QListWidget *ui_sfx_list;
-
     QLineEdit *ui_ic_chat_message;
 
     QLineEdit *ui_ooc_chat_message;
     QLineEdit *ui_ooc_chat_name;
 
-    //QLineEdit *ui_area_password;
     QLineEdit *ui_music_search;
 
     QLineEdit *ui_sfx_search;
@@ -561,8 +558,6 @@ private:
     QVector<AOCharButton *> ui_char_button_list;
 
     AOButton *ui_back_to_lobby;
-
-    QLineEdit *ui_char_password;
 
     AOButton *ui_char_select_left;
     AOButton *ui_char_select_right;

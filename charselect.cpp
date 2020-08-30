@@ -17,8 +17,6 @@ void Courtroom::construct_char_select()
 
     ui_back_to_lobby = new AOButton(ui_char_select_background, ao_app);
 
-    ui_char_password = new QLineEdit(ui_char_select_background);
-
     ui_char_select_left  = new AOButton(ui_char_select_background, ao_app);
     ui_char_select_right = new AOButton(ui_char_select_background, ao_app);
 

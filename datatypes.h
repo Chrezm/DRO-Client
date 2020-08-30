@@ -79,7 +79,6 @@ struct area_type
 {
     QString name;
     QString background;
-    bool passworded;
 };
 
 struct pos_type

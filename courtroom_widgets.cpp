@@ -129,8 +129,6 @@ void Courtroom::create_widgets()
   ui_ooc_chat_name->setPlaceholderText("Name");
   ui_ooc_chat_name->setText(ao_config->username());
 
-  //ui_area_password = new QLineEdit(this);
-  //ui_area_password->setFrame(false);
   ui_music_search = new QLineEdit(this);
   ui_music_search->setFrame(false);
 
@@ -410,7 +408,6 @@ void Courtroom::reset_widget_names()
                 {"evidence_buttons", ui_evidence_buttons},
             {"char_select", ui_char_select_background},
                 {"back_to_lobby", ui_back_to_lobby},
-                {"char_password", ui_char_password},
                 {"char_buttons", ui_char_buttons},
                 {"char_select_left", ui_char_select_left},
                 {"char_select_right", ui_char_select_right},
@@ -659,7 +656,6 @@ void Courtroom::set_widgets()
   set_size_and_pos(ui_ooc_chat_name, "ooc_chat_name");
   ui_ooc_chat_name->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
 
-  //set_size_and_pos(ui_area_password, "area_password");
   set_size_and_pos(ui_music_search, "music_search");
 
   set_size_and_pos(ui_sfx_search, "sfx_search");
@@ -941,8 +937,6 @@ void Courtroom::set_widgets()
 
   set_size_and_pos(ui_back_to_lobby, "back_to_lobby");
   ui_back_to_lobby->setText("Back to Lobby");
-
-  set_size_and_pos(ui_char_password, "char_password");
 
   set_size_and_pos(ui_char_buttons, "char_buttons");
 

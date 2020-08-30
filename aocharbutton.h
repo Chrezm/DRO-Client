@@ -18,7 +18,6 @@ public:
 
     void reset();
     void set_taken();
-    void set_passworded();
     void set_image(QString p_character);
 
 signals:
@@ -27,7 +26,6 @@ signals:
 
 private:
     AOImage *ui_taken      = nullptr;
-    AOImage *ui_passworded = nullptr;
 
 protected:
     void enterEvent(QEvent *e);

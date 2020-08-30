@@ -146,7 +146,7 @@
        <property name="geometry">
         <rect>
          <x>100</x>
-         <y>80</y>
+         <y>120</y>
          <width>259</width>
          <height>15</height>
         </rect>
@@ -196,8 +196,8 @@
       <widget class="QLabel" name="log_recording_label">
        <property name="geometry">
         <rect>
-         <x>9</x>
-         <y>80</y>
+         <x>10</x>
+         <y>120</y>
          <width>77</width>
          <height>15</height>
         </rect>
@@ -246,6 +246,41 @@
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="log_music">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>90</y>
+         <width>259</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+      <widget class="QLabel" name="log_music_label">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>80</y>
+         <width>77</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Log shows music changes:</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>

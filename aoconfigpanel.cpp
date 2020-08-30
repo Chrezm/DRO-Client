@@ -22,9 +22,12 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_callwords = AO_GUI_WIDGET(QLineEdit, "callwords");
     w_theme = AO_GUI_WIDGET(QComboBox, "theme");
     w_reload_theme = AO_GUI_WIDGET(QPushButton, "theme_reload");
+
+    // IC Chatlog
     w_log_max_lines = AO_GUI_WIDGET(QSpinBox, "log_length");
     w_log_uses_newline = AO_GUI_WIDGET(QCheckBox, "log_newline");
     w_log_goes_downward = AO_GUI_WIDGET(QCheckBox, "log_downward");
+    w_log_music = AO_GUI_WIDGET(QCheckBox, "log_music");
     w_log_is_recording = AO_GUI_WIDGET(QCheckBox, "log_recording");
 
     // audio
@@ -49,6 +52,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(m_config, SIGNAL(log_max_lines_changed(int)), w_log_max_lines, SLOT(setValue(int)));
     connect(m_config, SIGNAL(log_goes_downward_changed(bool)), w_log_goes_downward, SLOT(setChecked(bool)));
     connect(m_config, SIGNAL(log_uses_newline_changed(bool)), w_log_uses_newline, SLOT(setChecked(bool)));
+    connect(m_config, SIGNAL(log_music_changed(bool)), w_log_music, SLOT(setChecked(bool)));
     connect(m_config, SIGNAL(log_is_recording_changed(bool)), w_log_is_recording, SLOT(setChecked(bool)));
     connect(m_config, SIGNAL(effects_volume_changed(int)), w_effects, SLOT(setValue(int)));
     connect(m_config, SIGNAL(system_volume_changed(int)), w_system, SLOT(setValue(int)));
@@ -66,6 +70,7 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     connect(w_log_max_lines, SIGNAL(valueChanged(int)), m_config, SLOT(set_log_max_lines(int)));
     connect(w_log_goes_downward, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_goes_downward(int)));
     connect(w_log_uses_newline, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_uses_newline(int)));
+    connect(w_log_music, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_music(int)));
     connect(w_log_is_recording, SIGNAL(stateChanged(int)), m_config, SLOT(set_log_is_recording(int)));
     connect(w_effects, SIGNAL(valueChanged(int)), m_config, SLOT(set_effects_volume(int)));
     connect(w_effects, SIGNAL(valueChanged(int)), this, SLOT(on_effects_value_changed(int)));
@@ -83,9 +88,10 @@ AOConfigPanel::AOConfigPanel(QWidget *p_parent) : QWidget(p_parent), m_config(ne
     w_callwords->setText(m_config->callwords());
     w_theme->setCurrentText(m_config->theme());
     w_log_max_lines->setValue(m_config->log_max_lines());
-    w_log_is_recording->setChecked(m_config->log_is_recording_enabled());
     w_log_goes_downward->setChecked(m_config->log_goes_downward_enabled());
     w_log_uses_newline->setChecked(m_config->log_uses_newline_enabled());
+    w_log_music->setChecked(m_config->log_music_enabled());
+    w_log_is_recording->setChecked(m_config->log_is_recording_enabled());
     w_effects->setValue(m_config->effects_volume());
     w_system->setValue(m_config->system_volume());
     w_music->setValue(m_config->music_volume());

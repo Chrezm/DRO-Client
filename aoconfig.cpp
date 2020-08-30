@@ -27,6 +27,7 @@ class AOConfigPrivate : public QObject
     int log_max_lines;
     bool log_goes_downward;
     bool log_uses_newline;
+    bool log_music;
     bool log_is_recording;
     int effects_volume;
     int system_volume;
@@ -89,6 +90,13 @@ public slots:
         log_uses_newline = p_enabled;
         invoke_parents("log_uses_newline_changed", Q_ARG(bool, p_enabled));
     }
+    void set_log_music(bool p_enabled)
+    {
+        if (log_music == p_enabled)
+            return;
+        log_music = p_enabled;
+        invoke_parents("log_music_changed", Q_ARG(bool, p_enabled));
+    }
     void set_log_is_recording(bool p_enabled)
     {
         if (log_is_recording == p_enabled)
@@ -146,7 +154,8 @@ public slots:
         log_max_lines     = cfg.value("chatlog_limit", 200).toInt();
         log_goes_downward = cfg.value("chatlog_scrolldown", true).toBool();
         log_uses_newline  = cfg.value("chatlog_newline").toBool();
-        log_is_recording  = cfg.value("enable_logging").toBool();
+        log_music         = cfg.value("music_change_log", true).toBool();
+        log_is_recording  = cfg.value("enable_logging", true).toBool();
         effects_volume    = cfg.value("default_sfx", 50).toInt();
         system_volume     = cfg.value("default_system", 50).toInt();
         music_volume      = cfg.value("default_music", 50).toInt();
@@ -162,6 +171,7 @@ public slots:
         cfg.setValue("chatlog_limit", log_max_lines);
         cfg.setValue("chatlog_scrolldown", log_goes_downward);
         cfg.setValue("chatlog_newline", log_uses_newline);
+        cfg.setValue("music_change_log", log_music);
         cfg.setValue("enable_logging", log_is_recording);
         cfg.setValue("default_sfx", effects_volume);
         cfg.setValue("default_system", system_volume);
@@ -250,6 +260,11 @@ bool AOConfig::log_uses_newline_enabled()
     return d->log_uses_newline;
 }
 
+bool AOConfig::log_music_enabled()
+{
+    return d->log_music;
+}
+
 bool AOConfig::log_is_recording_enabled()
 {
     return d->log_is_recording;
@@ -323,6 +338,16 @@ void AOConfig::set_log_uses_newline(bool p_enabled)
 void AOConfig::set_log_uses_newline(int p_state)
 {
     set_log_uses_newline(p_state == Qt::Checked);
+}
+
+void AOConfig::set_log_music(bool p_enabled)
+{
+    d->set_log_music(p_enabled);
+}
+
+void AOConfig::set_log_music(int p_state)
+{
+    set_log_music(p_state == Qt::Checked);
 }
 
 void AOConfig::set_log_is_recording(bool p_enabled)

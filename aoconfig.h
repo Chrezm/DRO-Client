@@ -23,6 +23,7 @@ public:
     int log_max_lines();
     bool log_goes_downward_enabled();
     bool log_uses_newline_enabled();
+    bool log_music_enabled();
     bool log_is_recording_enabled();
     int effects_volume();
     int system_volume();
@@ -45,6 +46,8 @@ public slots:
     void set_log_goes_downward(int p_state);
     void set_log_uses_newline(bool p_enabled);
     void set_log_uses_newline(int p_state);
+    void set_log_music(bool p_enabled);
+    void set_log_music(int p_state);
     void set_log_is_recording(bool p_enabled);
     void set_log_is_recording(int p_state);
     void set_effects_volume(int p_number);
@@ -63,6 +66,7 @@ signals:
     void log_max_lines_changed(int);
     void log_goes_downward_changed(bool);
     void log_uses_newline_changed(bool);
+    void log_music_changed(bool);
     void log_is_recording_changed(bool);
     void effects_volume_changed(int);
     void system_volume_changed(int);

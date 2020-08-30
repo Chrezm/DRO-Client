@@ -777,7 +777,7 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
   if (is_system_speaking)
     append_system_text(m_chatmessage[MESSAGE]);
   else
-    append_ic_text(f_showname, m_chatmessage[MESSAGE], false);
+    append_ic_text(f_showname, m_chatmessage[MESSAGE], false, false);
 
   if(ao_config->log_is_recording_enabled())
     save_textlog("[" + QTime::currentTime().toString() + "] " + f_showname + ": " + m_chatmessage[MESSAGE]);
@@ -1153,7 +1153,14 @@ void Courtroom::update_ic_log(bool p_reset_log)
         }
         else
         {
-            cursor.insertText(record->name + (m_chatlog_newline ? QString(QChar::LineFeed) : ": "), name_format);
+            QString separator;
+            if (m_chatlog_newline)
+              separator = QString(QChar::LineFeed);
+            else if (!record->music)
+              separator = ": ";
+            else
+              separator = " ";
+            cursor.insertText(record->name + separator, name_format);
             cursor.insertText(record->line + QChar::LineFeed + (m_chatlog_newline ? QChar::LineFeed : QChar()), line_format);
         }
     }
@@ -1225,10 +1232,10 @@ void Courtroom::update_ic_log(bool p_reset_log)
     }
 }
 
-void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system)
+void Courtroom::append_ic_text(QString p_name, QString p_line, bool p_system, bool p_music)
 {
   // record new entry
-  m_ic_records.append(std::make_shared<record_type>(p_name, p_line, "", p_system));
+  m_ic_records.append(std::make_shared<record_type>(p_name, p_line, "", p_system, p_music));
 
   // update
   update_ic_log(false);
@@ -1238,7 +1245,7 @@ void Courtroom::append_system_text(QString p_line)
 {
   if (chatmessage_is_empty)
     return;
-  append_ic_text("", p_line, true);
+  append_ic_text("", p_line, true, false);
 }
 
 void Courtroom::play_preanim()
@@ -1631,30 +1638,32 @@ void Courtroom::handle_song(QStringList *p_contents)
     // If there is an empty showname, the client will use instead the default
     // showname of the character.
     QString f_showname;
-    if (f_contents.size() == 3) {
-        f_showname = f_contents.at(2);
-    } else {
-        f_showname = "";
+    if (f_contents.size() == 3)
+    {
+      f_showname = f_contents.at(2);
+    }
+    else
+    {
+      f_showname = "";
     }
 
     QString str_char;
-    if (f_showname.isEmpty()) {
-        str_char = ao_app->get_showname(char_list.at(n_char).name);
-    } else {
-        str_char = f_showname;
+    if (f_showname.isEmpty())
+    {
+      str_char = ao_app->get_showname(char_list.at(n_char).name);
+    }
+    else
+    {
+      str_char = f_showname;
     }
 
     if (!mute_map.value(n_char))
     {
       if (ao_app->get_music_change_log_enabled())
       {
-        m_music_player->play(f_song);
+        append_ic_text(str_char, "has played a song: " + f_song, false, true);
       }
-      else
-      {
-        append_ic_text(str_char, "has played a song: " + f_song, false);
-        m_music_player->play(f_song);
-      }
+      m_music_player->play(f_song);
     }
   }
 

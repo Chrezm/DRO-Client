@@ -189,7 +189,7 @@ bool AOApplication::get_enable_logging_enabled()
 
 bool AOApplication::get_music_change_log_enabled()
 {
-    return config->get_bool("music_change_log", true);
+    return config->log_music_enabled();
 }
 
 void AOApplication::add_favorite_server(int p_server)

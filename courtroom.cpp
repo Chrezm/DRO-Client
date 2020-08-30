@@ -97,13 +97,8 @@ void Courtroom::enter_courtroom(int p_cid)
 
   set_evidence_page();
 
-  QString side = ao_app->get_char_side(f_char);
-  int index = ui_pos_dropdown->findData(side);
-  if (index != -1 && changed_character)
-    ui_pos_dropdown->setCurrentIndex(index);
-
-  // enable judge mechanics
-  set_judge_enabled(side == "jud");
+  // Refresh character position and dropdown if needed
+  set_character_position(ao_app->get_char_side(f_char), changed_character);
 
   // Update widgets first, then check if everything is valid
   // This will also handle showing the correct shouts, effects and wtce buttons, and cycling
@@ -1692,6 +1687,16 @@ void Courtroom::set_hp_bar(int p_bar, int p_state)
   }
 }
 
+void Courtroom::set_character_position(QString p_pos, bool refresh_dropdown)
+{
+  int index = ui_pos_dropdown->findData(p_pos);
+  if (index != -1 && refresh_dropdown)
+    ui_pos_dropdown->setCurrentIndex(index);
+
+  // enable judge mechanics if appropriate
+  set_judge_enabled(p_pos == "jud");
+}
+
 void Courtroom::mod_called(QString p_ip)
 {
   ui_server_chatlog->append(p_ip);
@@ -1729,11 +1734,6 @@ void Courtroom::on_ooc_return_pressed()
       return;
 
     ao_config->set_username(ooc_name);
-  }
-
-  if (ooc_message.startsWith("/pos"))
-  {
-    set_judge_enabled(ooc_message.startsWith("/pos jud"));
   }
   else if (ooc_message.startsWith("/login"))
     ui_guard->show();
@@ -1882,7 +1882,7 @@ void Courtroom::on_pos_dropdown_changed(int p_index)
 
   set_judge_enabled(f_pos == "jud");
 
-  ao_app->send_server_packet(new AOPacket("CT#" + ui_ooc_chat_name->text() + "#/pos " + f_pos + "#%"));
+  ao_app->send_server_packet(new AOPacket("SP#" + f_pos + "#%"));
 }
 
 void Courtroom::on_mute_list_clicked(QModelIndex p_index)

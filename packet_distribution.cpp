@@ -713,6 +713,14 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     int timer_id = f_contents.at(0).toInt();
     w_courtroom->pause_timer(timer_id);
   }
+  else if (header == "SP")
+  {
+    // Set position
+    if (f_contents.size() != 1)
+      goto end;
+
+    w_courtroom->set_character_position(f_contents.at(0), true);
+  }
 
   end:
 

@@ -97,6 +97,9 @@ public:
     //sets the evidence list member variable to argument
     void set_evidence_list(QVector<evi_type> &p_evi_list);
 
+    //sets the character position
+    void set_character_position(QString p_pos, bool refresh_dropdown);
+
     //called when a DONE#% from the server was received
     void done_received();
 

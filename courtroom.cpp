@@ -1882,7 +1882,10 @@ void Courtroom::on_pos_dropdown_changed(int p_index)
 
   set_judge_enabled(f_pos == "jud");
 
-  ao_app->send_server_packet(new AOPacket("SP#" + f_pos + "#%"));
+  ao_app->send_server_packet(new AOPacket("CT#" + ui_ooc_chat_name->text() + "#/pos " + f_pos + "#%"));
+  // Uncomment later and remove above
+  // Will only work in TSDR 4.3+ servers
+  //ao_app->send_server_packet(new AOPacket("SP#" + f_pos + "#%"));
 }
 
 void Courtroom::on_mute_list_clicked(QModelIndex p_index)

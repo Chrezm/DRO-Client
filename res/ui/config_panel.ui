@@ -59,6 +59,9 @@
          </property>
         </widget>
        </item>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="callwords"/>
+       </item>
        <item row="2" column="1">
         <widget class="Line" name="line">
          <property name="orientation">
@@ -137,7 +140,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="0">
+       <item row="8" column="0">
         <widget class="QLabel" name="chat_tick_interval_label">
          <property name="text">
           <string>Chat tick interval:</string>
@@ -147,7 +150,7 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="8" column="1">
         <widget class="QSpinBox" name="chat_tick_interval">
          <property name="suffix">
           <string> ms</string>
@@ -159,9 +162,6 @@
           <number>999</number>
          </property>
         </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="callwords"/>
        </item>
        <item row="7" column="0">
         <widget class="QLabel" name="server_alerts_label">

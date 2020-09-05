@@ -74,13 +74,15 @@ void Courtroom::enter_courtroom(int p_cid)
 
   current_char = f_char;
 
-  current_emote_page = 0;
-  current_emote = 0;
-
   if (m_cid == -1)
     ui_emotes->hide();
   else
     ui_emotes->show();
+
+  // Tick the pre box if needed and set the emote to 0
+  current_emote_page = 0;
+  current_emote = -1; // Temporarily mark invalid to be able to change to 0
+  select_emote(0); // by doing this, we can also automatically tick always pre if needed
 
   set_emote_page();
   set_emote_dropdown();
@@ -2336,6 +2338,8 @@ void Courtroom::on_sfx_list_clicked()
     // Select the one clicked
     new_sfx->setText("[X] " + new_sfx_name);
     current_sfx_id = ui_sfx_list->currentRow();
+    if (ao_config->always_pre_enabled())
+      ui_pre->setChecked(true);
   }
   // If an sfx was selected before and now a different one is
   else if (old_sfx != new_sfx)
@@ -2344,6 +2348,8 @@ void Courtroom::on_sfx_list_clicked()
     old_sfx->setText(old_sfx_name.mid(4)); // 4 is the length of "[X] "
     new_sfx->setText("[X] " + new_sfx_name);
     current_sfx_id = ui_sfx_list->currentRow();
+    if (ao_config->always_pre_enabled())
+      ui_pre->setChecked(true);
   }
   // If an sfx was selected before and now the same one is
   else

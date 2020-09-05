@@ -85,6 +85,7 @@ void Courtroom::enter_courtroom(int p_cid)
   set_emote_page();
   set_emote_dropdown();
 
+  current_sfx_id = -1;
   current_evidence_page = 0;
   current_evidence = 0;
 
@@ -418,6 +419,7 @@ void Courtroom::list_sfx()
 {
   ui_sfx_list->clear();
   sfx_names.clear();
+  current_sfx_id = -1;
 
   QString f_file = design_ini;
 
@@ -589,25 +591,16 @@ void Courtroom::on_chat_return_pressed()
   else
     packet_contents.append(ao_app->get_emote(current_char, current_emote));
 
-
-
   packet_contents.append(ui_ic_chat_message->text());
-
   packet_contents.append(f_side);
 
-  //  packet_contents.append(ao_app->get_sfx_name(current_char, current_emote));
-  //  packet_contents.append(ui_sfx_search->text());
-
-  int row = ui_sfx_list->currentRow();
-  if (row == -1 || row == 0) // default
+  if (current_sfx_id == -1) // default
     packet_contents.append(ao_app->get_sfx_name(current_char, current_emote));
-  else if (QListWidgetItem *item = ui_sfx_list->item(row)) // selection
+  else  // selection
   {
-    double d_ind = item->statusTip().toDouble();
-    int ind = int(d_ind);
-    qDebug() << ind;
-    packet_contents.append(sfx_names.at(ind));
-    //    packet_contents.append(sfx_names.at(row));
+    // Do note that sfx_names does NOT have the sfx names with [X] due to selection, they are
+    // only "visible" on the text of the individual QListWidgetItem
+    packet_contents.append(sfx_names.at(current_sfx_id));
   }
 
   int f_emote_mod = ao_app->get_emote_mod(current_char, current_emote);
@@ -720,11 +713,11 @@ void Courtroom::handle_chatmessage(QStringList *p_contents)
   chatmessage_is_empty = m_chatmessage[MESSAGE] == " " || m_chatmessage[MESSAGE] == "";
   m_msg_is_first_person = false;
 
-  // reset our ui state
+  // reset our ui state if it is the client who spoke
   if (m_cid == f_char_id && !is_system_speaking)
   {
       ui_ic_chat_message->clear();
-      ui_sfx_list->setCurrentItem(ui_sfx_list->item(0));
+      list_sfx();
 
       m_objection_state = 0;
       reset_shout_buttons();
@@ -1253,7 +1246,6 @@ void Courtroom::play_preanim()
   //all time values in char.inis are multiplied by a constant(time_mod) to get the actual time
   int text_delay = ao_app->get_text_delay(f_char, f_preanim) * time_mod;
   int sfx_delay = m_chatmessage[SFX_DELAY].toInt() * 60;
-
   sfx_delay_timer->start(sfx_delay);
 
   // set state
@@ -1493,7 +1485,6 @@ void Courtroom::play_sfx()
   QString general_path = ao_app->get_base_path() + "/sounds/general/";
 
   QString f_ext = file_exists(general_path + sfx_name, extensions);
-
   m_effects_player->play(sfx_name + f_ext);
 }
 
@@ -2332,7 +2323,37 @@ void Courtroom::closeEvent(QCloseEvent *event)
 
 void Courtroom::on_sfx_list_clicked()
 {
-    ui_ic_chat_message->setFocus();
+  QListWidgetItem* old_sfx = (current_sfx_id == -1) ? nullptr : (ui_sfx_list->item(current_sfx_id));
+  QListWidgetItem* new_sfx = ui_sfx_list->currentItem();
+
+  QString old_sfx_name = (old_sfx) ? (old_sfx->text()) : "";
+  QString new_sfx_name = new_sfx->text();
+
+  // We have three cases to worry about
+  // If no sfx was previously selected
+  if (!old_sfx)
+  {
+    // Select the one clicked
+    new_sfx->setText("[X] " + new_sfx_name);
+    current_sfx_id = ui_sfx_list->currentRow();
+  }
+  // If an sfx was selected before and now a different one is
+  else if (old_sfx != new_sfx)
+  {
+    // Unselect the old one and select the one clicked
+    old_sfx->setText(old_sfx_name.mid(4)); // 4 is the length of "[X] "
+    new_sfx->setText("[X] " + new_sfx_name);
+    current_sfx_id = ui_sfx_list->currentRow();
+  }
+  // If an sfx was selected before and now the same one is
+  else
+  {
+    // Unselect the old one (and thus the new one)
+    new_sfx->setText(new_sfx_name.mid(4));
+    current_sfx_id = -1;
+  }
+
+  ui_ic_chat_message->setFocus();
 }
 
 void Courtroom::on_set_notes_clicked()

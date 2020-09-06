@@ -719,7 +719,7 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     if (f_contents.size() != 1)
       goto end;
 
-    w_courtroom->set_character_position(f_contents.at(0), true);
+    w_courtroom->set_character_position(f_contents.at(0));
   }
 
   end:

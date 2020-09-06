@@ -97,8 +97,13 @@ void Courtroom::enter_courtroom(int p_cid)
 
   set_evidence_page();
 
-  // Refresh character position and dropdown if needed
-  set_character_position(ao_app->get_char_side(f_char), changed_character);
+  // Refresh character position. If the character was changed, use the new position,
+  // otherwise use the old one. Even if the else is useless now (it can be omitted), I am keeping
+  // it in case we expand set_character_position to do more.
+  if (changed_character)
+    set_character_position(ao_app->get_char_side(f_char));
+  else
+    set_character_position(ui_pos_dropdown->currentText());
 
   // Update widgets first, then check if everything is valid
   // This will also handle showing the correct shouts, effects and wtce buttons, and cycling
@@ -1687,10 +1692,10 @@ void Courtroom::set_hp_bar(int p_bar, int p_state)
   }
 }
 
-void Courtroom::set_character_position(QString p_pos, bool refresh_dropdown)
+void Courtroom::set_character_position(QString p_pos)
 {
   int index = ui_pos_dropdown->findData(p_pos);
-  if (index != -1 && refresh_dropdown)
+  if (index != -1)
     ui_pos_dropdown->setCurrentIndex(index);
 
   // enable judge mechanics if appropriate

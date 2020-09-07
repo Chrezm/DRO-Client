@@ -27,7 +27,7 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow() {
 
   // initializing sound device
   BASS_Init(-1, 48000, BASS_DEVICE_LATENCY, 0, NULL);
-  BASS_PluginLoad("bassopus.dll", BASS_UNICODE);
+  load_bass_opus_plugin();
 
   create_widgets();
   connect_widgets();
@@ -253,6 +253,20 @@ void Courtroom::set_char_rpc() {
 
   config_file.close();
 }
+
+#if (defined(_WIN32) || defined(_WIN64))
+void Courtroom::load_bass_opus_plugin() { BASS_PluginLoad("bassopus.dll", 0); }
+#elif (defined(LINUX) || defined(__linux__))
+void Courtroom::load_bass_opus_plugin() {
+  BASS_PluginLoad("libbassopus.so", 0);
+}
+#elif defined __APPLE__
+void Courtroom::load_bass_opus_plugin() {
+  BASS_PluginLoad("libbassopus.dylib", 0);
+}
+#else
+#error This operating system is unsupported for BASS plugins.
+#endif
 
 void Courtroom::set_taken(int n_char, bool p_taken) {
   if (n_char >= char_list.size()) {
@@ -1094,10 +1108,12 @@ void Courtroom::update_ic_log(bool p_reset_log) {
         separator = ": ";
       else
         separator = " ";
+
       cursor.insertText(record->name + separator, name_format);
-      cursor.insertText(record->line + QChar::LineFeed +
-                            (m_chatlog_newline ? QChar::LineFeed : QChar()),
-                        line_format);
+
+      cursor.insertText(record->line + QChar::LineFeed, line_format);
+      if (m_chatlog_newline)
+        cursor.insertText(QString(QChar::LineFeed), line_format);
     }
   }
 

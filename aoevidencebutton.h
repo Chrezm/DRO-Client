@@ -12,12 +12,13 @@ class AOEvidenceButton : public QPushButton
   Q_OBJECT
 
 public:
-  AOEvidenceButton(QWidget *p_parent, AOApplication *p_ao_app, int p_x, int p_y);
+  AOEvidenceButton(QWidget *p_parent, AOApplication *p_ao_app, int p_x,
+                   int p_y);
 
   void reset();
   void set_image(QString p_image);
   void set_theme_image(QString p_image);
-  void set_id(int p_id) {m_id = p_id;}
+  void set_id(int p_id) { m_id = p_id; }
 
   void set_selected(bool p_selected);
 

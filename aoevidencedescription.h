@@ -17,7 +17,6 @@ signals:
 
 private slots:
   void on_enter_pressed();
-
 };
 
 #endif // AOEVIDENCEDESCRIPTION_H

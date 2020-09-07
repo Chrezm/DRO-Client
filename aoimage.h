@@ -1,4 +1,4 @@
-//This class represents a static theme-dependent image
+// This class represents a static theme-dependent image
 
 #ifndef AOIMAGE_H
 #define AOIMAGE_H

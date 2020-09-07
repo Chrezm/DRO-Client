@@ -1,13 +1,11 @@
 #include "aoabstractplayer.h"
 
 AOAbstractPlayer::AOAbstractPlayer(QObject *p_parent, AOApplication *p_ao_app)
-  : QObject(p_parent), ao_app(p_ao_app)
-{}
-
-int AOAbstractPlayer::get_volume()
+    : QObject(p_parent), ao_app(p_ao_app)
 {
-  return m_volume;
 }
+
+int AOAbstractPlayer::get_volume() { return m_volume; }
 
 void AOAbstractPlayer::set_volume(int p_volume)
 {

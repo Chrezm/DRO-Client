@@ -1,5 +1,5 @@
-#include <QFileInfo>
 #include <QDir>
+#include <QFileInfo>
 
 #include "file_functions.h"
 
@@ -12,9 +12,9 @@ bool file_exists(QString file_path)
 
 QString file_exists(QString file_path, QVector<QString> p_exts)
 {
-  for(auto &ext : p_exts)
+  for (auto &ext : p_exts)
   {
-    if(file_exists(file_path + ext))
+    if (file_exists(file_path + ext))
       return ext;
   }
   return "";

@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-#if (defined (_WIN32) || defined (_WIN64))
+#if (defined(_WIN32) || defined(_WIN64))
 #include <windows.h>
 
 DWORD dwVolSerial;
@@ -10,18 +10,18 @@ BOOL bIsRetrieved;
 
 QString get_hdid()
 {
-  bIsRetrieved = GetVolumeInformation(TEXT("C:\\"), NULL, NULL, &dwVolSerial, NULL, NULL, NULL, NULL);
+  bIsRetrieved = GetVolumeInformation(TEXT("C:\\"), NULL, NULL, &dwVolSerial,
+                                      NULL, NULL, NULL, NULL);
 
   if (bIsRetrieved)
     return QString::number(dwVolSerial, 16);
   else
-    //a totally random string
-    //what could possibly go wrong
+    // a totally random string
+    // what could possibly go wrong
     return "gxsps32sa9fnwic92mfbs0";
-
 }
 
-#elif (defined (LINUX) || defined (__linux__))
+#elif (defined(LINUX) || defined(__linux__))
 
 #include <QFile>
 #include <QTextStream>
@@ -34,7 +34,7 @@ QString get_hdid()
 
   QTextStream in(&fstab_file);
 
-  while(!in.atEnd())
+  while (!in.atEnd())
   {
     QString line = in.readLine();
 

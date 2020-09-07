@@ -1,8 +1,8 @@
 #include "aoapplication.h"
 #include "courtroom.h"
 #include "file_functions.h"
-#include <QDir>
 #include <QDebug>
+#include <QDir>
 #include <QStandardPaths>
 
 #ifdef BASE_OVERRIDE
@@ -12,29 +12,29 @@ QString base_path = "";
 
 QString AOApplication::get_base_path()
 {
-    if (base_path == "")
-    {
+  if (base_path == "")
+  {
 #ifdef BASE_OVERRIDE
-  base_path = base_override;
+    base_path = base_override;
 #elif defined(ANDROID)
-        QString sdcard_storage = getenv("SECONDARY_STORAGE");
-        if (dir_exists(sdcard_storage + "/AO2/")){
-            base_path = sdcard_storage + "/AO2/";
-        }else{
-            QString external_storage = getenv("EXTERNAL_STORAGE");
-            base_path = external_storage + "/AO2/";
-        }
+    QString sdcard_storage = getenv("SECONDARY_STORAGE");
+    if (dir_exists(sdcard_storage + "/AO2/"))
+    {
+      base_path = sdcard_storage + "/AO2/";
+    }
+    else
+    {
+      QString external_storage = getenv("EXTERNAL_STORAGE");
+      base_path = external_storage + "/AO2/";
+    }
 #else
-  base_path = QDir::currentPath() + "/base/";
+    base_path = QDir::currentPath() + "/base/";
 #endif
-}
-    return base_path;
+  }
+  return base_path;
 }
 
-QString AOApplication::get_data_path()
-{
-  return get_base_path() + "data/";
-}
+QString AOApplication::get_data_path() { return get_base_path() + "data/"; }
 
 QString AOApplication::get_theme_path()
 {
@@ -43,8 +43,8 @@ QString AOApplication::get_theme_path()
 
 QString AOApplication::get_theme_variant_path()
 {
-  return get_base_path() + "themes/" + get_theme().toLower() + "/variants/" + get_theme_variant()
-      + "/";
+  return get_base_path() + "themes/" + get_theme().toLower() + "/variants/" +
+         get_theme_variant() + "/";
 }
 
 QString AOApplication::get_default_theme_path()
@@ -81,7 +81,8 @@ QString AOApplication::get_background_path()
 {
   if (courtroom_constructed)
     return w_courtroom->get_background_path();
-  //this function being called when the courtroom isn't constructed makes no sense
+  // this function being called when the courtroom isn't constructed makes no
+  // sense
   return "";
 }
 
@@ -92,19 +93,20 @@ QString AOApplication::get_default_background_path()
 
 QString AOApplication::get_evidence_path()
 {
-    QString default_path = "evidence/";
-    QString alt_path = "items/";
-    if (dir_exists(default_path))
-      return get_base_path() + default_path;
-    else if (dir_exists(alt_path))
-      return get_base_path() + alt_path;
-    else
-      return get_base_path() + default_path;
+  QString default_path = "evidence/";
+  QString alt_path = "items/";
+  if (dir_exists(default_path))
+    return get_base_path() + default_path;
+  else if (dir_exists(alt_path))
+    return get_base_path() + alt_path;
+  else
+    return get_base_path() + default_path;
 }
 
 QString Courtroom::get_background_path()
 {
-  return ao_app->get_base_path() + "background/" + current_background.toLower() + "/";
+  return ao_app->get_base_path() + "background/" +
+         current_background.toLower() + "/";
 }
 
 QString Courtroom::get_default_background_path()

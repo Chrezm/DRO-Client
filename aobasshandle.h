@@ -19,14 +19,16 @@ class AOBassHandle : public QObject
 
 public:
   AOBassHandle(QObject *p_parent = nullptr);
-  AOBassHandle(QString p_file, bool p_suicide, QObject *p_parent = nullptr) noexcept(false);
+  AOBassHandle(QString p_file, bool p_suicide,
+               QObject *p_parent = nullptr) noexcept(false);
   ~AOBassHandle();
 
   QString get_file();
   void set_file(QString p_file, bool p_suicide = false) noexcept(false);
 
   // static
-  static void CALLBACK static_sync(HSYNC handle, DWORD channel, DWORD data, void *user);
+  static void CALLBACK static_sync(HSYNC handle, DWORD channel, DWORD data,
+                                   void *user);
 
 public slots:
   void play();
@@ -40,9 +42,9 @@ signals:
 
 private:
   QString m_file;
-  HSTREAM m_handle  = 0;
-  HSYNC   m_sync    = 0;
-  bool    m_suicide = false;
+  HSTREAM m_handle = 0;
+  HSYNC m_sync = 0;
+  bool m_suicide = false;
 
   void sync(DWORD data);
 

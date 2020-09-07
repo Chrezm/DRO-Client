@@ -611,6 +611,11 @@ private:
 
   void set_char_rpc();
 
+  /**
+   * @brief Loads the OS specific bass opus plugin.
+   */
+  void load_bass_opus_plugin();
+
 public slots:
   void objection_done();
   void preanim_done();

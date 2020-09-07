@@ -5,7 +5,6 @@
 
 #include <QLabel>
 
-
 class AOLabel : public QLabel
 {
 public:

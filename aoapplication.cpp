@@ -1,32 +1,37 @@
 #include "aoapplication.h"
 
-#include "lobby.h"
 #include "courtroom.h"
-#include "networkmanager.h"
 #include "debug_functions.h"
+#include "lobby.h"
+#include "networkmanager.h"
 
 #include "aoconfig.h"
 #include "aoconfigpanel.h"
 
 #include <QDebug>
-#include <QRect>
 #include <QDesktopWidget>
+#include <QRect>
 
 AOApplication::AOApplication(int &argc, char **argv) : QApplication(argc, argv)
 {
-    discord = new AttorneyOnline::Discord();
+  discord = new AttorneyOnline::Discord();
 
-    net_manager = new NetworkManager(this);
-    connect(net_manager, SIGNAL(ms_connect_finished(bool, bool)), SLOT(ms_connect_finished(bool, bool)));
+  net_manager = new NetworkManager(this);
+  connect(net_manager, SIGNAL(ms_connect_finished(bool, bool)),
+          SLOT(ms_connect_finished(bool, bool)));
 
-    config = new AOConfig(this);
-    connect(config, SIGNAL(theme_changed(QString)), this, SLOT(on_config_theme_changed()));
-    connect(config, SIGNAL(theme_variant_changed(QString)), this, SLOT(on_config_theme_variant_changed()));
+  config = new AOConfig(this);
+  connect(config, SIGNAL(theme_changed(QString)), this,
+          SLOT(on_config_theme_changed()));
+  connect(config, SIGNAL(theme_variant_changed(QString)), this,
+          SLOT(on_config_theme_variant_changed()));
 
-    config_panel = new AOConfigPanel;
-    connect(config_panel, SIGNAL(reload_theme()), this, SLOT(on_config_reload_theme_requested()));
-    connect(this, SIGNAL(reload_theme()), config_panel, SLOT(on_config_reload_theme_requested()));
-    config_panel->hide();
+  config_panel = new AOConfigPanel;
+  connect(config_panel, SIGNAL(reload_theme()), this,
+          SLOT(on_config_reload_theme_requested()));
+  connect(this, SIGNAL(reload_theme()), config_panel,
+          SLOT(on_config_reload_theme_requested()));
+  config_panel->hide();
 }
 
 AOApplication::~AOApplication()
@@ -49,8 +54,8 @@ void AOApplication::construct_lobby()
   lobby_constructed = true;
 
   QRect screenGeometry = QApplication::desktop()->screenGeometry();
-  int x = (screenGeometry.width()-w_lobby->width()) / 2;
-  int y = (screenGeometry.height()-w_lobby->height()) / 2;
+  int x = (screenGeometry.width() - w_lobby->width()) / 2;
+  int y = (screenGeometry.height() - w_lobby->height()) / 2;
   w_lobby->move(x, y);
 
   discord->state_lobby();
@@ -60,7 +65,7 @@ void AOApplication::construct_lobby()
 
 void AOApplication::destruct_lobby()
 {
-  if(!lobby_constructed)
+  if (!lobby_constructed)
   {
     qDebug() << "W: lobby was attempted destructed when it did not exist";
     return;
@@ -80,61 +85,54 @@ void AOApplication::construct_courtroom()
 
   w_courtroom = new Courtroom(this);
   connect(w_courtroom, SIGNAL(closing()), this, SLOT(on_courtroom_closing()));
-  connect(w_courtroom, SIGNAL(destroyed()), this, SLOT(on_courtroom_destroyed()));
+  connect(w_courtroom, SIGNAL(destroyed()), this,
+          SLOT(on_courtroom_destroyed()));
   courtroom_constructed = true;
 
   QRect screenGeometry = QApplication::desktop()->screenGeometry();
-  int x = (screenGeometry.width()-w_courtroom->width()) / 2;
-  int y = (screenGeometry.height()-w_courtroom->height()) / 2;
+  int x = (screenGeometry.width() - w_courtroom->width()) / 2;
+  int y = (screenGeometry.height() - w_courtroom->height()) / 2;
   w_courtroom->move(x, y);
 }
 
 void AOApplication::destruct_courtroom()
 {
-    // destruct courtroom
-    if (courtroom_constructed)
-    {
-        delete w_courtroom;
-        courtroom_constructed = false;
-    }
-    else
-    {
-        qDebug() << "W: courtroom was attempted destructed when it did not exist";
-    }
+  // destruct courtroom
+  if (courtroom_constructed)
+  {
+    delete w_courtroom;
+    courtroom_constructed = false;
+  }
+  else
+  {
+    qDebug() << "W: courtroom was attempted destructed when it did not exist";
+  }
 
-    // gracefully close our connection to the current server
-    net_manager->disconnect_from_server();
+  // gracefully close our connection to the current server
+  net_manager->disconnect_from_server();
 }
 
 QString AOApplication::get_version_string()
 {
-    return QString::number(RELEASE) + "." + QString::number(MAJOR_VERSION) + "." + QString::number(MINOR_VERSION);
+  return QString::number(RELEASE) + "." + QString::number(MAJOR_VERSION) + "." +
+         QString::number(MINOR_VERSION);
 }
 
 void AOApplication::set_theme_variant(QString p_variant)
 {
-    config->set_theme_variant(p_variant);
-    emit reload_theme();
+  config->set_theme_variant(p_variant);
+  emit reload_theme();
 }
 
-void AOApplication::on_config_theme_changed()
-{
-    emit reload_theme();
-}
+void AOApplication::on_config_theme_changed() { emit reload_theme(); }
 
-void AOApplication::on_config_reload_theme_requested()
-{
-    emit reload_theme();
-}
+void AOApplication::on_config_reload_theme_requested() { emit reload_theme(); }
 
-void AOApplication::on_config_theme_variant_changed()
-{
-    emit reload_theme();
-}
+void AOApplication::on_config_theme_variant_changed() { emit reload_theme(); }
 
 void AOApplication::set_favorite_list()
 {
-    favorite_list = read_serverlist_txt();
+  favorite_list = read_serverlist_txt();
 }
 
 QString AOApplication::get_current_char()
@@ -147,67 +145,64 @@ QString AOApplication::get_current_char()
 
 void AOApplication::toggle_config_panel()
 {
-    config_panel->setVisible(!config_panel->isVisible());
-    if (config_panel->isVisible())
-    {
-        QRect screenGeometry = QApplication::desktop()->screenGeometry();
-        int x = (screenGeometry.width()-config_panel->width()) / 2;
-        int y = (screenGeometry.height()-config_panel->height()) / 2;
-        config_panel->setFocus();
-        config_panel->raise();
-        config_panel->move(x, y);
-    }
+  config_panel->setVisible(!config_panel->isVisible());
+  if (config_panel->isVisible())
+  {
+    QRect screenGeometry = QApplication::desktop()->screenGeometry();
+    int x = (screenGeometry.width() - config_panel->width()) / 2;
+    int y = (screenGeometry.height() - config_panel->height()) / 2;
+    config_panel->setFocus();
+    config_panel->raise();
+    config_panel->move(x, y);
+  }
 }
 
 bool AOApplication::get_always_pre_enabled()
 {
-    return config->always_pre_enabled();
+  return config->always_pre_enabled();
 }
 
 bool AOApplication::get_first_person_enabled()
 {
-    return config->get_bool("first_person", false);
+  return config->get_bool("first_person", false);
 }
 
 bool AOApplication::get_server_alerts_enabled()
 {
-    return config->server_alerts_enabled();
+  return config->server_alerts_enabled();
 }
 
 bool AOApplication::get_chatlog_scrolldown()
 {
-    return config->log_goes_downward_enabled();
+  return config->log_goes_downward_enabled();
 }
 
-int AOApplication::get_chatlog_max_lines()
-{
-    return config->log_max_lines();
-}
+int AOApplication::get_chatlog_max_lines() { return config->log_max_lines(); }
 
 int AOApplication::get_chat_tick_interval()
 {
-    return config->chat_tick_interval();
+  return config->chat_tick_interval();
 }
 
 bool AOApplication::get_chatlog_newline()
 {
-    return config->log_uses_newline_enabled();
+  return config->log_uses_newline_enabled();
 }
 
 bool AOApplication::get_enable_logging_enabled()
 {
-    return config->log_is_recording_enabled();
+  return config->log_is_recording_enabled();
 }
 
 bool AOApplication::get_music_change_log_enabled()
 {
-    return config->log_music_enabled();
+  return config->log_music_enabled();
 }
 
 void AOApplication::add_favorite_server(int p_server)
 {
-    if (p_server < 0 || p_server >= server_list.size())
-        return;
+  if (p_server < 0 || p_server >= server_list.size())
+    return;
 
   server_type fav_server = server_list.at(p_server);
 
@@ -220,11 +215,11 @@ void AOApplication::add_favorite_server(int p_server)
 
 void AOApplication::server_disconnected()
 {
-    if (!courtroom_constructed)
-        return;
-    call_notice("Disconnected from server.");
-    construct_lobby();
-    destruct_courtroom();
+  if (!courtroom_constructed)
+    return;
+  call_notice("Disconnected from server.");
+  construct_lobby();
+  destruct_courtroom();
 }
 
 void AOApplication::loading_cancelled()
@@ -249,26 +244,25 @@ void AOApplication::ms_connect_finished(bool connected, bool will_retry)
     }
     else if (will_retry)
     {
-      w_lobby->append_error("Error connecting to master server. Will try again in "
-                          + QString::number(net_manager->ms_reconnect_delay_ms / 1000.f) + " seconds.");
+      w_lobby->append_error(
+          "Error connecting to master server. Will try again in " +
+          QString::number(net_manager->ms_reconnect_delay_ms / 1000.f) +
+          " seconds.");
     }
     else
     {
       call_error("There was an error connecting to the master server.\n"
-                 "We deploy multiple master servers to mitigate any possible downtime, "
-                 "but the client appears to have exhausted all possible methods of finding "
+                 "We deploy multiple master servers to mitigate any possible "
+                 "downtime, "
+                 "but the client appears to have exhausted all possible "
+                 "methods of finding "
                  "and connecting to one.\n"
-                 "Please check your Internet connection and firewall, and please try again.");
+                 "Please check your Internet connection and firewall, and "
+                 "please try again.");
     }
   }
 }
 
-void AOApplication::on_courtroom_closing()
-{
-    config_panel->hide();
-}
+void AOApplication::on_courtroom_closing() { config_panel->hide(); }
 
-void AOApplication::on_courtroom_destroyed()
-{
-    config_panel->hide();
-}
+void AOApplication::on_courtroom_destroyed() { config_panel->hide(); }

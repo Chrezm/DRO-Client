@@ -6,7 +6,8 @@
 
 AOCharButton::AOCharButton(QWidget *parent, AOApplication *p_ao_app, int x_pos,
                            int y_pos)
-    : QPushButton(parent) {
+    : QPushButton(parent)
+{
   ao_app = p_ao_app;
 
   this->resize(60, 60);
@@ -23,7 +24,8 @@ void AOCharButton::reset() { ui_taken->hide(); }
 
 void AOCharButton::set_taken() { ui_taken->show(); }
 
-void AOCharButton::set_image(QString p_character) {
+void AOCharButton::set_image(QString p_character)
+{
   QString image_path = ao_app->get_character_path(p_character, "char_icon.png");
   // QString legacy_path = ao_app->get_demothings_path() + p_character.toLower()
   // + "_char_icon.png"; QString alt_path = ao_app->get_demothings_path() +
@@ -38,19 +40,22 @@ void AOCharButton::set_image(QString p_character) {
   //  // ninja optimization
   //  QFile::copy(legacy_path, image_path);
   //}
-  else {
+  else
+  {
     this->setStyleSheet("border-image:url()");
     this->setText(p_character);
   }
 }
 
-void AOCharButton::enterEvent(QEvent *e) {
+void AOCharButton::enterEvent(QEvent *e)
+{
   setFlat(false);
   QPushButton::enterEvent(e);
   emit mouse_entered(this);
 }
 
-void AOCharButton::leaveEvent(QEvent *e) {
+void AOCharButton::leaveEvent(QEvent *e)
+{
   QPushButton::leaveEvent(e);
   emit mouse_left();
 }

@@ -20,15 +20,20 @@
 #endif
 QString base_path = "";
 
-QString AOApplication::get_base_path() {
-  if (base_path == "") {
+QString AOApplication::get_base_path()
+{
+  if (base_path == "")
+  {
 #ifdef BASE_OVERRIDE
     base_path = base_override;
 #elif defined(ANDROID)
     QString sdcard_storage = getenv("SECONDARY_STORAGE");
-    if (dir_exists(sdcard_storage + "/AO2/")) {
+    if (dir_exists(sdcard_storage + "/AO2/"))
+    {
       base_path = sdcard_storage + "/AO2/";
-    } else {
+    }
+    else
+    {
       QString external_storage = getenv("EXTERNAL_STORAGE");
       base_path = external_storage + "/AO2/";
     }
@@ -41,24 +46,28 @@ QString AOApplication::get_base_path() {
 
 QString AOApplication::get_data_path() { return get_base_path() + "data/"; }
 
-QString AOApplication::get_theme_path(QString p_file) {
+QString AOApplication::get_theme_path(QString p_file)
+{
   QString path = get_base_path() + "themes/" + get_theme() + "/" + p_file;
   return get_case_sensitive_path(path);
 }
 
-QString AOApplication::get_theme_variant_path(QString p_file) {
+QString AOApplication::get_theme_variant_path(QString p_file)
+{
   QString path = get_base_path() + "themes/" + get_theme().toLower() +
                  "/variants/" + get_theme_variant() + "/" + p_file;
   return get_case_sensitive_path(path);
 }
 
-QString AOApplication::get_default_theme_path(QString p_file) {
+QString AOApplication::get_default_theme_path(QString p_file)
+{
   QString path = get_base_path() + "themes/default/" + p_file;
 
   return get_case_sensitive_path(path);
 }
 
-QString AOApplication::get_character_path(QString p_character, QString p_file) {
+QString AOApplication::get_character_path(QString p_character, QString p_file)
+{
   QString path = get_base_path() + "characters/" + p_character + "/" + p_file;
   return get_case_sensitive_path(path);
 }
@@ -74,18 +83,22 @@ QString AOApplication::get_character_path(QString p_character, QString p_file) {
 //    return get_base_path() + default_path;
 //}
 
-QString AOApplication::get_sounds_path(QString p_file) {
+QString AOApplication::get_sounds_path(QString p_file)
+{
   QString path = get_base_path() + "sounds/general/" + p_file;
   return get_case_sensitive_path(path);
 }
 
-QString AOApplication::get_music_path(QString p_song) {
+QString AOApplication::get_music_path(QString p_song)
+{
   QString path = get_base_path() + "sounds/music/" + p_song;
   return get_case_sensitive_path(path);
 }
 
-QString AOApplication::get_background_path(QString p_file) {
-  if (courtroom_constructed) {
+QString AOApplication::get_background_path(QString p_file)
+{
+  if (courtroom_constructed)
+  {
     return get_case_sensitive_path(w_courtroom->get_background_path(p_file));
   }
   // this function being called when the courtroom isn't constructed makes no
@@ -93,12 +106,14 @@ QString AOApplication::get_background_path(QString p_file) {
   return "";
 }
 
-QString AOApplication::get_default_background_path(QString p_file) {
+QString AOApplication::get_default_background_path(QString p_file)
+{
   QString path = get_base_path() + "background/gs4/" + p_file;
   return get_case_sensitive_path(path);
 }
 
-QString AOApplication::get_evidence_path(QString p_file) {
+QString AOApplication::get_evidence_path(QString p_file)
+{
   QString default_path =
       get_case_sensitive_path(get_base_path() + "evidence/" + p_file);
   QString alt_path =
@@ -110,14 +125,17 @@ QString AOApplication::get_evidence_path(QString p_file) {
     return alt_path;
 }
 
-QString Courtroom::get_background_path(QString p_file) {
+QString Courtroom::get_background_path(QString p_file)
+{
   return ao_app->get_base_path() + "background/" + current_background + "/" +
          p_file;
 }
 
 QString AOApplication::get_file_extension(QString p_file,
-                                          QVector<QString> p_exts) {
-  for (auto &ext : p_exts) {
+                                          QVector<QString> p_exts)
+{
+  for (auto &ext : p_exts)
+  {
     if (file_exists(get_case_sensitive_path(p_file + ext)))
       return ext;
   }
@@ -125,11 +143,13 @@ QString AOApplication::get_file_extension(QString p_file,
 }
 
 #ifndef CASE_SENSITIVE_FILESYSTEM
-QString AOApplication::get_case_sensitive_path(QString p_file) {
+QString AOApplication::get_case_sensitive_path(QString p_file)
+{
   return p_file;
 }
 #else
-QString AOApplication::get_case_sensitive_path(QString p_file) {
+QString AOApplication::get_case_sensitive_path(QString p_file)
+{
   // First, check to see if the file already exists as it is.
   if (QFile(p_file).exists())
     return p_file;

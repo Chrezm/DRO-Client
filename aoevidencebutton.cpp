@@ -4,7 +4,9 @@
 
 #include <QDebug>
 
-AOEvidenceButton::AOEvidenceButton(QWidget *p_parent, AOApplication *p_ao_app, int p_x, int p_y) : QPushButton(p_parent)
+AOEvidenceButton::AOEvidenceButton(QWidget *p_parent, AOApplication *p_ao_app,
+                                   int p_x, int p_y)
+    : QPushButton(p_parent)
 {
   ao_app = p_ao_app;
 
@@ -66,10 +68,7 @@ void AOEvidenceButton::set_selected(bool p_selected)
     ui_selected->hide();
 }
 
-void AOEvidenceButton::on_clicked()
-{
-  evidence_clicked(m_id);
-}
+void AOEvidenceButton::on_clicked() { evidence_clicked(m_id); }
 
 void AOEvidenceButton::mouseDoubleClickEvent(QMouseEvent *e)
 {
@@ -79,19 +78,19 @@ void AOEvidenceButton::mouseDoubleClickEvent(QMouseEvent *e)
 
 void AOEvidenceButton::dragLeaveEvent(QMouseEvent *e)
 {
-  //QWidget::dragLeaveEvent(e);
+  // QWidget::dragLeaveEvent(e);
 
   qDebug() << "drag leave event";
 }
 
 void AOEvidenceButton::dragEnterEvent(QMouseEvent *e)
 {
-  //QWidget::dragEnterEvent(e);
+  // QWidget::dragEnterEvent(e);
 
   qDebug() << "drag enter event";
 }
 
-void AOEvidenceButton::enterEvent(QEvent * e)
+void AOEvidenceButton::enterEvent(QEvent *e)
 {
   ui_selector->show();
 
@@ -101,7 +100,7 @@ void AOEvidenceButton::enterEvent(QEvent * e)
   QPushButton::enterEvent(e);
 }
 
-void AOEvidenceButton::leaveEvent(QEvent * e)
+void AOEvidenceButton::leaveEvent(QEvent *e)
 {
   ui_selector->hide();
 

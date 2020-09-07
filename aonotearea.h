@@ -2,13 +2,13 @@
 #define AONOTEAREA_HPP
 
 #include <QLabel>
-#include <QScrollArea>
 #include <QListWidget>
-#include <QVector>
+#include <QScrollArea>
 #include <QVBoxLayout>
+#include <QVector>
 #include <aobutton.h>
-#include <aonotepicker.h>
 #include <aoimage.h>
+#include <aonotepicker.h>
 
 #include "aoapplication.h"
 
@@ -25,7 +25,6 @@ public:
 private:
   AOApplication *ao_app;
   void set_layout();
-
 };
 
 #endif // AONOTEAREA_HPP

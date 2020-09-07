@@ -25,7 +25,7 @@ signals:
   void new_volume(int p_volume);
 
 protected:
-  AOApplication* ao_app = nullptr;
+  AOApplication *ao_app = nullptr;
 
 private:
   int m_volume = 0;

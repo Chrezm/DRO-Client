@@ -46,7 +46,8 @@
 
 class AOApplication;
 
-class Courtroom : public QMainWindow {
+class Courtroom : public QMainWindow
+{
   Q_OBJECT
 public:
   explicit Courtroom(AOApplication *p_ao_app);
@@ -58,8 +59,10 @@ public:
   void clear_music() { music_list.clear(); }
   void clear_areas() { area_list.clear(); }
 
-  void fix_last_area() {
-    if (area_list.size() > 0) {
+  void fix_last_area()
+  {
+    if (area_list.size() > 0)
+    {
       QString malplaced = area_list.last();
       area_list.removeLast();
       append_music(malplaced);
@@ -787,7 +790,8 @@ protected:
 
 template <typename T>
 void Courtroom::insert_widget_names(QVector<QString> &p_widget_names,
-                                    QVector<T *> &p_widgets) {
+                                    QVector<T *> &p_widgets)
+{
   QVector<QWidget *> widgets;
 
   for (QWidget *widget : p_widgets)

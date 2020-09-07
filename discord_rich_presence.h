@@ -1,18 +1,23 @@
 #ifndef DISCORD_RICH_PRESENCE_H
 #define DISCORD_RICH_PRESENCE_H
 
-#include <string>
 #include <discord-rpc.h>
+#include <string>
 
-namespace AttorneyOnline {
+namespace AttorneyOnline
+{
 
 class Discord
 {
 private:
-  const char* APPLICATION_ID[2] = { "538080629535801347" , "538080629535801347", }; // insert second one here blah blah
+  const char *APPLICATION_ID[2] = {
+      "538080629535801347",
+      "538080629535801347",
+  }; // insert second one here blah blah
   int m_index = 0;
   std::string server_name, server_id;
   int64_t timestamp;
+
 public:
   Discord();
   ~Discord();
@@ -26,5 +31,5 @@ public:
   void toggle(int p_index);
 };
 
-}
+} // namespace AttorneyOnline
 #endif // DISCORD_RICH_PRESENCE_H

@@ -4,13 +4,11 @@
 
 #include <QDebug>
 
-AOImage::AOImage(QWidget *parent, AOApplication *p_ao_app) : QLabel(parent)
-{
+AOImage::AOImage(QWidget *parent, AOApplication *p_ao_app) : QLabel(parent) {
   ao_app = p_ao_app;
 }
 
-void AOImage::set_image(QString p_image)
-{
+void AOImage::set_image(QString p_image) {
   QString f_path = ao_app->get_image_path(p_image);
   AOPixmap f_pixmap(f_path);
   this->setPixmap(f_pixmap.scale_to_size(size()));
@@ -22,9 +20,8 @@ void AOImage::set_image(QString p_image)
     image_path = "";
 }
 
-void AOImage::set_image_from_path(QString p_path)
-{
-  QString default_path = ao_app->get_default_theme_path() + "chatmed.png";
+void AOImage::set_image_from_path(QString p_path) {
+  QString default_path = ao_app->get_default_theme_path("chatmed.png");
 
   QString final_path;
 

@@ -14,10 +14,10 @@ AOScene::AOScene(QWidget *parent, AOApplication *p_ao_app) : QLabel(parent), ao_
 
 void AOScene::set_image(QString p_image)
 {
-    QString target_path = ao_app->get_default_background_path() + p_image;
+    QString target_path = ao_app->get_default_background_path(p_image);
 
     // background specific path
-    QString background_path = ao_app->get_background_path() + p_image;
+    QString background_path = ao_app->get_background_path(p_image);
 
     for (auto &ext : QVector<QString>{".webp", ".apng", ".gif", ".png"})
     {

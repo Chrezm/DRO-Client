@@ -15,311 +15,346 @@ class Courtroom;
 class AOConfig;
 class AOConfigPanel;
 
-class AOApplication : public QApplication
-{
-    Q_OBJECT
+class AOApplication : public QApplication {
+  Q_OBJECT
 
 public:
-    AOApplication(int &argc, char **argv);
-    ~AOApplication();
+  AOApplication(int &argc, char **argv);
+  ~AOApplication();
+
+  NetworkManager *net_manager = nullptr;
+  Lobby *w_lobby = nullptr;
+  Courtroom *w_courtroom = nullptr;
+  AttorneyOnline::Discord *discord = nullptr;
+  AOConfig *config = nullptr;
+  AOConfigPanel *config_panel = nullptr;
+
+  bool lobby_constructed = false;
+  bool courtroom_constructed = false;
+
+  void construct_lobby();
+  void destruct_lobby();
+
+  void construct_courtroom();
+  void destruct_courtroom();
+
+  void ms_packet_received(AOPacket *p_packet);
+  void server_packet_received(AOPacket *p_packet);
+
+  void send_ms_packet(AOPacket *p_packet);
+  void send_server_packet(AOPacket *p_packet, bool encoded = true);
+
+  /////////////////server metadata//////////////////
+
+  unsigned int s_decryptor = 5;
+  bool encryption_needed = true;
+
+  bool yellow_text_enabled = false;
+  bool prezoom_enabled = false;
+  bool flipping_enabled = false;
+  bool custom_objection_enabled = false;
+  bool improved_loading_enabled = false;
+  bool desk_mod_enabled = false;
+  bool evidence_enabled = false;
+
+  ///////////////loading info///////////////////
+
+  // player number, it's hardly used but might be needed for some old servers
+  int s_pv = 0;
+
+  QString server_software = "";
+
+  int char_list_size = 0;
+  int loaded_chars = 0;
+  int evidence_list_size = 0;
+  int loaded_evidence = 0;
+  int music_list_size = 0;
+  int loaded_music = 0;
+
+  bool courtroom_loaded = false;
+
+  //////////////////versioning///////////////
+
+  int get_release() { return RELEASE; }
+  int get_major_version() { return MAJOR_VERSION; }
+  int get_minor_version() { return MINOR_VERSION; }
+  QString get_version_string();
+
+  ///////////////////////////////////////////
+
+  void set_favorite_list();
+  QVector<server_type> &get_favorite_list() { return favorite_list; }
+  void add_favorite_server(int p_server);
+
+  void set_server_list();
+  QVector<server_type> &get_server_list() { return server_list; }
+
+  // reads the theme from config.ini and sets it accordingly
+  void set_theme_name(QString p_name);
+
+  // Returns the character the player has currently selected
+  QString get_current_char();
+
+  // implementation in path_functions.cpp
+  QString get_base_path();
+  QString get_data_path();
+  QString get_theme_path(QString p_file);
+  QString get_theme_variant_path(QString p_file);
+  QString get_default_theme_path(QString p_file);
+  QString get_character_path(QString p_character, QString p_file);
+  // QString get_demothings_path();
+  QString get_sounds_path(QString p_file);
+  QString get_music_path(QString p_song);
+  QString get_background_path(QString p_file);
+  QString get_default_background_path(QString p_file);
+  QString get_evidence_path(QString p_file);
 
-    NetworkManager *net_manager      = nullptr;
-    Lobby *w_lobby                   = nullptr;
-    Courtroom *w_courtroom           = nullptr;
-    AttorneyOnline::Discord *discord = nullptr;
-    AOConfig *config                 = nullptr;
-    AOConfigPanel *config_panel      = nullptr;
+  /**
+   * @brief Searches for a file with any of the given extensions, and returns
+   * the first extension that actually matches to an existing file.
+   *
+   * @param p_file The path to the file, without extension.
+   * @param p_exts The potential extensions the file could have.
+   *
+   * @return The first extension with which a file exists, or an empty string,
+   * if not one does.
+   */
+  QString get_file_extension(QString p_file, QVector<QString> p_exts);
 
-    bool lobby_constructed     = false;
-    bool courtroom_constructed = false;
+  /**
+   * @brief Returns the 'correct' path for the file given as the parameter by
+   * trying to match the case of the actual path.
+   *
+   * @details This function is mostly used on case-sensitive file systems, like
+   * ext4, generally used on Linux. On FAT, there is no difference between
+   * "file" and "FILE". On ext4, those are two different files. This results in
+   * assets that are detected correctly on Windows not being detected on Linux.
+   *
+   * For this reason, the implementation of this function is system-dependent:
+   * on case-insensitive systems, it just returns the parameter itself.
+   *
+   * @param p_file The path whose casing must be checked against the actual
+   * directory structure.
+   *
+   * @return The parameter path with fixed casing.
+   */
+  QString get_case_sensitive_path(QString p_file);
 
-    void construct_lobby();
-    void destruct_lobby();
+  ////// Functions for accessing the config panel //////
 
-    void construct_courtroom();
-    void destruct_courtroom();
+  void toggle_config_panel();
 
-    void ms_packet_received(AOPacket *p_packet);
-    void server_packet_received(AOPacket *p_packet);
+  ////// Functions for reading and writing files //////
+  // Implementations file_functions.cpp
 
-    void send_ms_packet(AOPacket *p_packet);
-    void send_server_packet(AOPacket *p_packet, bool encoded = true);
+  // Returns text from note file
+  QString read_note(QString filename);
 
-    /////////////////server metadata//////////////////
+  // Reads the theme from config.ini and loads it into the current_theme
+  // variable
+  QString get_theme();
 
-    unsigned int s_decryptor = 5;
-    bool encryption_needed   = true;
+  // Reads the theme variant from config.ini and loads it into the current theme
+  // variant variable
+  QString get_theme_variant();
 
-    bool yellow_text_enabled      = false;
-    bool prezoom_enabled          = false;
-    bool flipping_enabled         = false;
-    bool custom_objection_enabled = false;
-    bool improved_loading_enabled = false;
-    bool desk_mod_enabled         = false;
-    bool evidence_enabled         = false;
+  // Returns the blip rate from config.ini
+  int read_blip_rate();
 
-    ///////////////loading info///////////////////
+  // returns whatever we want newlines or ':' to be appended in front of names
+  // in the ic chat log
+  bool read_chatlog_newline();
 
-    //player number, it's hardly used but might be needed for some old servers
-    int s_pv = 0;
+  // returns the user name
+  QString get_username();
 
-    QString server_software = "";
+  // returns a list of call words
+  QStringList get_callwords();
 
-    int char_list_size     = 0;
-    int loaded_chars       = 0;
-    int evidence_list_size = 0;
-    int loaded_evidence    = 0;
-    int music_list_size    = 0;
-    int loaded_music       = 0;
+  // returns whatever preanimations should always play or not
+  bool get_always_pre_enabled();
 
-    bool courtroom_loaded = false;
+  // returns whatever the client should simulate first person dialog
+  bool get_first_person_enabled();
 
-    //////////////////versioning///////////////
+  // returns whether server alerts (ones that trigger a client alert other than
+  // callwords) should actually tigger a server alert or not
+  bool get_server_alerts_enabled();
 
-    int get_release() { return RELEASE; }
-    int get_major_version() { return MAJOR_VERSION; }
-    int get_minor_version() { return MINOR_VERSION; }
-    QString get_version_string();
+  // returns if chatlog goes downward
+  bool get_chatlog_scrolldown();
 
-    ///////////////////////////////////////////
+  int get_chatlog_max_lines();
 
-    void set_favorite_list();
-    QVector<server_type> &get_favorite_list() { return favorite_list; }
-    void add_favorite_server(int p_server);
+  int get_chat_tick_interval();
 
-    void set_server_list();
-    QVector<server_type> &get_server_list() { return server_list; }
+  bool get_chatlog_newline();
 
-    //reads the theme from config.ini and sets it accordingly
-    void set_theme_name(QString p_name);
+  bool get_enable_logging_enabled();
 
-    //Returns the character the player has currently selected
-    QString get_current_char();
+  // Returns the value of default_sfx in config.ini
+  int get_default_sfx();
 
-    //implementation in path_functions.cpp
-    QString get_base_path();
-    QString get_data_path();
-    QString get_theme_path();
-    QString get_theme_variant_path();
-    QString get_default_theme_path();
-    QString get_character_path(QString p_character);
-    QString get_demothings_path();
-    QString get_sounds_path();
-    QString get_music_path(QString p_song);
-    QString get_background_path();
-    QString get_default_background_path();
-    QString get_evidence_path();
+  // Returns the value of default_music in config.ini
+  int get_default_music();
 
-    ////// Functions for accessing the config panel //////
+  // returns whatever music is logged within the chatlog
+  bool get_music_change_log_enabled();
 
-    void toggle_config_panel();
+  // Returns the value of default_blip in config.ini
+  int get_default_blip();
 
-    ////// Functions for reading and writing files //////
-    // Implementations file_functions.cpp
+  // Returns true if blank blips is enabled in config.ini and false otherwise
+  bool get_blank_blip();
 
-    //Returns text from note file
-    QString read_note(QString filename);
+  // TODO document what this does
+  QStringList get_sfx_list();
 
-    //Reads the theme from config.ini and loads it into the current_theme variable
-    QString get_theme();
+  // Appends the argument string to serverlist.txt
+  void write_to_serverlist_txt(QString p_line);
 
-    //Reads the theme variant from config.ini and loads it into the current theme variant variable
-    QString get_theme_variant();
+  // Writes to note file
+  void write_note(QString p_text, QString filename);
 
-    //Returns the blip rate from config.ini
-    int read_blip_rate();
+  // appends to note file
+  void append_note(QString p_line, QString filename);
 
-    // returns whatever we want newlines or ':' to be appended in front of names
-    // in the ic chat log
-    bool read_chatlog_newline();
+  // Overwrites config.ini with new theme
+  void write_theme(QString theme);
 
-    // returns the user name
-    QString get_username();
+  // Set the theme variant
+  void set_theme_variant(QString m_theme_variant);
 
-    // returns a list of call words
-    QStringList get_callwords();
+  // Returns the contents of serverlist.txt
+  QVector<server_type> read_serverlist_txt();
 
-    // returns whatever preanimations should always play or not
-    bool get_always_pre_enabled();
+  // Returns the value of p_identifier in the design.ini file in p_design_path
+  QString read_design_ini(QString p_identifier, QString p_design_path);
 
-    // returns whatever the client should simulate first person dialog
-    bool get_first_person_enabled();
+  // Returns the value of p_identifier from p_file in either a theme variant
+  // subfolder, a theme folder, or default theme folder
+  QString read_theme_ini(QString p_identifier, QString p_file);
 
-    // returns whether server alerts (ones that trigger a client alert other than callwords)
-    // should actually tigger a server alert or not
-    bool get_server_alerts_enabled();
+  // Helper function for returning an int in a file inside of the theme folder
+  int get_design_ini_value(QString p_identifier, QString p_design_file);
 
-    // returns if chatlog goes downward
-    bool get_chatlog_scrolldown();
+  // Returns the coordinates of widget with p_identifier from p_file
+  QPoint get_button_spacing(QString p_identifier, QString p_file);
 
-    int get_chatlog_max_lines();
+  // Returns the dimensions of widget with specified identifier from p_file
+  pos_size_type get_element_dimensions(QString p_identifier, QString p_file);
 
-    int get_chat_tick_interval();
+  // Returns the value of font property p_identifier from p_file
+  int get_font_property(QString p_identifier, QString p_file);
 
-    bool get_chatlog_newline();
+  // Returns the name of the font with p_identifier from p_file
+  QString get_font_name(QString p_identifier, QString p_file);
 
-    bool get_enable_logging_enabled();
+  // Returns the color with p_identifier from p_file
+  QColor get_color(QString p_identifier, QString p_file);
 
-    //Returns the value of default_sfx in config.ini
-    int get_default_sfx();
+  // Returns the sfx with p_identifier from sounds.ini in the current theme path
+  QString get_sfx(QString p_identifier);
 
-    //Returns the value of default_music in config.ini
-    int get_default_music();
+  // Returns the value of p_search_line within target_tag and terminator_tag
+  QString read_char_ini(QString p_char, QString p_search_line,
+                        QString target_tag, QString terminator_tag);
 
-    // returns whatever music is logged within the chatlog
-    bool get_music_change_log_enabled();
+  // Returns the text between target_tag and terminator_tag in p_file
+  QString get_stylesheet(QString target_tag, QString p_file);
 
-    //Returns the value of default_blip in config.ini
-    int get_default_blip();
+  // Returns string list (characters, color) from p_file
+  QVector<QStringList> get_highlight_color();
 
-    //Returns true if blank blips is enabled in config.ini and false otherwise
-    bool get_blank_blip();
+  // Returns special button on cc_config according to index
+  QString get_spbutton(QString p_tag, int index);
 
-    // TODO document what this does
-    QStringList get_sfx_list();
+  // Returns effect on cc_config according to index
+  QStringList get_effect(int index);
 
-    //Appends the argument string to serverlist.txt
-    void write_to_serverlist_txt(QString p_line);
+  // Returns wtce on cc_config according to index
+  QStringList get_wtce(int index);
 
-    //Writes to note file
-    void write_note(QString p_text, QString filename);
+  // Returns the side of the p_char character from that characters ini file
+  QString get_char_side(QString p_char);
 
-    //appends to note file
-    void append_note(QString p_line, QString filename);
+  // Returns the showname from the ini of p_char
+  QString get_showname(QString p_char);
 
-    //Overwrites config.ini with new theme
-    void write_theme(QString theme);
+  // Returns showname from showname.ini
+  QString read_showname(QString p_char);
 
-    //Set the theme variant
-    void set_theme_variant(QString m_theme_variant);
+  // Returns the value of chat from the specific p_char's ini file
+  QString get_chat(QString p_char);
 
-    //Returns the contents of serverlist.txt
-    QVector<server_type> read_serverlist_txt();
+  // Returns the value of shouts from the specified p_char's ini file
+  QString get_char_shouts(QString p_char);
 
-    //Returns the value of p_identifier in the design.ini file in p_design_path
-    QString read_design_ini(QString p_identifier, QString p_design_path);
+  // Not in use
+  int get_text_delay(QString p_char, QString p_emote);
 
-    //Returns the value of p_identifier from p_file in either a theme variant subfolder, a theme folder, or default theme folder
-    QString read_theme_ini(QString p_identifier, QString p_file);
+  // Returns the name of p_char
+  QString get_char_name(QString p_char);
 
-    //Helper function for returning an int in a file inside of the theme folder
-    int get_design_ini_value(QString p_identifier, QString p_design_file);
+  // Returns the total amount of emotes of p_char
+  int get_emote_number(QString p_char);
 
-    //Returns the coordinates of widget with p_identifier from p_file
-    QPoint get_button_spacing(QString p_identifier, QString p_file);
+  // Returns the emote comment of p_char's p_emote
+  QString get_emote_comment(QString p_char, int p_emote);
 
-    //Returns the dimensions of widget with specified identifier from p_file
-    pos_size_type get_element_dimensions(QString p_identifier, QString p_file);
+  // Returns the base name of p_char's p_emote
+  QString get_emote(QString p_char, int p_emote);
 
-    //Returns the value of font property p_identifier from p_file
-    int get_font_property(QString p_identifier, QString p_file);
+  // Returns the preanimation name of p_char's p_emote
+  QString get_pre_emote(QString p_char, int p_emote);
 
-    //Returns the name of the font with p_identifier from p_file
-    QString get_font_name(QString p_identifier, QString p_file);
+  // Returns x,y offset for effect p_effect
+  QStringList get_effect_offset(QString p_char, int p_effect);
 
-    //Returns the color with p_identifier from p_file
-    QColor get_color(QString p_identifier, QString p_file);
+  // Returns overlay at p_effect in char_path/overlay
+  QStringList get_overlay(QString p_char, int p_effect);
 
-    //Returns the sfx with p_identifier from sounds.ini in the current theme path
-    QString get_sfx(QString p_identifier);
+  // Returns the sfx of p_char's p_emote
+  QString get_sfx_name(QString p_char, int p_emote);
 
-    //Returns the value of p_search_line within target_tag and terminator_tag
-    QString read_char_ini(QString p_char, QString p_search_line, QString target_tag, QString terminator_tag);
+  // Not in use
+  int get_sfx_delay(QString p_char, int p_emote);
 
-    //Returns the text between target_tag and terminator_tag in p_file
-    QString get_stylesheet(QString target_tag, QString p_file);
+  // Returns the modifier for p_char's p_emote
+  int get_emote_mod(QString p_char, int p_emote);
 
-    //Returns string list (characters, color) from p_file
-    QVector<QStringList> get_highlight_color();
+  // Returns the desk modifier for p_char's p_emote
+  int get_desk_mod(QString p_char, int p_emote);
 
-    //Returns special button on cc_config according to index
-    QString get_spbutton(QString p_tag, int index);
+  // Returns p_char's gender
+  QString get_gender(QString p_char);
 
-    //Returns effect on cc_config according to index
-    QStringList get_effect(int index);
-
-    //Returns wtce on cc_config according to index
-    QStringList get_wtce(int index);
-
-    //Returns the side of the p_char character from that characters ini file
-    QString get_char_side(QString p_char);
-
-    //Returns the showname from the ini of p_char
-    QString get_showname(QString p_char);
-
-    //Returns showname from showname.ini
-    QString read_showname(QString p_char);
-
-    //Returns the value of chat from the specific p_char's ini file
-    QString get_chat(QString p_char);
-
-    //Returns the value of shouts from the specified p_char's ini file
-    QString get_char_shouts(QString p_char);
-
-    //Not in use
-    int get_text_delay(QString p_char, QString p_emote);
-
-    //Returns the name of p_char
-    QString get_char_name(QString p_char);
-
-    //Returns the total amount of emotes of p_char
-    int get_emote_number(QString p_char);
-
-    //Returns the emote comment of p_char's p_emote
-    QString get_emote_comment(QString p_char, int p_emote);
-
-    //Returns the base name of p_char's p_emote
-    QString get_emote(QString p_char, int p_emote);
-
-    //Returns the preanimation name of p_char's p_emote
-    QString get_pre_emote(QString p_char, int p_emote);
-
-    //Returns x,y offset for effect p_effect
-    QStringList get_effect_offset(QString p_char, int p_effect);
-
-    //Returns overlay at p_effect in char_path/overlay
-    QStringList get_overlay(QString p_char, int p_effect);
-
-    //Returns the sfx of p_char's p_emote
-    QString get_sfx_name(QString p_char, int p_emote);
-
-    //Not in use
-    int get_sfx_delay(QString p_char, int p_emote);
-
-    //Returns the modifier for p_char's p_emote
-    int get_emote_mod(QString p_char, int p_emote);
-
-    //Returns the desk modifier for p_char's p_emote
-    int get_desk_mod(QString p_char, int p_emote);
-
-    //Returns p_char's gender
-    QString get_gender(QString p_char);
-
-    //Get the location of p_image, which is either in a theme variant subfolder, a theme folder, or default theme folder
-    QString get_image_path(QString p_image);
+  // Get the location of p_image, which is either in a theme variant subfolder,
+  // a theme folder, or default theme folder
+  QString get_image_path(QString p_image);
 
 signals:
-    void reload_theme();
+  void reload_theme();
 
 private:
-    const int RELEASE       = 2;
-    const int MAJOR_VERSION = 4;
-    const int MINOR_VERSION = 8;
+  const int RELEASE = 2;
+  const int MAJOR_VERSION = 4;
+  const int MINOR_VERSION = 8;
 
-    QVector<server_type> server_list;
-    QVector<server_type> favorite_list;
+  QVector<server_type> server_list;
+  QVector<server_type> favorite_list;
 
 private slots:
-    void ms_connect_finished(bool connected, bool will_retry);
-    void on_courtroom_closing();
-    void on_courtroom_destroyed();
-    void on_config_theme_changed();
-    void on_config_reload_theme_requested();
-    void on_config_theme_variant_changed();
+  void ms_connect_finished(bool connected, bool will_retry);
+  void on_courtroom_closing();
+  void on_courtroom_destroyed();
+  void on_config_theme_changed();
+  void on_config_reload_theme_requested();
+  void on_config_theme_variant_changed();
 
 public slots:
-    void server_disconnected();
-    void loading_cancelled();
+  void server_disconnected();
+  void loading_cancelled();
 };
 
 #endif // AOAPPLICATION_H

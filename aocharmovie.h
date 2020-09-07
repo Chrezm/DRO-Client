@@ -1,8 +1,8 @@
 #ifndef AOCHARMOVIE_H
 #define AOCHARMOVIE_H
 
-#include <QMovie>
 #include <QLabel>
+#include <QMovie>
 #include <QTimer>
 
 #include "aopixmap.h"
@@ -21,7 +21,7 @@ public:
   void play_talking(QString p_char, QString p_emote, bool show);
   void play_idle(QString p_char, QString p_emote, bool show);
 
-  void set_flipped(bool p_flipped) {m_flipped = p_flipped;}
+  void set_flipped(bool p_flipped) { m_flipped = p_flipped; }
 
   void stop();
 

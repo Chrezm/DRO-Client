@@ -19,8 +19,6 @@ signals:
 
 private slots:
   void on_enter_pressed();
-
-
 };
 
 #endif // AOLINEEDIT_H

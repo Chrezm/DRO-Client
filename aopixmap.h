@@ -6,13 +6,13 @@
 class AOPixmap
 {
 public:
-    AOPixmap(QPixmap p_pixmap);
-    AOPixmap(QString p_file_path);
+  AOPixmap(QPixmap p_pixmap);
+  AOPixmap(QString p_file_path);
 
-    QPixmap scaleToSize(QSize p_size);
+  QPixmap scaleToSize(QSize p_size);
 
 private:
-    QPixmap m_pixmap;
+  QPixmap m_pixmap;
 };
 
 #endif

@@ -1,24 +1,31 @@
 #ifndef AOTIMER_H
 #define AOTIMER_H
 
-#include <QWidget>
+#include <QElapsedTimer>
 #include <QTime>
 #include <QTimer>
-#include <QElapsedTimer>
-#include <aolabel.h>
+#include <QWidget>
 #include <aobutton.h>
+#include <aolabel.h>
 
-class ManualTimer {
+class ManualTimer
+{
   QTime current_time;
   int timestep_length;
 
-  public:
-    QTime get_time() { return current_time; }
-    int get_timestep_length() { return timestep_length; }
+public:
+  QTime get_time() { return current_time; }
+  int get_timestep_length() { return timestep_length; }
 
-    void set_time(QTime new_time) { current_time = new_time; }
-    void set_timestep_length(int new_timestep_length) { timestep_length = new_timestep_length ;}
-    void perform_timestep() {current_time = current_time.addMSecs(timestep_length);}
+  void set_time(QTime new_time) { current_time = new_time; }
+  void set_timestep_length(int new_timestep_length)
+  {
+    timestep_length = new_timestep_length;
+  }
+  void perform_timestep()
+  {
+    current_time = current_time.addMSecs(timestep_length);
+  }
 };
 
 class AOTimer : public AOLabel
@@ -26,7 +33,7 @@ class AOTimer : public AOLabel
   Q_OBJECT
 
 public:
-  AOTimer(QWidget* p_parent, AOApplication *p_ao_app);
+  AOTimer(QWidget *p_parent, AOApplication *p_ao_app);
 
 private:
   AOApplication *ao_app = nullptr;

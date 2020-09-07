@@ -1,11 +1,10 @@
 #include "aobasshandle.h"
 
-AOBassHandle::AOBassHandle(QObject *p_parent)
-  : QObject(p_parent)
-{}
+AOBassHandle::AOBassHandle(QObject *p_parent) : QObject(p_parent) {}
 
-AOBassHandle::AOBassHandle(QString p_file, bool p_suicide, QObject *p_parent) noexcept(false)
-  : QObject(p_parent)
+AOBassHandle::AOBassHandle(QString p_file, bool p_suicide,
+                           QObject *p_parent) noexcept(false)
+    : QObject(p_parent)
 {
   set_file(p_file, p_suicide);
 }
@@ -35,10 +34,7 @@ void AOBassHandle::suicide()
   delete this;
 }
 
-QString AOBassHandle::get_file()
-{
-  return m_file;
-}
+QString AOBassHandle::get_file() { return m_file; }
 
 void AOBassHandle::set_file(QString p_file, bool p_suicide) noexcept(false)
 {
@@ -48,11 +44,14 @@ void AOBassHandle::set_file(QString p_file, bool p_suicide) noexcept(false)
   m_file = p_file;
 
   // create a handle based on the file
-  m_handle = BASS_StreamCreateFile(FALSE, m_file.utf16(), 0, 0, BASS_UNICODE|BASS_ASYNCFILE);
+  m_handle = BASS_StreamCreateFile(FALSE, m_file.utf16(), 0, 0,
+                                   BASS_UNICODE | BASS_ASYNCFILE);
   if (!m_handle)
-    throw AOException(QString("%1 could not be initialized to play").arg(p_file));
+    throw AOException(
+        QString("%1 could not be initialized to play").arg(p_file));
 
-  m_sync = BASS_ChannelSetSync(m_handle, BASS_SYNC_END, 0, &AOBassHandle::static_sync, this);
+  m_sync = BASS_ChannelSetSync(m_handle, BASS_SYNC_END, 0,
+                               &AOBassHandle::static_sync, this);
   if (!m_sync)
   {
     // free stream since we can't sync
@@ -68,22 +67,17 @@ void AOBassHandle::set_file(QString p_file, bool p_suicide) noexcept(false)
 
 void AOBassHandle::set_volume(int p_volume)
 {
-  BASS_ChannelSetAttribute(m_handle, BASS_ATTRIB_VOL, p_volume/100.0f);
+  BASS_ChannelSetAttribute(m_handle, BASS_ATTRIB_VOL, p_volume / 100.0f);
 }
 
-void AOBassHandle::play()
-{
-  BASS_ChannelPlay(m_handle, FALSE);
-}
+void AOBassHandle::play() { BASS_ChannelPlay(m_handle, FALSE); }
 
-void AOBassHandle::stop()
-{
-  BASS_ChannelStop(m_handle);
-}
+void AOBassHandle::stop() { BASS_ChannelStop(m_handle); }
 
-void CALLBACK AOBassHandle::static_sync(HSYNC handle, DWORD channel, DWORD data, void *user)
+void CALLBACK AOBassHandle::static_sync(HSYNC handle, DWORD channel, DWORD data,
+                                        void *user)
 {
-  if (auto self = static_cast<AOBassHandle*>(user))
+  if (auto self = static_cast<AOBassHandle *>(user))
   {
     self->sync(data);
   }

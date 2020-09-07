@@ -5,13 +5,13 @@
 
 class AOSfxPlayer : public AOAbstractPlayer
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    AOSfxPlayer(QObject *p_parent, AOApplication *p_ao_app);
+  AOSfxPlayer(QObject *p_parent, AOApplication *p_ao_app);
 
-    void play(QString p_file);
-    void stop();
+  void play(QString p_file);
+  void stop();
 };
 
 #endif // AOSFXPLAYER_H

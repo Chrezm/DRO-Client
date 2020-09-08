@@ -40,4 +40,7 @@ void AOShoutPlayer::play(QString p_name, QString p_char)
   }
 }
 
-void AOShoutPlayer::stop() { emit stopping(); }
+void AOShoutPlayer::stop()
+{
+  emit stopping();
+}

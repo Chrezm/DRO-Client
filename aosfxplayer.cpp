@@ -27,4 +27,7 @@ void AOSfxPlayer::play(QString p_name)
   }
 }
 
-void AOSfxPlayer::stop() { emit stopping(); }
+void AOSfxPlayer::stop()
+{
+  emit stopping();
+}

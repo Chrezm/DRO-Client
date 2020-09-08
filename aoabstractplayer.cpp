@@ -5,7 +5,10 @@ AOAbstractPlayer::AOAbstractPlayer(QObject *p_parent, AOApplication *p_ao_app)
 {
 }
 
-int AOAbstractPlayer::get_volume() { return m_volume; }
+int AOAbstractPlayer::get_volume()
+{
+  return m_volume;
+}
 
 void AOAbstractPlayer::set_volume(int p_volume)
 {

@@ -83,4 +83,7 @@ void AOEvidenceDisplay::reset()
   this->clear();
 }
 
-QLabel *AOEvidenceDisplay::get_evidence_icon() { return evidence_icon; }
+QLabel *AOEvidenceDisplay::get_evidence_icon()
+{
+  return evidence_icon;
+}

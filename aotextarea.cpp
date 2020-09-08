@@ -5,7 +5,9 @@
 #include <QScrollBar>
 #include <QTextCursor>
 
-AOTextArea::AOTextArea(QWidget *p_parent) : QTextBrowser(p_parent) {}
+AOTextArea::AOTextArea(QWidget *p_parent) : QTextBrowser(p_parent)
+{
+}
 
 void AOTextArea::append_chatmessage(QString p_name, QString p_message)
 {

@@ -10,8 +10,14 @@ public:
   AOPacket(QString p_packet_string);
   AOPacket(QString header, QStringList &p_contents);
 
-  QString get_header() { return m_header; }
-  QStringList &get_contents() { return m_contents; }
+  QString get_header()
+  {
+    return m_header;
+  }
+  QStringList &get_contents()
+  {
+    return m_contents;
+  }
   QString to_string();
 
   void encrypt_header(unsigned int p_key);

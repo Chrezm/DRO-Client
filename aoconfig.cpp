@@ -47,7 +47,10 @@ public:
   {
     read_file();
   }
-  ~AOConfigPrivate() { save_file(); }
+  ~AOConfigPrivate()
+  {
+    save_file();
+  }
 
   // setters
 public slots:
@@ -271,47 +274,110 @@ int AOConfig::get_number(QString p_name, int p_default)
   return d->cfg.value(p_name, p_default).toInt();
 }
 
-QString AOConfig::username() { return d->username; }
+QString AOConfig::username()
+{
+  return d->username;
+}
 
-QString AOConfig::callwords() { return d->callwords; }
+QString AOConfig::callwords()
+{
+  return d->callwords;
+}
 
-QString AOConfig::theme() { return d->theme; }
+QString AOConfig::theme()
+{
+  return d->theme;
+}
 
-QString AOConfig::theme_variant() { return d->theme_variant; }
+QString AOConfig::theme_variant()
+{
+  return d->theme_variant;
+}
 
-bool AOConfig::always_pre_enabled() { return d->always_pre; }
+bool AOConfig::always_pre_enabled()
+{
+  return d->always_pre;
+}
 
-int AOConfig::chat_tick_interval() { return d->chat_tick_interval; }
+int AOConfig::chat_tick_interval()
+{
+  return d->chat_tick_interval;
+}
 
-bool AOConfig::server_alerts_enabled() { return d->server_alerts; }
+bool AOConfig::server_alerts_enabled()
+{
+  return d->server_alerts;
+}
 
-int AOConfig::log_max_lines() { return d->log_max_lines; }
+int AOConfig::log_max_lines()
+{
+  return d->log_max_lines;
+}
 
-bool AOConfig::log_goes_downward_enabled() { return d->log_goes_downward; }
+bool AOConfig::log_goes_downward_enabled()
+{
+  return d->log_goes_downward;
+}
 
-bool AOConfig::log_uses_newline_enabled() { return d->log_uses_newline; }
+bool AOConfig::log_uses_newline_enabled()
+{
+  return d->log_uses_newline;
+}
 
-bool AOConfig::log_music_enabled() { return d->log_music; }
+bool AOConfig::log_music_enabled()
+{
+  return d->log_music;
+}
 
-bool AOConfig::log_is_recording_enabled() { return d->log_is_recording; }
+bool AOConfig::log_is_recording_enabled()
+{
+  return d->log_is_recording;
+}
 
-int AOConfig::effects_volume() { return d->effects_volume; }
+int AOConfig::effects_volume()
+{
+  return d->effects_volume;
+}
 
-int AOConfig::system_volume() { return d->system_volume; }
+int AOConfig::system_volume()
+{
+  return d->system_volume;
+}
 
-int AOConfig::music_volume() { return d->music_volume; }
+int AOConfig::music_volume()
+{
+  return d->music_volume;
+}
 
-int AOConfig::blips_volume() { return d->blips_volume; }
+int AOConfig::blips_volume()
+{
+  return d->blips_volume;
+}
 
-int AOConfig::blip_rate() { return d->blip_rate; }
+int AOConfig::blip_rate()
+{
+  return d->blip_rate;
+}
 
-bool AOConfig::blank_blips_enabled() { return d->blank_blips; }
+bool AOConfig::blank_blips_enabled()
+{
+  return d->blank_blips;
+}
 
-void AOConfig::set_username(QString p_string) { d->set_username(p_string); }
+void AOConfig::set_username(QString p_string)
+{
+  d->set_username(p_string);
+}
 
-void AOConfig::set_callwords(QString p_string) { d->set_callwords(p_string); }
+void AOConfig::set_callwords(QString p_string)
+{
+  d->set_callwords(p_string);
+}
 
-void AOConfig::set_theme(QString p_string) { d->set_theme(p_string); }
+void AOConfig::set_theme(QString p_string)
+{
+  d->set_theme(p_string);
+}
 
 void AOConfig::set_theme_variant(QString p_string)
 {
@@ -323,7 +389,10 @@ void AOConfig::set_always_pre(int p_state)
   set_always_pre(p_state == Qt::Checked);
 }
 
-void AOConfig::set_always_pre(bool p_enabled) { d->set_always_pre(p_enabled); }
+void AOConfig::set_always_pre(bool p_enabled)
+{
+  d->set_always_pre(p_enabled);
+}
 
 void AOConfig::set_chat_tick_interval(int p_number)
 {
@@ -365,7 +434,10 @@ void AOConfig::set_log_uses_newline(int p_state)
   set_log_uses_newline(p_state == Qt::Checked);
 }
 
-void AOConfig::set_log_music(bool p_enabled) { d->set_log_music(p_enabled); }
+void AOConfig::set_log_music(bool p_enabled)
+{
+  d->set_log_music(p_enabled);
+}
 
 void AOConfig::set_log_music(int p_state)
 {
@@ -392,11 +464,20 @@ void AOConfig::set_system_volume(int p_number)
   d->set_system_volume(p_number);
 }
 
-void AOConfig::set_music_volume(int p_number) { d->set_music_volume(p_number); }
+void AOConfig::set_music_volume(int p_number)
+{
+  d->set_music_volume(p_number);
+}
 
-void AOConfig::set_blips_volume(int p_number) { d->set_blips_volume(p_number); }
+void AOConfig::set_blips_volume(int p_number)
+{
+  d->set_blips_volume(p_number);
+}
 
-void AOConfig::set_blip_rate(int p_number) { d->set_blip_rate(p_number); }
+void AOConfig::set_blip_rate(int p_number)
+{
+  d->set_blip_rate(p_number);
+}
 
 void AOConfig::set_blank_blips(bool p_enabled)
 {
@@ -408,7 +489,10 @@ void AOConfig::set_blank_blips(int p_state)
   set_blank_blips(p_state == Qt::Checked);
 }
 
-void AOConfig::save_file() { d->save_file(); }
+void AOConfig::save_file()
+{
+  d->save_file();
+}
 
 // moc
 #include "aoconfig.moc"

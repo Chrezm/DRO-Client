@@ -209,4 +209,7 @@ void Courtroom::char_mouse_entered(AOCharButton *p_caller)
   ui_char_button_selector->show();
 }
 
-void Courtroom::char_mouse_left() { ui_char_button_selector->hide(); }
+void Courtroom::char_mouse_left()
+{
+  ui_char_button_selector->hide();
+}

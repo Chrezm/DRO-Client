@@ -5,7 +5,8 @@
 
 #include <QDebug>
 
-AOButton::AOButton(QWidget *parent, AOApplication *p_ao_app) : QPushButton(parent)
+AOButton::AOButton(QWidget *parent, AOApplication *p_ao_app)
+    : QPushButton(parent)
 {
   ao_app = p_ao_app;
 }
@@ -20,8 +21,10 @@ void AOButton::set_image(QString p_image)
   if (file_exists(image_path))
   {
     if (file_exists(hover_image_path))
-      this->setStyleSheet("QPushButton {border-image:url(\"" + image_path + "\");}"
-                          "QPushButton:hover {border-image:url(\"" + hover_image_path + "\");}");
+      this->setStyleSheet("QPushButton {border-image:url(\"" + image_path +
+                          "\");}"
+                          "QPushButton:hover {border-image:url(\"" +
+                          hover_image_path + "\");}");
     else
       this->setStyleSheet("border-image:url(\"" + image_path + "\")");
   }

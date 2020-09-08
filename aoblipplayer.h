@@ -1,12 +1,14 @@
 #ifndef AOBLIPPLAYER_H
 #define AOBLIPPLAYER_H
 
-#include "bass.h"
 #include "aoapplication.h"
-
-#include <QWidget>
-#include <string.h>
+// lib
+#include <bass.h>
+// qt
 #include <QDebug>
+#include <QWidget>
+// std
+#include <string.h>
 
 const int BLIP_COUNT = 5;
 

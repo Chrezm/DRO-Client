@@ -1,21 +1,15 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2016-12-29T01:14:46
-#
-#-------------------------------------------------
-
 QT += core gui widgets uitools multimedia network
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 RC_ICONS = logo.ico
 
-TARGET = Attorney_Online_remake
+CONFIG += c++11
+
+TARGET = dro-client
+VERSION = 2.4.8.0
 TEMPLATE = app
 
-VERSION = 2.4.8.0
-
-SOURCES += main.cpp\
+SOURCES += \
+    main.cpp \
     aoconfig.cpp \
     aoconfigpanel.cpp \
     aoevidencedescription.cpp \
@@ -65,7 +59,8 @@ SOURCES += main.cpp\
     aolabel.cpp \
     courtroom_widgets.cpp
 
-HEADERS  += lobby.h \
+HEADERS += \
+    lobby.h \
     aoabstractplayer.h \
     aobasshandle.h \
     aoconfig.h \
@@ -109,6 +104,9 @@ HEADERS  += lobby.h \
     discord-rpc.h \
     aonotepad.h
 
+DEPENDPATH += $$PWD $$PWD/lib
+INCLUDEPATH += $$PWD $$PWD/lib
+
 # 1. You need to get BASS and put the x86 bass DLL/headers in the project root folder
 #    AND the compilation output folder. If you want a static link, you'll probably
 #    need the .lib file too. MinGW-GCC is really finicky finding BASS, it seems.
@@ -118,8 +116,6 @@ HEADERS  += lobby.h \
 unix:LIBS += -L$$PWD -lbass -ldiscord-rpc
 win32:LIBS += -L$$PWD "$$PWD/bass.lib" -ldiscord-rpc #"$$PWD/discord-rpc.dll"
 android:LIBS += -L$$PWD\android\libs\armeabi-v7a\ -lbass
-
-CONFIG += c++11
 
 ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
 

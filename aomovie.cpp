@@ -4,8 +4,8 @@
 #include "file_functions.h"
 #include "misc_functions.h"
 
-AOMovie::AOMovie(QWidget *p_parent, AOApplication *p_ao_app)
-    : QLabel(p_parent) {
+AOMovie::AOMovie(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(p_parent)
+{
   ao_app = p_ao_app;
 
   m_movie = new QMovie();
@@ -19,7 +19,8 @@ AOMovie::~AOMovie() { delete m_movie; }
 
 void AOMovie::set_play_once(bool p_play_once) { play_once = p_play_once; }
 
-void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme) {
+void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme)
+{
   m_movie->stop();
   QVector<QString> f_vec;
   QString file_path = "";
@@ -48,12 +49,15 @@ void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme) {
       ao_app->get_theme_path("placeholder"),
       ao_app->get_default_theme_path("placeholder")};
 
-  for (auto &f_file : f_paths) {
+  for (auto &f_file : f_paths)
+  {
     bool found = false;
-    for (auto &ext : decltype(f_vec){".webp", ".apng", ".gif", ".png"}) {
+    for (auto &ext : decltype(f_vec){".webp", ".apng", ".gif", ".png"})
+    {
       QString fullPath = f_file + ext;
       found = file_exists(fullPath);
-      if (found) {
+      if (found)
+      {
         file_path = fullPath;
         break;
       }
@@ -71,13 +75,16 @@ void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme) {
   m_movie->start();
 }
 
-void AOMovie::stop() {
+void AOMovie::stop()
+{
   m_movie->stop();
   this->hide();
 }
 
-void AOMovie::frame_change(int n_frame) {
-  if (n_frame == (m_movie->frameCount() - 1) && play_once) {
+void AOMovie::frame_change(int n_frame)
+{
+  if (n_frame == (m_movie->frameCount() - 1) && play_once)
+  {
     // we need this or else the last frame wont show
     delay(m_movie->nextFrameDelay());
 
@@ -88,7 +95,8 @@ void AOMovie::frame_change(int n_frame) {
   }
 }
 
-void AOMovie::combo_resize(int w, int h) {
+void AOMovie::combo_resize(int w, int h)
+{
   QSize f_size(w, h);
   this->resize(f_size);
   m_movie->setScaledSize(f_size);

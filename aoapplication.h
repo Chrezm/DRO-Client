@@ -15,7 +15,8 @@ class Courtroom;
 class AOConfig;
 class AOConfigPanel;
 
-class AOApplication : public QApplication {
+class AOApplication : public QApplication
+{
   Q_OBJECT
 
 public:

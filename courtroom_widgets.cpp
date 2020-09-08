@@ -20,7 +20,8 @@
 #include <QTextCharFormat>
 #include <QTime>
 
-void Courtroom::create_widgets() {
+void Courtroom::create_widgets()
+{
   keepalive_timer = new QTimer(this);
   keepalive_timer->start(60000);
 
@@ -184,7 +185,8 @@ void Courtroom::create_widgets() {
   ui_note_button = new AOButton(this, ao_app);
 
   ui_label_images.resize(label_images.size());
-  for (int i = 0; i < ui_label_images.size(); ++i) {
+  for (int i = 0; i < ui_label_images.size(); ++i)
+  {
     ui_label_images[i] = new AOImage(this, ao_app);
   }
 
@@ -215,7 +217,8 @@ void Courtroom::create_widgets() {
   ui_text_color->addItem("Red");
   ui_text_color->addItem("Orange");
   ui_text_color->addItem("Blue");
-  if (ao_app->yellow_text_enabled) {
+  if (ao_app->yellow_text_enabled)
+  {
     ui_text_color->addItem("Yellow");
     ui_text_color->addItem("Purple");
     ui_text_color->addItem("Pink");
@@ -237,7 +240,8 @@ void Courtroom::create_widgets() {
   construct_char_select();
 }
 
-void Courtroom::connect_widgets() {
+void Courtroom::connect_widgets()
+{
   connect(keepalive_timer, SIGNAL(timeout()), this, SLOT(ping_server()));
 
   connect(ao_app, SIGNAL(reload_theme()), this,
@@ -360,7 +364,8 @@ void Courtroom::connect_widgets() {
           SLOT(on_set_notes_clicked()));
 }
 
-void Courtroom::reset_widget_names() {
+void Courtroom::reset_widget_names()
+{
   // Assign names to the default widgets
   widget_names = {
       {"courtroom", this},
@@ -447,7 +452,8 @@ void Courtroom::reset_widget_names() {
   };
 }
 
-void Courtroom::insert_widget_name(QString p_widget_name, QWidget *p_widget) {
+void Courtroom::insert_widget_name(QString p_widget_name, QWidget *p_widget)
+{
   // insert entry
   widget_names[p_widget_name] = p_widget;
   // set name
@@ -455,12 +461,14 @@ void Courtroom::insert_widget_name(QString p_widget_name, QWidget *p_widget) {
 }
 
 void Courtroom::insert_widget_names(QVector<QString> &p_widget_names,
-                                    QVector<QWidget *> &p_widgets) {
+                                    QVector<QWidget *> &p_widgets)
+{
   for (int i = 0; i < p_widgets.length(); ++i)
     insert_widget_name(p_widget_names[i], p_widgets[i]);
 }
 
-void Courtroom::set_widget_names() {
+void Courtroom::set_widget_names()
+{
   // Assign names to the default widgets
   reset_widget_names();
 
@@ -481,7 +489,8 @@ void Courtroom::set_widget_names() {
   insert_widget_names(timer_names, ui_timers);
 }
 
-void Courtroom::set_widget_layers() {
+void Courtroom::set_widget_layers()
+{
   QStringList paths{
       ao_app->get_theme_variant_path("courtroom_layers.ini"),
       ao_app->get_theme_path("courtroom_layers.ini"),
@@ -492,10 +501,12 @@ void Courtroom::set_widget_layers() {
   QStringList recorded_widgets;
 
   // read the entire thing
-  for (QString path : paths) {
+  for (QString path : paths)
+  {
     QFile layer_ini(path);
 
-    if (layer_ini.open(QFile::ReadOnly)) {
+    if (layer_ini.open(QFile::ReadOnly))
+    {
       QTextStream in(&layer_ini);
 
       // current parent's name
@@ -503,7 +514,8 @@ void Courtroom::set_widget_layers() {
       // the courtroom is ALWAYS going to be recorded
       recorded_widgets.append(parent_name);
 
-      while (!in.atEnd()) {
+      while (!in.atEnd())
+      {
         QString line = in.readLine().trimmed();
 
         // skip if line is empty
@@ -511,16 +523,19 @@ void Courtroom::set_widget_layers() {
           continue;
 
         // revert to default parent if we encounter an end scope
-        if (line.startsWith("[\\")) {
+        if (line.startsWith("[\\"))
+        {
           parent_name = "courtroom";
         }
         // is this a parent?
-        else if (line.startsWith("[")) {
+        else if (line.startsWith("["))
+        {
           // update the current parent
           parent_name = line.remove(0, 1).chopped(1).trimmed();
         }
         // if this is not a parent, it's a child
-        else {
+        else
+        {
           // if the child is already known, skip
           if (recorded_widgets.contains(line))
             continue;
@@ -560,23 +575,28 @@ void Courtroom::set_widget_layers() {
   // particular, make it visible and raise it in front of all assets. This can
   // help assist a theme designer who accidentally missed config_panel and would
   // have become unable to reload themes had they closed the config panel
-  if (!recorded_widgets.contains("config_panel")) {
+  if (!recorded_widgets.contains("config_panel"))
+  {
     ui_config_panel->setParent(this);
     ui_config_panel->raise();
     ui_config_panel->setVisible(true);
   }
 }
 
-void Courtroom::set_widgets() {
+void Courtroom::set_widgets()
+{
   QString filename = design_ini;
   pos_size_type f_courtroom =
       ao_app->get_element_dimensions("courtroom", filename);
 
-  if (f_courtroom.width < 0 || f_courtroom.height < 0) {
+  if (f_courtroom.width < 0 || f_courtroom.height < 0)
+  {
     qDebug() << "W: did not find courtroom width or height in " << filename;
 
     this->resize(714, 668);
-  } else {
+  }
+  else
+  {
     m_courtroom_width = f_courtroom.width;
     m_courtroom_height = f_courtroom.height;
 
@@ -724,7 +744,8 @@ void Courtroom::set_widgets() {
   //  set_size_and_pos(ui_shouts[4], "got_it");
   //  set_size_and_pos(ui_shouts[5], "cross_swords");
   //  set_size_and_pos(ui_shouts[6], "counter_alt");
-  for (int i = 0; i < shout_names.size(); ++i) {
+  for (int i = 0; i < shout_names.size(); ++i)
+  {
     set_size_and_pos(ui_shouts[i], shout_names[i]);
   }
   //  ui_shouts[0]->show();
@@ -741,7 +762,8 @@ void Courtroom::set_widgets() {
 
   // courtroom_config.ini necessary + check for crash
   if (ao_app->read_theme_ini("enable_single_shout", cc_config_ini) == "true" &&
-      ui_shouts.size() > 0) {
+      ui_shouts.size() > 0)
+  {
     for (auto &shout : ui_shouts)
       move_widget(shout, "bullet");
 
@@ -755,7 +777,8 @@ void Courtroom::set_widgets() {
   //  set_size_and_pos(ui_effects[1], "effect_gloom");
   //  set_size_and_pos(ui_effects[2], "effect_question");
   //  set_size_and_pos(ui_effects[3], "effect_pow");
-  for (int i = 0; i < effect_names.size(); ++i) {
+  for (int i = 0; i < effect_names.size(); ++i)
+  {
     set_size_and_pos(ui_effects[i], effect_names[i]);
   }
   reset_effect_buttons();
@@ -786,7 +809,8 @@ void Courtroom::set_widgets() {
   ui_wtce_down->set_image("wtcedown.png");
   ui_wtce_down->hide();
 
-  for (int i = 0; i < wtce_names.size(); ++i) {
+  for (int i = 0; i < wtce_names.size(); ++i)
+  {
     set_size_and_pos(ui_wtce[i], wtce_names[i]);
   }
 
@@ -802,7 +826,8 @@ void Courtroom::set_widgets() {
   // this will reset the image
   reset_judge_wtce_buttons();
 
-  for (int i = 0; i < free_block_names.size(); ++i) {
+  for (int i = 0; i < free_block_names.size(); ++i)
+  {
     set_size_and_pos(ui_free_blocks[i], free_block_names[i]);
   }
   set_free_blocks();
@@ -827,7 +852,8 @@ void Courtroom::set_widgets() {
   ui_config_panel->setStyleSheet("");
   ui_note_button->setStyleSheet("");
 
-  if (ao_app->read_theme_ini("enable_button_images", cc_config_ini) == "true") {
+  if (ao_app->read_theme_ini("enable_button_images", cc_config_ini) == "true")
+  {
     // Set files, ask questions later
     // set_image first tries the theme variant folder, then the theme folder,
     // then falls back to the default theme
@@ -858,7 +884,8 @@ void Courtroom::set_widgets() {
   // found in courtroom_design.ini This is to assist with people who switch to
   // incompatible and/or smaller themes and have the button disappear
   if (ui_config_panel->x() > width() || ui_config_panel->y() > height() ||
-      !ui_config_panel->isVisible()) {
+      !ui_config_panel->isVisible())
+  {
     ui_config_panel->setVisible(true);
     ui_config_panel->move(0, 0);
     // Moreover, if the width or height is invalid, change it to some fixed
@@ -874,11 +901,13 @@ void Courtroom::set_widgets() {
 
   set_size_and_pos(ui_hidden, "hidden");
 
-  for (int i = 0; i < ui_label_images.size(); ++i) {
+  for (int i = 0; i < ui_label_images.size(); ++i)
+  {
     set_size_and_pos(ui_label_images[i], label_images[i].toLower() + "_image");
   }
 
-  if (ao_app->read_theme_ini("enable_label_images", cc_config_ini) == "true") {
+  if (ao_app->read_theme_ini("enable_label_images", cc_config_ini) == "true")
+  {
     for (int i = 0; i < ui_checks.size(); ++i) // loop through checks
     {
       QString image = label_images[i].toLower() + ".png";
@@ -901,7 +930,9 @@ void Courtroom::set_widgets() {
       else
         ui_labels[i]->setText(label_images[j]);
     }
-  } else {
+  }
+  else
+  {
     for (int i = 0; i < ui_checks.size(); ++i) // same thing
     {
       ui_checks[i]->setText(label_images[i]);
@@ -1001,7 +1032,8 @@ void Courtroom::set_widgets() {
 
   list_note_files();
 
-  if (!contains_add_button) {
+  if (!contains_add_button)
+  {
     ui_note_area->m_layout->addWidget(ui_note_area->add_button);
     contains_add_button = true;
   }
@@ -1011,31 +1043,39 @@ void Courtroom::set_widgets() {
   set_fonts();
 }
 
-void Courtroom::set_size_and_pos(QWidget *p_widget, QString p_identifier) {
+void Courtroom::set_size_and_pos(QWidget *p_widget, QString p_identifier)
+{
   QString filename = design_ini;
 
   pos_size_type design_ini_result =
       ao_app->get_element_dimensions(p_identifier, filename);
 
-  if (design_ini_result.width < 0 || design_ini_result.height < 0) {
+  if (design_ini_result.width < 0 || design_ini_result.height < 0)
+  {
     qDebug() << "W: could not find \"" << p_identifier << "\" in " << filename;
     p_widget->hide();
-  } else {
+  }
+  else
+  {
     p_widget->move(design_ini_result.x, design_ini_result.y);
     p_widget->resize(design_ini_result.width, design_ini_result.height);
   }
 }
 
-void Courtroom::move_widget(QWidget *p_widget, QString p_identifier) {
+void Courtroom::move_widget(QWidget *p_widget, QString p_identifier)
+{
   QString filename = design_ini;
 
   pos_size_type design_ini_result =
       ao_app->get_element_dimensions(p_identifier, filename);
 
-  if (design_ini_result.width < 0 || design_ini_result.height < 0) {
+  if (design_ini_result.width < 0 || design_ini_result.height < 0)
+  {
     qDebug() << "W: could not find \"" << p_identifier << "\" in " << filename;
     p_widget->hide();
-  } else {
+  }
+  else
+  {
     p_widget->move(design_ini_result.x, design_ini_result.y);
   }
 }
@@ -1043,7 +1083,8 @@ void Courtroom::move_widget(QWidget *p_widget, QString p_identifier) {
 template <typename T>
 int Courtroom::adapt_numbered_items(QVector<T *> &item_vector,
                                     QString config_item_number,
-                                    QString item_name) {
+                                    QString item_name)
+{
   // &item_vector must be a vector of size at least 1!
 
   // Redraw the new correct number of items.
@@ -1056,15 +1097,20 @@ int Courtroom::adapt_numbered_items(QVector<T *> &item_vector,
 
   // Decide what to do if the new theme has a different amount of items than the
   // old one
-  if (new_item_number < current_item_number) {
+  if (new_item_number < current_item_number)
+  {
     // Hide old items if there are any.
-    for (int i = new_item_number; i < current_item_number; i++) {
+    for (int i = new_item_number; i < current_item_number; i++)
+    {
       item_vector[i]->hide();
     }
-  } else if (current_item_number < new_item_number) {
+  }
+  else if (current_item_number < new_item_number)
+  {
     // Create new items
     item_vector.resize(new_item_number);
-    for (int i = current_item_number; i < new_item_number; i++) {
+    for (int i = current_item_number; i < new_item_number; i++)
+    {
       item_vector[i] = new T(this);
       item_vector[i]->stackUnder(item_vector[i - 1]);
       // index i-1 exists as i >= current_item_number == item_vector.size() >= 1
@@ -1074,7 +1120,8 @@ int Courtroom::adapt_numbered_items(QVector<T *> &item_vector,
   // item_vector is non-decreasing. This is because we want to allow for items
   // to, say, run in the background as invisible. With that said, we can now
   // properly format our new items
-  for (int i = 0; i < new_item_number; i++) {
+  for (int i = 0; i < new_item_number; i++)
+  {
     item_vector[i]->show();
     set_size_and_pos(item_vector[i], item_name + "_" + QString::number(i));
     // Note that show is deliberately placed before set_size_and_pos
@@ -1085,8 +1132,10 @@ int Courtroom::adapt_numbered_items(QVector<T *> &item_vector,
   return new_item_number;
 }
 
-void Courtroom::check_effects() {
-  for (int i = 0; i < ui_effects.size(); ++i) {
+void Courtroom::check_effects()
+{
+  for (int i = 0; i < ui_effects.size(); ++i)
+  {
     QStringList paths{
         ao_app->get_character_path(current_char, effect_names.at(i) + ".webp"),
         ao_app->get_character_path(current_char, effect_names.at(i) + ".gif"),
@@ -1099,8 +1148,10 @@ void Courtroom::check_effects() {
 
     // Assume the effect does not exist until a matching file is found
     effects_enabled[i] = false;
-    for (QString path : paths) {
-      if (file_exists(path)) {
+    for (QString path : paths)
+    {
+      if (file_exists(path))
+      {
         effects_enabled[i] = true;
         break;
       }
@@ -1108,8 +1159,10 @@ void Courtroom::check_effects() {
   }
 }
 
-void Courtroom::check_free_blocks() {
-  for (int i = 0; i < ui_free_blocks.size(); ++i) {
+void Courtroom::check_free_blocks()
+{
+  for (int i = 0; i < ui_free_blocks.size(); ++i)
+  {
     QStringList paths{
         ao_app->get_character_path(current_char,
                                    free_block_names.at(i) + ".webp"),
@@ -1124,8 +1177,10 @@ void Courtroom::check_free_blocks() {
 
     // Assume the free block does not exist until a matching file is found
     free_blocks_enabled[i] = false;
-    for (QString path : paths) {
-      if (file_exists(path)) {
+    for (QString path : paths)
+    {
+      if (file_exists(path))
+      {
         free_blocks_enabled[i] = true;
         break;
       }
@@ -1133,8 +1188,10 @@ void Courtroom::check_free_blocks() {
   }
 }
 
-void Courtroom::check_shouts() {
-  for (int i = 0; i < ui_shouts.size(); ++i) {
+void Courtroom::check_shouts()
+{
+  for (int i = 0; i < ui_shouts.size(); ++i)
+  {
     QStringList paths{
         ao_app->get_character_path(current_char, shout_names.at(i) + ".webp"),
         ao_app->get_character_path(current_char, shout_names.at(i) + ".gif"),
@@ -1147,8 +1204,10 @@ void Courtroom::check_shouts() {
 
     // Assume the shout does not exist until a matching file is found
     shouts_enabled[i] = false;
-    for (QString path : paths) {
-      if (file_exists(path)) {
+    for (QString path : paths)
+    {
+      if (file_exists(path))
+      {
         shouts_enabled[i] = true;
         break;
       }
@@ -1156,8 +1215,10 @@ void Courtroom::check_shouts() {
   }
 }
 
-void Courtroom::check_wtce() {
-  for (int i = 0; i < ui_wtce.size(); ++i) {
+void Courtroom::check_wtce()
+{
+  for (int i = 0; i < ui_wtce.size(); ++i)
+  {
     QStringList paths{
         ao_app->get_character_path(current_char, wtce_names.at(i) + ".webp"),
         ao_app->get_character_path(current_char, wtce_names.at(i) + ".gif"),
@@ -1170,8 +1231,10 @@ void Courtroom::check_wtce() {
 
     // Assume the judge button does not exist until a matching file is found
     wtce_enabled[i] = false;
-    for (QString path : paths) {
-      if (file_exists(path)) {
+    for (QString path : paths)
+    {
+      if (file_exists(path))
+      {
         wtce_enabled[i] = true;
         break;
       }
@@ -1179,7 +1242,8 @@ void Courtroom::check_wtce() {
   }
 }
 
-void Courtroom::delete_widget(QWidget *p_widget) {
+void Courtroom::delete_widget(QWidget *p_widget)
+{
   // remove the widget from recorded names
   widget_names.remove(p_widget->objectName());
 
@@ -1199,7 +1263,8 @@ void Courtroom::delete_widget(QWidget *p_widget) {
   delete p_widget;
 }
 
-void Courtroom::load_effects() {
+void Courtroom::load_effects()
+{
   // Close any existing effects to prevent memory leaks
   for (QWidget *widget : ui_effects)
     delete_widget(widget);
@@ -1210,7 +1275,8 @@ void Courtroom::load_effects() {
   effects_enabled.resize(effect_number);
   ui_effects.resize(effect_number);
 
-  for (int i = 0; i < ui_effects.size(); ++i) {
+  for (int i = 0; i < ui_effects.size(); ++i)
+  {
     ui_effects[i] = new AOButton(this, ao_app);
     ui_effects[i]->setProperty("effect_id", i + 1);
     ui_effects[i]->stackUnder(ui_effect_up);
@@ -1224,16 +1290,19 @@ void Courtroom::load_effects() {
 
   // And add names
   effect_names.clear();
-  for (int i = 1; i <= ui_effects.size(); ++i) {
+  for (int i = 1; i <= ui_effects.size(); ++i)
+  {
     QStringList names = ao_app->get_effect(i);
-    if (!names.isEmpty()) {
+    if (!names.isEmpty())
+    {
       QString name = names.at(0).trimmed();
       effect_names.append(name);
     }
   }
 }
 
-void Courtroom::load_free_blocks() {
+void Courtroom::load_free_blocks()
+{
   for (QWidget *widget : ui_free_blocks)
     delete_widget(widget);
 
@@ -1243,7 +1312,8 @@ void Courtroom::load_free_blocks() {
   free_blocks_enabled.resize(free_block_number);
   ui_free_blocks.resize(free_block_number);
 
-  for (int i = 0; i < ui_free_blocks.size(); ++i) {
+  for (int i = 0; i < ui_free_blocks.size(); ++i)
+  {
     ui_free_blocks[i] = new AOMovie(this, ao_app);
     // ui_free_blocks[i]->setProperty("free_block_id", i+1);
     ui_free_blocks[i]->set_play_once(false);
@@ -1252,10 +1322,12 @@ void Courtroom::load_free_blocks() {
 
   // And add names
   free_block_names.clear();
-  for (int i = 1; i <= ui_free_blocks.size(); ++i) {
+  for (int i = 1; i <= ui_free_blocks.size(); ++i)
+  {
     QString name =
         "free_block_" + ao_app->get_spbutton("[FREE BLOCKS]", i).trimmed();
-    if (!name.isEmpty()) {
+    if (!name.isEmpty())
+    {
       free_block_names.append(name);
       widget_names[name] = ui_free_blocks[i - 1];
       ui_free_blocks[i - 1]->setObjectName(name);
@@ -1264,7 +1336,8 @@ void Courtroom::load_free_blocks() {
   qDebug() << "FREE BLOCKS HERE " << free_block_names;
 }
 
-void Courtroom::load_shouts() {
+void Courtroom::load_shouts()
+{
   for (QWidget *widget : ui_shouts)
     delete_widget(widget);
 
@@ -1274,7 +1347,8 @@ void Courtroom::load_shouts() {
   shouts_enabled.resize(shout_number);
   ui_shouts.resize(shout_number);
 
-  for (int i = 0; i < ui_shouts.size(); ++i) {
+  for (int i = 0; i < ui_shouts.size(); ++i)
+  {
     ui_shouts[i] = new AOButton(this, ao_app);
     ui_shouts[i]->setProperty("shout_id", i + 1);
     ui_shouts[i]->stackUnder(ui_shout_up);
@@ -1287,9 +1361,11 @@ void Courtroom::load_shouts() {
 
   // And add names
   shout_names.clear();
-  for (int i = 1; i <= ui_shouts.size(); ++i) {
+  for (int i = 1; i <= ui_shouts.size(); ++i)
+  {
     QString name = ao_app->get_spbutton("[SHOUTS]", i).trimmed();
-    if (!name.isEmpty()) {
+    if (!name.isEmpty())
+    {
       qDebug() << "SHOUT " << name << " " << ui_shouts[i - 1];
       shout_names.append(name);
       widget_names[name] = ui_shouts[i - 1];
@@ -1299,7 +1375,8 @@ void Courtroom::load_shouts() {
   qDebug() << widget_names;
 }
 
-void Courtroom::load_wtce() {
+void Courtroom::load_wtce()
+{
   for (QWidget *widget : ui_wtce)
     delete_widget(widget);
 
@@ -1308,7 +1385,8 @@ void Courtroom::load_wtce() {
   wtce_enabled.resize(wtce_number);
   ui_wtce.resize(wtce_number);
 
-  for (int i = 0; i < ui_wtce.size(); ++i) {
+  for (int i = 0; i < ui_wtce.size(); ++i)
+  {
     ui_wtce[i] = new AOButton(this, ao_app);
     ui_wtce[i]->setProperty("wtce_id", i + 1);
     ui_wtce[i]->stackUnder(ui_wtce_up);
@@ -1321,9 +1399,11 @@ void Courtroom::load_wtce() {
 
   // And add names
   wtce_names.clear();
-  for (int i = 1; i <= ui_wtce.size(); ++i) {
+  for (int i = 1; i <= ui_wtce.size(); ++i)
+  {
     QString name = ao_app->get_spbutton("[WTCE]", i).trimmed();
-    if (!name.isEmpty()) {
+    if (!name.isEmpty())
+    {
       wtce_names.append(name);
       widget_names[name] = ui_wtce[i - 1];
       ui_wtce[i - 1]->setObjectName(name);
@@ -1331,14 +1411,16 @@ void Courtroom::load_wtce() {
   }
 }
 
-void Courtroom::set_shouts() {
+void Courtroom::set_shouts()
+{
   for (auto &shout : ui_shouts)
     shout->hide();
   if (ui_shouts.size() > 0)
     ui_shouts[m_shout_state]->show(); // check to prevent crashing
 }
 
-void Courtroom::set_effects() {
+void Courtroom::set_effects()
+{
   for (auto &effect : ui_effects)
     effect->hide();
 
@@ -1347,7 +1429,8 @@ void Courtroom::set_effects() {
     ui_effects[m_effect_current]->show();
 }
 
-void Courtroom::set_judge_enabled(bool p_enabled) {
+void Courtroom::set_judge_enabled(bool p_enabled)
+{
   is_judge = p_enabled;
 
   // set judge button visibility
@@ -1359,7 +1442,8 @@ void Courtroom::set_judge_enabled(bool p_enabled) {
   set_judge_wtce();
 }
 
-void Courtroom::set_judge_wtce() {
+void Courtroom::set_judge_wtce()
+{
   // hide all wtce before enabling visibility
   for (auto &wtce : ui_wtce)
     wtce->hide();
@@ -1377,29 +1461,36 @@ void Courtroom::set_judge_wtce() {
     return;
 
   // set visibility based off parameter
-  if (is_single_wtce == true) {
+  if (is_single_wtce == true)
+  {
     ui_wtce[m_wtce_current]->show();
-  } else {
+  }
+  else
+  {
     for (AOButton *i_wtce : ui_wtce)
       i_wtce->show();
   }
 }
 
-void Courtroom::set_free_blocks() {
-  for (int i = 0; i < ui_free_blocks.size(); i++) {
+void Courtroom::set_free_blocks()
+{
+  for (int i = 0; i < ui_free_blocks.size(); i++)
+  {
     AOMovie *free_block = ui_free_blocks[i];
     free_block->play(free_block_names[i]);
   }
 }
 
-void Courtroom::set_dropdown(QWidget *widget, QString target_tag) {
+void Courtroom::set_dropdown(QWidget *widget, QString target_tag)
+{
   QString f_file = "courtroom_stylesheets.css";
   QString style_sheet_string = ao_app->get_stylesheet(target_tag, f_file);
   if (style_sheet_string != "")
     widget->setStyleSheet(style_sheet_string);
 }
 
-void Courtroom::set_dropdowns() {
+void Courtroom::set_dropdowns()
+{
   set_dropdown(ui_text_color, "[TEXT COLOR]");
   set_dropdown(ui_pos_dropdown, "[POS DROPDOWN]");
   set_dropdown(ui_emote_dropdown, "[EMOTE DROPDOWN]");
@@ -1408,12 +1499,14 @@ void Courtroom::set_dropdowns() {
   set_dropdown(ui_ooc_chat_message, "[OOC LINE]");
 }
 
-void Courtroom::set_font(QWidget *widget, QString p_identifier) {
+void Courtroom::set_font(QWidget *widget, QString p_identifier)
+{
   set_font(widget, p_identifier, "");
 }
 
 void Courtroom::set_font(QWidget *widget, QString p_identifier,
-                         QString override_color) {
+                         QString override_color)
+{
   QString design_file = fonts_ini;
   QString class_name = widget->metaObject()->className();
 
@@ -1422,7 +1515,8 @@ void Courtroom::set_font(QWidget *widget, QString p_identifier,
       ao_app->get_font_name("font_" + p_identifier, design_file);
   widget->setFont(QFont(font_name, f_weight));
 
-  if (override_color.isEmpty()) {
+  if (override_color.isEmpty())
+  {
     QString color =
         ao_app->read_theme_ini(p_identifier + "_color", "courtroom_fonts.ini");
     if (color.isEmpty())
@@ -1442,12 +1536,14 @@ void Courtroom::set_font(QWidget *widget, QString p_identifier,
   widget->setStyleSheet(style_sheet_string);
 }
 
-void Courtroom::set_qtextedit_font(QTextEdit *widget, QString p_identifier) {
+void Courtroom::set_qtextedit_font(QTextEdit *widget, QString p_identifier)
+{
   set_qtextedit_font(widget, p_identifier, "");
 }
 
 void Courtroom::set_qtextedit_font(QTextEdit *widget, QString p_identifier,
-                                   QString override_color) {
+                                   QString override_color)
+{
   set_font(widget, p_identifier, override_color);
 
   QString design_file = fonts_ini;
@@ -1459,7 +1555,8 @@ void Courtroom::set_qtextedit_font(QTextEdit *widget, QString p_identifier,
   widget->setCurrentCharFormat(widget_format);
 }
 
-void Courtroom::set_fonts() {
+void Courtroom::set_fonts()
+{
   set_qtextedit_font(ui_vp_showname, "showname");
   set_qtextedit_font(ui_vp_message, "message");
   set_qtextedit_font(ui_ic_chatlog, "ic_chatlog");
@@ -1470,16 +1567,19 @@ void Courtroom::set_fonts() {
   set_font(ui_sfx_list, "sfx_list");
   set_qtextedit_font(ui_vp_music_name, "music_name");
   set_qtextedit_font(ui_vp_notepad, "notepad");
-  for (int i = 0; i < timer_number; i++) {
+  for (int i = 0; i < timer_number; i++)
+  {
     set_qtextedit_font(ui_timers[i], "timer_" + QString::number(i));
   }
 }
 
-void Courtroom::set_mute_list() {
+void Courtroom::set_mute_list()
+{
   mute_map.clear();
 
   // maps which characters are muted based on cid, none are muted by default
-  for (int n_cid = 0; n_cid < char_list.size(); n_cid++) {
+  for (int n_cid = 0; n_cid < char_list.size(); n_cid++)
+  {
     mute_map.insert(n_cid, false);
   }
 
@@ -1490,7 +1590,8 @@ void Courtroom::set_mute_list() {
 
   sorted_mute_list.sort();
 
-  for (QString i_name : sorted_mute_list) {
+  for (QString i_name : sorted_mute_list)
+  {
     // mute_map.insert(i_name, false);
     ui_mute_list->addItem(i_name);
   }

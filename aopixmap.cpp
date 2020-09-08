@@ -8,9 +8,7 @@ AOPixmap::AOPixmap(QPixmap p_pixmap) : m_pixmap(p_pixmap)
   }
 }
 
-AOPixmap::AOPixmap(QString p_file_path) : AOPixmap(QPixmap(p_file_path))
-{
-}
+AOPixmap::AOPixmap(QString p_file_path) : AOPixmap(QPixmap(p_file_path)) {}
 
 void AOPixmap::clear()
 {

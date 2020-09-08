@@ -68,10 +68,7 @@ void AOEvidenceButton::set_selected(bool p_selected)
     ui_selected->hide();
 }
 
-void AOEvidenceButton::on_clicked()
-{
-  evidence_clicked(m_id);
-}
+void AOEvidenceButton::on_clicked() { evidence_clicked(m_id); }
 
 void AOEvidenceButton::mouseDoubleClickEvent(QMouseEvent *e)
 {

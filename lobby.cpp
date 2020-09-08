@@ -284,10 +284,7 @@ QString Lobby::get_chatlog()
   return return_value;
 }
 
-int Lobby::get_selected_server()
-{
-  return ui_server_list->currentRow();
-}
+int Lobby::get_selected_server() { return ui_server_list->currentRow(); }
 
 void Lobby::set_loading_value(int p_value)
 {

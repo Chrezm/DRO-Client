@@ -124,20 +124,11 @@ void AOApplication::set_theme_variant(QString p_variant)
   emit reload_theme();
 }
 
-void AOApplication::on_config_theme_changed()
-{
-  emit reload_theme();
-}
+void AOApplication::on_config_theme_changed() { emit reload_theme(); }
 
-void AOApplication::on_config_reload_theme_requested()
-{
-  emit reload_theme();
-}
+void AOApplication::on_config_reload_theme_requested() { emit reload_theme(); }
 
-void AOApplication::on_config_theme_variant_changed()
-{
-  emit reload_theme();
-}
+void AOApplication::on_config_theme_variant_changed() { emit reload_theme(); }
 
 void AOApplication::set_favorite_list()
 {
@@ -186,10 +177,7 @@ bool AOApplication::get_chatlog_scrolldown()
   return config->log_goes_downward_enabled();
 }
 
-int AOApplication::get_chatlog_max_lines()
-{
-  return config->log_max_lines();
-}
+int AOApplication::get_chatlog_max_lines() { return config->log_max_lines(); }
 
 int AOApplication::get_chat_tick_interval()
 {
@@ -275,12 +263,6 @@ void AOApplication::ms_connect_finished(bool connected, bool will_retry)
   }
 }
 
-void AOApplication::on_courtroom_closing()
-{
-  config_panel->hide();
-}
+void AOApplication::on_courtroom_closing() { config_panel->hide(); }
 
-void AOApplication::on_courtroom_destroyed()
-{
-  config_panel->hide();
-}
+void AOApplication::on_courtroom_destroyed() { config_panel->hide(); }

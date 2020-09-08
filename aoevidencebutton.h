@@ -18,10 +18,7 @@ public:
   void reset();
   void set_image(QString p_image);
   void set_theme_image(QString p_image);
-  void set_id(int p_id)
-  {
-    m_id = p_id;
-  }
+  void set_id(int p_id) { m_id = p_id; }
 
   void set_selected(bool p_selected);
 

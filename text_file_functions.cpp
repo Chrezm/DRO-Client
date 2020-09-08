@@ -10,22 +10,40 @@
 #include <QTextStream>
 #include <QVector>
 
-QString AOApplication::get_theme() { return config->theme(); }
+QString AOApplication::get_theme()
+{
+  return config->theme();
+}
 
-QString AOApplication::get_theme_variant() { return config->theme_variant(); }
+QString AOApplication::get_theme_variant()
+{
+  return config->theme_variant();
+}
 
-int AOApplication::read_blip_rate() { return config->blip_rate(); }
+int AOApplication::read_blip_rate()
+{
+  return config->blip_rate();
+}
 
 bool AOApplication::read_chatlog_newline()
 {
   return config->log_uses_newline_enabled();
 }
 
-int AOApplication::get_default_music() { return config->music_volume(); }
+int AOApplication::get_default_music()
+{
+  return config->music_volume();
+}
 
-int AOApplication::get_default_sfx() { return config->effects_volume(); }
+int AOApplication::get_default_sfx()
+{
+  return config->effects_volume();
+}
 
-int AOApplication::get_default_blip() { return config->blips_volume(); }
+int AOApplication::get_default_blip()
+{
+  return config->blips_volume();
+}
 
 QStringList AOApplication::get_callwords()
 {
@@ -788,7 +806,10 @@ int AOApplication::get_text_delay(QString p_char, QString p_emote)
     return f_result.toInt();
 }
 
-bool AOApplication::get_blank_blip() { return config->blank_blips_enabled(); }
+bool AOApplication::get_blank_blip()
+{
+  return config->blank_blips_enabled();
+}
 
 QString AOApplication::read_theme_ini(QString p_identifier, QString p_file)
 {

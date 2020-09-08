@@ -20,9 +20,15 @@ AOCharButton::AOCharButton(QWidget *parent, AOApplication *p_ao_app, int x_pos,
   ui_taken->hide();
 }
 
-void AOCharButton::reset() { ui_taken->hide(); }
+void AOCharButton::reset()
+{
+  ui_taken->hide();
+}
 
-void AOCharButton::set_taken() { ui_taken->show(); }
+void AOCharButton::set_taken()
+{
+  ui_taken->show();
+}
 
 void AOCharButton::set_image(QString p_character)
 {

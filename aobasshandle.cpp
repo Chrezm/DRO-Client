@@ -1,6 +1,8 @@
 #include "aobasshandle.h"
 
-AOBassHandle::AOBassHandle(QObject *p_parent) : QObject(p_parent) {}
+AOBassHandle::AOBassHandle(QObject *p_parent) : QObject(p_parent)
+{
+}
 
 AOBassHandle::AOBassHandle(QString p_file, bool p_suicide,
                            QObject *p_parent) noexcept(false)
@@ -34,7 +36,10 @@ void AOBassHandle::suicide()
   delete this;
 }
 
-QString AOBassHandle::get_file() { return m_file; }
+QString AOBassHandle::get_file()
+{
+  return m_file;
+}
 
 void AOBassHandle::set_file(QString p_file, bool p_suicide) noexcept(false)
 {
@@ -70,9 +75,15 @@ void AOBassHandle::set_volume(int p_volume)
   BASS_ChannelSetAttribute(m_handle, BASS_ATTRIB_VOL, p_volume / 100.0f);
 }
 
-void AOBassHandle::play() { BASS_ChannelPlay(m_handle, FALSE); }
+void AOBassHandle::play()
+{
+  BASS_ChannelPlay(m_handle, FALSE);
+}
 
-void AOBassHandle::stop() { BASS_ChannelStop(m_handle); }
+void AOBassHandle::stop()
+{
+  BASS_ChannelStop(m_handle);
+}
 
 void CALLBACK AOBassHandle::static_sync(HSYNC handle, DWORD channel, DWORD data,
                                         void *user)

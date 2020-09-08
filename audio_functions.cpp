@@ -1,6 +1,9 @@
 #include "courtroom.h"
 
-bool Courtroom::is_audio_muted() { return m_audio_mute; }
+bool Courtroom::is_audio_muted()
+{
+  return m_audio_mute;
+}
 
 void Courtroom::set_audio_mute_enabled(bool p_enabled)
 {

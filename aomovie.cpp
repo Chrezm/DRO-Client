@@ -15,9 +15,15 @@ AOMovie::AOMovie(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(p_parent)
   connect(m_movie, SIGNAL(frameChanged(int)), this, SLOT(frame_change(int)));
 }
 
-AOMovie::~AOMovie() { delete m_movie; }
+AOMovie::~AOMovie()
+{
+  delete m_movie;
+}
 
-void AOMovie::set_play_once(bool p_play_once) { play_once = p_play_once; }
+void AOMovie::set_play_once(bool p_play_once)
+{
+  play_once = p_play_once;
+}
 
 void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme)
 {

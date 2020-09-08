@@ -26,7 +26,9 @@ NetworkManager::NetworkManager(AOApplication *parent) : QObject(parent)
                    SLOT(server_disconnected()));
 }
 
-NetworkManager::~NetworkManager() {}
+NetworkManager::~NetworkManager()
+{
+}
 
 void NetworkManager::connect_to_master()
 {

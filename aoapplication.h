@@ -76,19 +76,34 @@ public:
 
   //////////////////versioning///////////////
 
-  int get_release() { return RELEASE; }
-  int get_major_version() { return MAJOR_VERSION; }
-  int get_minor_version() { return MINOR_VERSION; }
+  int get_release()
+  {
+    return RELEASE;
+  }
+  int get_major_version()
+  {
+    return MAJOR_VERSION;
+  }
+  int get_minor_version()
+  {
+    return MINOR_VERSION;
+  }
   QString get_version_string();
 
   ///////////////////////////////////////////
 
   void set_favorite_list();
-  QVector<server_type> &get_favorite_list() { return favorite_list; }
+  QVector<server_type> &get_favorite_list()
+  {
+    return favorite_list;
+  }
   void add_favorite_server(int p_server);
 
   void set_server_list();
-  QVector<server_type> &get_server_list() { return server_list; }
+  QVector<server_type> &get_server_list()
+  {
+    return server_list;
+  }
 
   // reads the theme from config.ini and sets it accordingly
   void set_theme_name(QString p_name);

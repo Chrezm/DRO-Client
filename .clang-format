@@ -1,2 +1,9 @@
 BasedOnStyle : LLVM 
 BreakBeforeBraces : Allman
+AllowShortBlocksOnASingleLine : Never
+AllowShortCaseLabelsOnASingleLine : false
+AllowShortFunctionsOnASingleLine : None
+AllowShortIfStatementsOnASingleLine : Never
+AllowShortLambdasOnASingleLine : None
+AllowShortLoopsOnASingleLine : false
+# AllowShortEnumsOnASingleLine : false

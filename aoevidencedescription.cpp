@@ -15,4 +15,7 @@ void AOEvidenceDescription::mouseDoubleClickEvent(QMouseEvent *e)
   this->setReadOnly(false);
 }
 
-void AOEvidenceDescription::on_enter_pressed() { this->setReadOnly(true); }
+void AOEvidenceDescription::on_enter_pressed()
+{
+  this->setReadOnly(true);
+}

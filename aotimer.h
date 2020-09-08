@@ -15,10 +15,19 @@ class ManualTimer
   int timestep_length;
 
 public:
-  QTime get_time() { return current_time; }
-  int get_timestep_length() { return timestep_length; }
+  QTime get_time()
+  {
+    return current_time;
+  }
+  int get_timestep_length()
+  {
+    return timestep_length;
+  }
 
-  void set_time(QTime new_time) { current_time = new_time; }
+  void set_time(QTime new_time)
+  {
+    current_time = new_time;
+  }
   void set_timestep_length(int new_timestep_length)
   {
     timestep_length = new_timestep_length;

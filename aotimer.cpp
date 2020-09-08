@@ -60,11 +60,20 @@ void AOTimer::update_time()
   firing_timer.start(firing_timer_length);
 }
 
-void AOTimer::set() { set_time(start_time); }
+void AOTimer::set()
+{
+  set_time(start_time);
+}
 
-void AOTimer::resume() { firing_timer.start(firing_timer_length); }
+void AOTimer::resume()
+{
+  firing_timer.start(firing_timer_length);
+}
 
-void AOTimer::pause() { firing_timer.stop(); }
+void AOTimer::pause()
+{
+  firing_timer.stop();
+}
 
 void AOTimer::redraw()
 {

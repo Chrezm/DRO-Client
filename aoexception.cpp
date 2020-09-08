@@ -1,6 +1,8 @@
 #include "aoexception.h"
 
-AOException::AOException(QString p_msg) : m_msg(p_msg) {}
+AOException::AOException(QString p_msg) : m_msg(p_msg)
+{
+}
 
 const char *AOException::what() const noexcept
 {

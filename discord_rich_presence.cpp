@@ -33,7 +33,9 @@ void Discord::start(const char *APPLICATION_ID)
   DiscordEventHandlers handlers;
   std::memset(&handlers, 0, sizeof(handlers));
   handlers = {};
-  handlers.ready = [] { qInfo() << "Discord RPC ready"; };
+  handlers.ready = [] {
+    qInfo() << "Discord RPC ready";
+  };
   handlers.disconnected = [](int errorCode, const char *message) {
     qInfo() << "Discord RPC disconnected! " << message;
   };
@@ -44,7 +46,10 @@ void Discord::start(const char *APPLICATION_ID)
   Discord_Initialize(APPLICATION_ID, &handlers, 1, nullptr);
 }
 
-Discord::~Discord() { Discord_Shutdown(); }
+Discord::~Discord()
+{
+  Discord_Shutdown();
+}
 
 void Discord::restart(const char *APPLICATION_ID)
 {

@@ -46,41 +46,20 @@
 
 class AOApplication;
 
-class Courtroom : public QMainWindow
-{
+class Courtroom : public QMainWindow {
   Q_OBJECT
 public:
   explicit Courtroom(AOApplication *p_ao_app);
 
-  void append_char(char_type p_char)
-  {
-    char_list.append(p_char);
-  }
-  void append_evidence(evi_type p_evi)
-  {
-    evidence_list.append(p_evi);
-  }
-  void append_music(QString f_music)
-  {
-    music_list.append(f_music);
-  }
-  void append_area(QString f_area)
-  {
-    area_list.append(f_area);
-  }
-  void clear_music()
-  {
-    music_list.clear();
-  }
-  void clear_areas()
-  {
-    area_list.clear();
-  }
+  void append_char(char_type p_char) { char_list.append(p_char); }
+  void append_evidence(evi_type p_evi) { evidence_list.append(p_evi); }
+  void append_music(QString f_music) { music_list.append(f_music); }
+  void append_area(QString f_area) { area_list.append(f_area); }
+  void clear_music() { music_list.clear(); }
+  void clear_areas() { area_list.clear(); }
 
-  void fix_last_area()
-  {
-    if (area_list.size() > 0)
-    {
+  void fix_last_area() {
+    if (area_list.size() > 0) {
       QString malplaced = area_list.last();
       area_list.removeLast();
       append_music(malplaced);
@@ -152,18 +131,11 @@ public:
   void set_ban(int p_cid);
 
   // implementations in path_functions.cpp
-  QString get_background_path();
-  QString get_default_background_path();
+  QString get_background_path(QString p_file);
 
   // cid = character id, returns the cid of the currently selected character
-  int get_cid()
-  {
-    return m_cid;
-  }
-  QString get_current_char()
-  {
-    return current_char;
-  }
+  int get_cid() { return m_cid; }
+  QString get_current_char() { return current_char; }
 
   // properly sets up some varibles: resets user state
   void enter_courtroom(int p_cid);
@@ -810,8 +782,7 @@ protected:
 
 template <typename T>
 void Courtroom::insert_widget_names(QVector<QString> &p_widget_names,
-                                    QVector<T *> &p_widgets)
-{
+                                    QVector<T *> &p_widgets) {
   QVector<QWidget *> widgets;
 
   for (QWidget *widget : p_widgets)

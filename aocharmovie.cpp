@@ -9,8 +9,7 @@
 #include <QImageReader>
 
 AOCharMovie::AOCharMovie(QWidget *p_parent, AOApplication *p_ao_app)
-    : QLabel(p_parent)
-{
+    : QLabel(p_parent) {
   ao_app = p_ao_app;
 
   m_reader = new QMovie(this);
@@ -24,27 +23,22 @@ AOCharMovie::AOCharMovie(QWidget *p_parent, AOApplication *p_ao_app)
 }
 
 void AOCharMovie::play(QString p_char, QString p_emote, QString p_emote_prefix,
-                       bool p_visible)
-{
+                       bool p_visible) {
   QString target_path;
   QStringList f_paths{
-      ao_app->get_character_path(p_char) + p_emote_prefix +
-          p_emote.toLower(),                                  // .gif
-      ao_app->get_character_path(p_char) + p_emote.toLower(), // .png
-      ao_app->get_theme_variant_path() + "placeholder",       // .gif
-      ao_app->get_theme_path() + "placeholder",               // .gif
-      ao_app->get_default_theme_path() + "placeholder"        // .gif
+      ao_app->get_character_path(p_char, p_emote_prefix + p_emote), // .gif
+      ao_app->get_character_path(p_char, p_emote),                  // .png
+      ao_app->get_theme_variant_path("placeholder"),                // .gif
+      ao_app->get_theme_path("placeholder"),                        // .gif
+      ao_app->get_default_theme_path("placeholder")                 // .gif
   };
 
-  for (auto &f_file : f_paths)
-  {
+  for (auto &f_file : f_paths) {
     bool found = false;
-    for (auto &ext : QStringList{".webp", ".apng", ".gif", ".png"})
-    {
+    for (auto &ext : QStringList{".webp", ".apng", ".gif", ".png"}) {
       QString fullPath = f_file + ext;
       found = file_exists(fullPath);
-      if (found)
-      {
+      if (found) {
         target_path = fullPath;
         break;
       }
@@ -60,8 +54,8 @@ void AOCharMovie::play(QString p_char, QString p_emote, QString p_emote_prefix,
 
   movie_frames.clear();
   QImageReader *reader = new QImageReader(target_path);
-  for (int i = 0; i < reader->imageCount(); ++i)
-  { // optimize can be better, but I'll just keep it like that for now
+  for (int i = 0; i < reader->imageCount();
+       ++i) { // optimize can be better, but I'll just keep it like that for now
     QImage f_image = reader->read();
     if (m_mirror)
       f_image = f_image.mirrored(true, false);
@@ -75,19 +69,15 @@ void AOCharMovie::play(QString p_char, QString p_emote, QString p_emote_prefix,
   m_reader->start();
 }
 
-bool AOCharMovie::play_pre(QString p_char, QString p_emote, bool show)
-{
-  QString f_file_path = ao_app->get_character_path(p_char) + p_emote.toLower();
+bool AOCharMovie::play_pre(QString p_char, QString p_emote, bool show) {
+  QString f_file_path = ao_app->get_character_path(p_char, p_emote);
   bool f_file_exist = false;
 
   { // figure out what extension the animation is using
-    QString f_source_path =
-        ao_app->get_character_path(p_char) + p_emote.toLower();
-    for (QString &i_ext : QStringList{".webp", ".apng", ".gif", ".png"})
-    {
+    QString f_source_path = ao_app->get_character_path(p_char, p_emote);
+    for (QString &i_ext : QStringList{".webp", ".apng", ".gif", ".png"}) {
       QString f_target_path = f_source_path + i_ext;
-      if (file_exists(f_target_path))
-      {
+      if (file_exists(f_target_path)) {
         f_file_path = f_target_path;
         f_file_exist = true;
         break;
@@ -96,8 +86,7 @@ bool AOCharMovie::play_pre(QString p_char, QString p_emote, bool show)
   }
 
   // play if it exist
-  if (f_file_exist)
-  {
+  if (f_file_exist) {
     m_reader->stop();
     this->clear();
     m_play_once = true;
@@ -108,10 +97,9 @@ bool AOCharMovie::play_pre(QString p_char, QString p_emote, bool show)
   return f_file_exist;
 }
 
-void AOCharMovie::play_talking(QString p_char, QString p_emote, bool p_visible)
-{
-  QString gif_path =
-      ao_app->get_character_path(p_char) + "(b)" + p_emote.toLower();
+void AOCharMovie::play_talking(QString p_char, QString p_emote,
+                               bool p_visible) {
+  QString gif_path = ao_app->get_character_path(p_char, "(b)" + p_emote);
 
   m_reader->stop();
   this->clear();
@@ -120,10 +108,8 @@ void AOCharMovie::play_talking(QString p_char, QString p_emote, bool p_visible)
   play(p_char, p_emote, "(b)", p_visible);
 }
 
-void AOCharMovie::play_idle(QString p_char, QString p_emote, bool p_visible)
-{
-  QString gif_path =
-      ao_app->get_character_path(p_char) + "(a)" + p_emote.toLower();
+void AOCharMovie::play_idle(QString p_char, QString p_emote, bool p_visible) {
+  QString gif_path = ao_app->get_character_path(p_char, "(a)" + p_emote);
 
   this->clear();
   m_reader->stop();
@@ -132,13 +118,9 @@ void AOCharMovie::play_idle(QString p_char, QString p_emote, bool p_visible)
   play(p_char, p_emote, "(a)", p_visible);
 }
 
-void AOCharMovie::set_mirror_enabled(bool p_enable)
-{
-  m_mirror = p_enable;
-}
+void AOCharMovie::set_mirror_enabled(bool p_enable) { m_mirror = p_enable; }
 
-void AOCharMovie::stop()
-{
+void AOCharMovie::stop() {
   // for all intents and purposes, stopping is the same as hiding. at no point
   // do we want a frozen gif to display
   m_reader->stop();
@@ -146,8 +128,7 @@ void AOCharMovie::stop()
   this->hide();
 }
 
-void AOCharMovie::combo_resize(QSize p_size)
-{
+void AOCharMovie::combo_resize(QSize p_size) {
   resize(p_size);
   m_reader->stop();
   m_frame_timer->stop();
@@ -155,20 +136,16 @@ void AOCharMovie::combo_resize(QSize p_size)
   m_reader->start();
 }
 
-void AOCharMovie::on_frame_changed(int p_frame_num)
-{
-  if (movie_frames.size() > p_frame_num)
-  {
+void AOCharMovie::on_frame_changed(int p_frame_num) {
+  if (movie_frames.size() > p_frame_num) {
     AOPixmap f_pixmap = QPixmap::fromImage(movie_frames.at(p_frame_num));
     this->setPixmap(f_pixmap.scale_to_size(this->size()));
   }
 
   // pre-anim only
-  if (m_play_once)
-  {
+  if (m_play_once) {
     int f_frame_count = m_reader->frameCount();
-    if (f_frame_count == 0 || p_frame_num == (f_frame_count - 1))
-    {
+    if (f_frame_count == 0 || p_frame_num == (f_frame_count - 1)) {
       int f_frame_delay = m_reader->nextFrameDelay();
       if (f_frame_delay < 0)
         f_frame_delay = 0;
@@ -178,7 +155,4 @@ void AOCharMovie::on_frame_changed(int p_frame_num)
   }
 }
 
-void AOCharMovie::timer_done()
-{
-  done();
-}
+void AOCharMovie::timer_done() { done(); }

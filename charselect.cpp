@@ -5,8 +5,7 @@
 
 #include <QDebug>
 
-void Courtroom::construct_char_select()
-{
+void Courtroom::construct_char_select() {
   ui_char_select_background = new AOImage(this, ao_app);
 
   ui_char_buttons = new QWidget(ui_char_select_background);
@@ -38,8 +37,7 @@ void Courtroom::construct_char_select()
   reconstruct_char_select();
 }
 
-void Courtroom::reconstruct_char_select()
-{
+void Courtroom::reconstruct_char_select() {
   while (!ui_char_button_list.isEmpty())
     delete ui_char_button_list.takeLast();
 
@@ -65,8 +63,7 @@ void Courtroom::reconstruct_char_select()
 
   max_chars_on_page = char_columns * char_rows;
 
-  for (int n = 0; n < max_chars_on_page; ++n)
-  {
+  for (int n = 0; n < max_chars_on_page; ++n) {
     int x_pos = (button_width + x_spacing) * x_mod_count;
     int y_pos = (button_height + y_spacing) * y_mod_count;
 
@@ -84,8 +81,7 @@ void Courtroom::reconstruct_char_select()
 
     ++x_mod_count;
 
-    if (x_mod_count == char_columns)
-    {
+    if (x_mod_count == char_columns) {
       ++y_mod_count;
       x_mod_count = 0;
     }
@@ -94,43 +90,37 @@ void Courtroom::reconstruct_char_select()
   reset_char_select();
 }
 
-void Courtroom::reset_char_select()
-{
+void Courtroom::reset_char_select() {
   current_char_page = 0;
 
   set_char_select();
   set_char_select_page();
 }
 
-void Courtroom::set_char_select()
-{
+void Courtroom::set_char_select() {
   QString filename = "courtroom_design.ini";
 
   pos_size_type f_charselect =
       ao_app->get_element_dimensions("char_select", filename);
 
-  if (f_charselect.width < 0 || f_charselect.height < 0)
-  {
+  if (f_charselect.width < 0 || f_charselect.height < 0) {
     qDebug()
         << "W: did not find courtroom width or height in courtroom_design.ini!";
     this->resize(714, 668);
-  }
-  else
+  } else
     this->resize(f_charselect.width, f_charselect.height);
 
   ui_char_select_background->resize(f_charselect.width, f_charselect.height);
   ui_char_select_background->set_image("charselect_background.png");
 }
 
-void Courtroom::set_char_select_page()
-{
+void Courtroom::set_char_select_page() {
   ui_char_select_background->show();
 
   ui_char_select_left->hide();
   ui_char_select_right->hide();
 
-  for (AOCharButton *button : ui_char_button_list)
-  {
+  for (AOCharButton *button : ui_char_button_list) {
     button->reset();
     button->hide();
   }
@@ -138,16 +128,14 @@ void Courtroom::set_char_select_page()
   int total_pages = char_list.size() / max_chars_on_page;
   int chars_on_page = 0;
 
-  if (char_list.size() % max_chars_on_page != 0)
-  {
+  if (char_list.size() % max_chars_on_page != 0) {
     ++total_pages;
     // i. e. not on the last page
     if (total_pages > current_char_page + 1)
       chars_on_page = max_chars_on_page;
     else
       chars_on_page = char_list.size() % max_chars_on_page;
-  }
-  else
+  } else
     chars_on_page = max_chars_on_page;
 
   if (total_pages > current_char_page + 1)
@@ -157,8 +145,7 @@ void Courtroom::set_char_select_page()
     ui_char_select_left->show();
 
   // show all buttons for this page
-  for (int n_button = 0; n_button < chars_on_page; ++n_button)
-  {
+  for (int n_button = 0; n_button < chars_on_page; ++n_button) {
     if (char_list.length() <= n_button)
       continue;
 
@@ -173,35 +160,29 @@ void Courtroom::set_char_select_page()
   }
 }
 
-void Courtroom::char_clicked(int n_char)
-{
+void Courtroom::char_clicked(int n_char) {
   int n_real_char = n_char + current_char_page * max_chars_on_page;
 
   QString char_ini_path =
-      ao_app->get_character_path(char_list.at(n_real_char).name) + "char.ini";
+      ao_app->get_character_path(char_list.at(n_real_char).name, "char.ini");
   qDebug() << "char_ini_path" << char_ini_path;
 
-  if (!file_exists(char_ini_path))
-  {
+  if (!file_exists(char_ini_path)) {
     qDebug() << "did not find " << char_ini_path;
     call_notice("Could not find " + char_ini_path);
     return;
   }
 
-  if (n_real_char == m_cid)
-  {
+  if (n_real_char == m_cid) {
     enter_courtroom(m_cid);
-  }
-  else
-  {
+  } else {
     QString content = "CC#" + QString::number(ao_app->s_pv) + "#" +
                       QString::number(n_real_char) + "#" + get_hdid() + "#%";
     ao_app->send_server_packet(new AOPacket(content));
   }
 }
 
-void Courtroom::char_mouse_entered(AOCharButton *p_caller)
-{
+void Courtroom::char_mouse_entered(AOCharButton *p_caller) {
   if (p_caller == nullptr)
     return;
   ui_char_button_selector->move(p_caller->x() - 1, p_caller->y() - 1);
@@ -209,7 +190,4 @@ void Courtroom::char_mouse_entered(AOCharButton *p_caller)
   ui_char_button_selector->show();
 }
 
-void Courtroom::char_mouse_left()
-{
-  ui_char_button_selector->hide();
-}
+void Courtroom::char_mouse_left() { ui_char_button_selector->hide(); }

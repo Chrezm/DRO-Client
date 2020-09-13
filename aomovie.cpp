@@ -60,7 +60,7 @@ void AOMovie::play(QString p_file, QString p_char, QString p_custom_theme)
     bool found = false;
     for (auto &ext : decltype(f_vec){".webp", ".apng", ".gif", ".png"})
     {
-      QString fullPath = f_file + ext;
+      QString fullPath = ao_app->get_case_sensitive_path(f_file + ext);
       found = file_exists(fullPath);
       if (found)
       {

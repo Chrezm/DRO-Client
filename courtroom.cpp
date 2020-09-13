@@ -1013,7 +1013,7 @@ void Courtroom::handle_chatmessage_3()
     ext = ao_app->get_file_extension(directory, exts);
     if (!ext.isEmpty())
     {
-      path = directory + ext;
+      path = ao_app->get_case_sensitive_path(directory + ext);
       break;
     }
   }

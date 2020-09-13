@@ -40,7 +40,7 @@ void AOCharMovie::play(QString p_char, QString p_emote, QString p_emote_prefix,
     bool found = false;
     for (auto &ext : QStringList{".webp", ".apng", ".gif", ".png"})
     {
-      QString fullPath = f_file + ext;
+      QString fullPath = ao_app->get_case_sensitive_path(f_file + ext);
       found = file_exists(fullPath);
       if (found)
       {
@@ -83,7 +83,8 @@ bool AOCharMovie::play_pre(QString p_char, QString p_emote, bool show)
     QString f_source_path = ao_app->get_character_path(p_char, p_emote);
     for (QString &i_ext : QStringList{".webp", ".apng", ".gif", ".png"})
     {
-      QString f_target_path = f_source_path + i_ext;
+      QString f_target_path =
+          ao_app->get_case_sensitive_path(f_source_path + i_ext);
       if (file_exists(f_target_path))
       {
         f_file_path = f_target_path;

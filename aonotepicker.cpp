@@ -1,6 +1,7 @@
 #include "aonotepicker.h"
 
 #include "courtroom.h"
+#include "debug_functions.h"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -23,6 +24,12 @@ void Courtroom::on_file_selected()
   AOButton *f_button = static_cast<AOButton *>(sender());
   AONotePicker *f_notepicker = static_cast<AONotePicker *>(f_button->parent());
 
+  if (f_notepicker->real_file.isEmpty())
+  {
+    call_notice("You must give a filepath to load a note from!");
+    return;
+  }
+
   if (current_file != f_notepicker->real_file)
   {
     current_file = f_notepicker->real_file;
@@ -39,7 +46,9 @@ void Courtroom::on_set_file_button_clicked()
 {
   AOButton *f_button = static_cast<AOButton *>(sender());
   AONotePicker *f_notepicker = static_cast<AONotePicker *>(f_button->parent());
-  QString f_filename = QFileDialog::getOpenFileName(this, "Open File");
+  QString f_filename = QFileDialog::getOpenFileName(
+      this, "Open File", QDir::currentPath(), "Text files (*.txt)");
+
   if (f_filename != "")
   {
     f_notepicker->m_line->setText(f_filename);

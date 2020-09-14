@@ -22,9 +22,17 @@ void Courtroom::on_file_selected()
 
   AOButton *f_button = static_cast<AOButton *>(sender());
   AONotePicker *f_notepicker = static_cast<AONotePicker *>(f_button->parent());
-  current_file = f_notepicker->real_file;
-  load_note();
-  f_button->set_image("note_select_selected.png");
+
+  if (current_file != f_notepicker->real_file)
+  {
+    current_file = f_notepicker->real_file;
+    load_note();
+    f_button->set_image("note_select_selected.png");
+  }
+  else
+  {
+    current_file = "";
+  }
 }
 
 void Courtroom::on_set_file_button_clicked()
@@ -45,6 +53,12 @@ void Courtroom::on_delete_button_clicked()
 {
   AOButton *f_button = static_cast<AOButton *>(sender());
   AONotePicker *f_notepicker = static_cast<AONotePicker *>(f_button->parent());
+
+  if (current_file == f_notepicker->real_file)
+  {
+    current_file = "";
+  }
+
   ui_note_area->m_layout->removeWidget(f_notepicker);
   delete f_notepicker;
   set_note_files();

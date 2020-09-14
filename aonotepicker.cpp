@@ -34,7 +34,7 @@ void Courtroom::on_file_selected()
   {
     current_file = f_notepicker->real_file;
     load_note();
-    f_button->set_image("note_select_selected.png");
+    f_notepicker->m_hover->set_image("note_select_selected.png");
   }
   else
   {
@@ -52,6 +52,15 @@ void Courtroom::on_set_file_button_clicked()
   if (f_filename != "")
   {
     f_notepicker->m_line->setText(f_filename);
+
+    // If this notepicker is the currently selected slot, update the notepad as
+    // the file given changes.
+    if (f_notepicker->real_file == current_file)
+    {
+      current_file = f_filename;
+      load_note();
+    }
+
     f_notepicker->real_file = f_filename;
 
     set_note_files();

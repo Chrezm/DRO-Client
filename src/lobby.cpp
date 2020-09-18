@@ -7,6 +7,8 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QImageReader>
+#include <QMessageBox>
 #include <QScrollBar>
 #include <QTextEdit>
 
@@ -365,21 +367,24 @@ void Lobby::on_connect_released()
 
 void Lobby::on_about_clicked()
 {
-  call_notice("Attorney Online 2 is built using Qt.\n\n"
-              "Lead development:\n"
-              "OmniTroid\n\n"
-              "stonedDiscord\n"
-              "longbyte1\n"
-              "Supporting development:\n"
-              "Fiercy\n\n"
-              "UI design:\n"
-              "Ruekasu\n"
-              "Draxirch\n\n"
-              "Special thanks:\n"
-              "Unishred\n"
-              "Argoneus\n"
-              "Noevain\n"
-              "Cronnicossy");
+  const bool hasApng = QImageReader::supportedImageFormats().contains("apng");
+
+  QString msg = tr("<h2>Danganronpa Online</h2>"
+                   "version: %1"
+                   "<p><b>Source code:</b> "
+                   "<a href='https://github.com/Chrezm/DRO-Client'>"
+                   "https://github.com/Chrezm/DRO-Client</a>"
+                   "<p><b>Development:</b><br>"
+                   "Cerapter, Elf, Iuvee, Tricky Leifa"
+                   "<p>Running on Qt version %2 with the BASS audio engine.<br>"
+                   "APNG plugin loaded: %3"
+                   "<p>Built on %4")
+                    .arg(ao_app->get_version_string())
+                    .arg(QLatin1String(QT_VERSION_STR))
+                    .arg(hasApng ? tr("Yes") : tr("No"))
+                    .arg(QLatin1String(__DATE__));
+
+  QMessageBox::about(this, tr("About"), msg);
 }
 
 void Lobby::on_server_list_clicked(QModelIndex p_model)

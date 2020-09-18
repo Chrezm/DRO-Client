@@ -375,7 +375,10 @@ void Lobby::on_about_clicked()
                    "<a href='https://github.com/Chrezm/DRO-Client'>"
                    "https://github.com/Chrezm/DRO-Client</a>"
                    "<p><b>Development:</b><br>"
-                   "Cerapter, Elf, Iuvee, Tricky Leifa"
+                   "Cerapter, Elf, Iuvee, Tricky Leifa, Ziella"
+                   "<p>Based on Attorney Online 2:<br>"
+                   "<a href='https://github.com/AttorneyOnline/AO2-Client'>"
+                   "https://github.com/AttorneyOnline/AO2-Client</a>"
                    "<p>Running on Qt version %2 with the BASS audio engine.<br>"
                    "APNG plugin loaded: %3"
                    "<p>Built on %4")

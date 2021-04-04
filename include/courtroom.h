@@ -142,10 +142,6 @@ public:
   // sets text color based on text color in chatmessage
   void set_text_color();
 
-  // takes in serverD-formatted IP list as prints a converted version to server
-  // OOC admittedly poorly named
-  void set_ip_list(QString p_list);
-
   // disables chat if current cid matches second argument
   // enables if p_muted is false
   void set_mute(bool p_muted, int p_cid);

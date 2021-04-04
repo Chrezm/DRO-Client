@@ -1530,13 +1530,6 @@ void Courtroom::set_text_color()
   m_base_string_color.setNamedColor(color_code);
 }
 
-void Courtroom::set_ip_list(QString p_list)
-{
-  QString f_list = p_list.replace("|", ":").replace("*", "\n");
-
-  ui_server_chatlog->append(f_list);
-}
-
 void Courtroom::set_mute(bool p_muted, int p_cid)
 {
   if (p_cid != m_cid && p_cid != -1)
@@ -1744,6 +1737,18 @@ void Courtroom::on_ooc_return_pressed()
   {
     m_effects_player->play(ao_app->get_sfx("coinflip"));
   }
+
+  QStringList packet_contents;
+  packet_contents.append(ooc_name);
+  packet_contents.append(ooc_message);
+
+  AOPacket *f_packet = new AOPacket("CT", packet_contents);
+
+  ao_app->send_server_packet(f_packet);
+
+  ui_ooc_chat_message->clear();
+
+  ui_ooc_chat_message->setFocus();
 }
 
 void Courtroom::on_music_search_edited(QString p_text)

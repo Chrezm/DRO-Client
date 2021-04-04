@@ -594,11 +594,6 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
       w_courtroom->set_evidence_list(f_evi_list);
     }
   }
-  else if (header == "IL")
-  {
-    if (courtroom_constructed && f_contents.size() > 0)
-      w_courtroom->set_ip_list(f_contents.at(0));
-  }
   else if (header == "MU")
   {
     if (courtroom_constructed && f_contents.size() > 0)

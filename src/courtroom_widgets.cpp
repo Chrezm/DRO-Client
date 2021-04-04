@@ -613,7 +613,6 @@ void Courtroom::set_widgets()
   set_size_and_pos(ui_area_list, "area_list");
   if (ui_music_list->isVisible())
     ui_area_list->hide();
-  //  ui_area_list->setStyleSheet("background-color: rgba(0, 0, 0, 0);");
 
   set_size_and_pos(ui_sfx_list, "sfx_list");
 
@@ -753,8 +752,7 @@ void Courtroom::set_widgets()
   }
   set_free_blocks();
 
-  // Set the default values for the buttons, then determine if they should be
-  // replaced by images
+  // Set the default values for the buttons, then determine if they should be replaced by images
   set_size_and_pos(ui_change_character, "change_character");
   set_size_and_pos(ui_call_mod, "call_mod");
   set_size_and_pos(ui_note_button, "note_button");
@@ -1194,7 +1192,6 @@ void Courtroom::load_free_blocks()
   for (int i = 0; i < ui_free_blocks.size(); ++i)
   {
     ui_free_blocks[i] = new AOMovie(this, ao_app);
-    // ui_free_blocks[i]->setProperty("free_block_id", i+1);
     ui_free_blocks[i]->set_play_once(false);
     ui_free_blocks[i]->stackUnder(ui_vp_player_char);
   }

@@ -15,7 +15,8 @@
 static const int EVENT_TIMER_INTERVAL_DEFAULT = 100;
 
 DRAudioEnginePrivate::DRAudioEnginePrivate() : QObject(nullptr), event_timer(new QTimer)
-{}
+{
+}
 
 DRAudioEnginePrivate::~DRAudioEnginePrivate()
 {
@@ -26,6 +27,7 @@ DRAudioEnginePrivate::~DRAudioEnginePrivate()
 
 void DRAudioEnginePrivate::invoke_signal(QString p_method_name, QGenericArgument p_arg1)
 {
+  // Does this do anything? children seems to always be an empty QObjectList
   for (QObject *i_child : children)
   {
     QMetaObject::invokeMethod(i_child, p_method_name.toStdString().c_str(), p_arg1);
@@ -35,7 +37,7 @@ void DRAudioEnginePrivate::invoke_signal(QString p_method_name, QGenericArgument
 void DRAudioEnginePrivate::update_device()
 {
   // cache the stream's position before we make the switch
-  for (DRAudioStreamFamily::ptr &i_family : family_map.values())
+  for (DRAudioStreamFamily::ptr &i_family : family_map)
     for (DRAudioStream::ptr &i_stream : i_family->get_stream_list())
       i_stream->cache_position();
 
@@ -67,7 +69,7 @@ void DRAudioEnginePrivate::update_device()
     return;
   }
 
-  for (DRAudioStreamFamily::ptr &i_family : family_map.values())
+  for (DRAudioStreamFamily::ptr &i_family : family_map)
     i_family->update_device();
 }
 
@@ -108,7 +110,7 @@ void DRAudioEnginePrivate::update_options()
 
 void DRAudioEnginePrivate::update_volume()
 {
-  for (auto &i_group : family_map.values())
+  for (auto &i_group : family_map)
     i_group->update_volume();
 }
 
@@ -127,7 +129,7 @@ void DRAudioEnginePrivate::on_event_tick()
   check_device = false;
 
   std::optional<DRAudioDevice> target_device;
-  for (DRAudioDevice &i_device : device_map.values())
+  for (DRAudioDevice &i_device : device_map)
   {
     if (!i_device.is_enabled())
       continue;

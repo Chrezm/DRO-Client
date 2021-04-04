@@ -70,7 +70,7 @@ void AOEmoteButton::set_image(QString p_chr, int p_emote_number, bool p_enabled)
   const bool texture_exist = file_exists(texture_path);
   setText(texture_exist ? QString() : ao_app->get_emote_comment(p_chr, p_emote_number));
   setStyleSheet(texture_exist
-                    ? QString("%1 { border-image: url(\"%2\"); }").arg(metaObject()->className()).arg(texture_path)
+                    ? QString("%1 { border-image: url(\"%2\"); }").arg(metaObject()->className(), texture_path)
                     : QString());
 }
 

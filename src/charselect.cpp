@@ -116,7 +116,7 @@ void Courtroom::set_char_select_page()
   ui_char_select_left->hide();
   ui_char_select_right->hide();
 
-  for (AOCharButton *button : ui_char_button_list)
+  for (AOCharButton *button : qAsConst(ui_char_button_list))
   {
     button->reset();
     button->hide();

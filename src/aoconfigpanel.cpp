@@ -138,8 +138,8 @@ AOConfigPanel::AOConfigPanel(AOApplication *p_ao_app, QWidget *p_parent)
   connect(w_server_alerts, SIGNAL(toggled(bool)), m_config, SLOT(set_server_alerts(bool)));
 
   connect(w_discord_presence, SIGNAL(toggled(bool)), m_config, SLOT(set_discord_presence(bool)));
-  connect(w_discord_hide_server, SIGNAL(toggled(bool)), m_config, SLOT(set_discord_hide_server(const bool)));
-  connect(w_discord_hide_character, SIGNAL(toggled(bool)), m_config, SLOT(set_discord_hide_character(const bool)));
+  connect(w_discord_hide_server, SIGNAL(toggled(bool)), m_config, SLOT(set_discord_hide_server(bool)));
+  connect(w_discord_hide_character, SIGNAL(toggled(bool)), m_config, SLOT(set_discord_hide_character(bool)));
 
   connect(w_theme, SIGNAL(currentIndexChanged(QString)), m_config, SLOT(set_theme(QString)));
   connect(w_reload_theme, SIGNAL(clicked()), this, SLOT(on_reload_theme_clicked()));
@@ -257,7 +257,8 @@ void AOConfigPanel::refresh_theme_list()
 
   // themes
   const QString path = QDir::currentPath() + "/base/themes";
-  for (QString i_folder : QDir(ao_app->get_case_sensitive_path(path)).entryList(QDir::Dirs))
+  const QStringList folders = QDir(ao_app->get_case_sensitive_path(path)).entryList(QDir::Dirs);
+  for (const QString &i_folder : folders)
   {
     if (i_folder == "." || i_folder == "..")
       continue;
@@ -283,7 +284,8 @@ void AOConfigPanel::refresh_gamemode_list()
   w_gamemode->addItem("<default>");
   // gamemodes
   QString path = QDir::currentPath() + "/base/themes/" + m_config->theme() + "/gamemodes/";
-  for (QString i_folder : QDir(ao_app->get_case_sensitive_path(path)).entryList(QDir::Dirs))
+  const QStringList folders = QDir(ao_app->get_case_sensitive_path(path)).entryList(QDir::Dirs);
+  for (const QString &i_folder : folders)
   {
     if (i_folder == "." || i_folder == "..")
       continue;
@@ -317,7 +319,8 @@ void AOConfigPanel::refresh_timeofday_list()
     path = QDir::currentPath() + "/base/themes/" + m_config->theme() + "/gamemodes/" + m_config->gamemode() + "/times/";
 
   // times of day
-  for (QString i_folder : QDir(ao_app->get_case_sensitive_path(path)).entryList(QDir::Dirs))
+  const QStringList folders = QDir(ao_app->get_case_sensitive_path(path)).entryList(QDir::Dirs);
+  for (const QString &i_folder : folders)
   {
     if (i_folder == "." || i_folder == "..")
       continue;

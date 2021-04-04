@@ -24,8 +24,6 @@ void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_sid
   QString f_evidence_path = ao_app->get_evidence_path(p_evidence_image);
 
   AOPixmap f_pixmap(f_evidence_path);
-
-  QString final_gif_path;
   QString gif_name;
   QString icon_identifier;
 

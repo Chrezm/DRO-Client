@@ -329,9 +329,8 @@ QMap<DR::Color, DR::ColorInfo> AOApplication::get_chatmessage_colors()
   QString path = find_theme_asset_path(file_name);
   if (path.isEmpty())
   {
-    qInfo().noquote() << QString("[color] theme %1 is missing file: %2, using default colors instead")
-                             .arg(get_theme())
-                             .arg(file_name);
+    qInfo().noquote()
+        << QString("[color] theme %1 is missing file: %2, using default colors instead").arg(get_theme(), file_name);
     return color_map;
   }
   qInfo().noquote() << QString("[color] loading colors for theme %1").arg(get_theme());
@@ -350,7 +349,7 @@ QMap<DR::Color, DR::ColorInfo> AOApplication::get_chatmessage_colors()
 
     if (!QColor::isValidColor(code))
     {
-      qWarning().noquote() << QString("[color] for color %1: color code is invalid: %2").arg(lower_name).arg(code);
+      qWarning().noquote() << QString("[color] for color %1: color code is invalid: %2").arg(lower_name, code);
       continue;
     }
 
@@ -361,9 +360,8 @@ QMap<DR::Color, DR::ColorInfo> AOApplication::get_chatmessage_colors()
   }
 
   // replace the data in the map we will return
-  for (DR::Color &i_color : color_map.keys())
+  for (DR::ColorInfo &color_info : color_map)
   {
-    DR::ColorInfo &color_info = color_map[i_color];
     const QString lower_name = color_info.name.toLower();
     if (!color_replacement_map.contains(lower_name))
       continue;

@@ -96,7 +96,7 @@ void Courtroom::set_emote_page()
 
   int total_emotes = ao_app->get_emote_number(current_char);
 
-  for (AOEmoteButton *i_button : ui_emote_list)
+  for (AOEmoteButton *i_button : qAsConst(ui_emote_list))
   {
     i_button->hide();
   }

@@ -79,7 +79,7 @@ void Courtroom::set_note_files()
     QString f_filestring = f_notepicker->real_file;
     QString f_filename = f_notepicker->m_line->text();
 
-    t += QString("%1 = %2 = %3\n\n").arg(i).arg(f_filestring).arg(f_filename).toUtf8();
+    t += QString("%1 = %2 = %3\n\n").arg(QString(i), f_filestring, f_filename).toUtf8();
   }
 
   config_file.close();

@@ -24,7 +24,7 @@ QString AOPacket::to_string()
 {
   QString f_string = m_header;
 
-  for (QString i_string : m_contents)
+  for (const QString &i_string : qAsConst(m_contents))
   {
     f_string += ("#" + i_string);
   }

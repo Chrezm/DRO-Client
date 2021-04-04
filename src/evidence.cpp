@@ -101,7 +101,7 @@ void Courtroom::set_evidence_page()
   ui_evidence_left->hide();
   ui_evidence_right->hide();
 
-  for (AOEvidenceButton *i_button : ui_evidence_list)
+  for (AOEvidenceButton *i_button : qAsConst(ui_evidence_list))
   {
     i_button->reset();
   }
@@ -231,7 +231,7 @@ void Courtroom::on_evidence_clicked(int p_id)
 
   ui_evidence_name->setText(local_evidence_list.at(f_real_id).name);
 
-  for (AOEvidenceButton *i_button : ui_evidence_list)
+  for (AOEvidenceButton *i_button : qAsConst(ui_evidence_list))
     i_button->set_selected(false);
 
   ui_evidence_list.at(p_id)->set_selected(true);

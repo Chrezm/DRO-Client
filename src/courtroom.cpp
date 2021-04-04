@@ -228,7 +228,7 @@ void Courtroom::set_scene()
 
     bool has_all_desks = true;
     QStringList alldesks{"defensedesk", "prosecutiondesk", "stand"};
-    for (QString desk : alldesks)
+    for (const QString &desk : alldesks)
     {
       QString full_path = ao_app->find_asset_path({get_background_path(desk)}, animated_or_static_extensions());
       if (full_path.isEmpty())
@@ -409,13 +409,7 @@ void Courtroom::list_areas()
 
   QString f_file = "courtroom_design.ini";
 
-  QBrush free_brush(ao_app->get_color("area_free_color", f_file));
-  QBrush lfp_brush(ao_app->get_color("area_lfp_color", f_file));
-  QBrush casing_brush(ao_app->get_color("area_casing_color", f_file));
-  QBrush recess_brush(ao_app->get_color("area_recess_color", f_file));
-  QBrush rp_brush(ao_app->get_color("area_rp_color", f_file));
-  QBrush gaming_brush(ao_app->get_color("area_gaming_color", f_file));
-  QBrush locked_brush(ao_app->get_color("area_locked_color", f_file));
+  QBrush default_color(ao_app->get_color("area_free_color", f_file));
 
   int n_listed_areas = 0;
 
@@ -428,10 +422,7 @@ void Courtroom::list_areas()
     if (i_area.toLower().contains(ui_music_search->text().toLower()))
     {
       ui_area_list->addItem(i_area);
-      //      area_names.append(i_);
-
-      ui_area_list->item(n_listed_areas)->setBackground(free_brush);
-
+      ui_area_list->item(n_listed_areas)->setBackground(default_color);
       ++n_listed_areas;
     }
   }
@@ -802,14 +793,6 @@ void Courtroom::handle_chatmessage(QStringList p_contents)
     f_showname = m_chatmessage[CMShowName];
   }
 
-  QString f_message = f_showname + ": " + m_chatmessage[CMMessage] + "\n";
-
-  /*
-  if (f_message == previous_ic_message && is_system_speaking == false)
-    return;
-  previous_ic_message = f_message;
-    */
-
   m_effects_player->stop_all();
 
   text_state = 0;
@@ -1086,7 +1069,7 @@ void Courtroom::handle_chatmessage_3()
   QString f_message = m_chatmessage[CMMessage];
   QStringList callwords = ao_app->get_callwords();
 
-  for (QString word : callwords)
+  for (const QString &word : callwords)
   {
     if (f_message.contains(word, Qt::CaseInsensitive))
     {
@@ -1465,7 +1448,7 @@ void Courtroom::chat_tick()
 
       for (const auto &col : f_vec)
       {
-        if (f_character == col[0][0] && m_string_color != col[1])
+        if (f_character == QString(col[0][0]) && m_string_color != col[1])
         {
           m_color_stack.push(col[1]);
           m_string_color = m_color_stack.top();
@@ -1489,12 +1472,11 @@ void Courtroom::chat_tick()
 
       for (const auto &col : f_vec)
       {
-        if (f_character == col[0][1] && !highlight_found)
+        if (f_character == QString(col[0][1]) && !highlight_found)
         {
           if (m_color_stack.size() > 1)
             m_color_stack.pop();
           m_future_string_color = m_color_stack.top();
-          highlight_found = true;
           render_character = (col[2] != "0");
           break;
         }
@@ -1678,8 +1660,6 @@ void Courtroom::handle_song(QStringList p_contents)
 
 void Courtroom::handle_wtce(QString p_wtce)
 {
-  QString sfx_file = cc_sounds_ini;
-
   int index = p_wtce.at(p_wtce.size() - 1).digitValue();
   if (index > 0 && index < wtce_names.size() + 1 && wtce_names.size() > 0) // check to prevent crash
   {
@@ -1750,7 +1730,6 @@ void Courtroom::on_ooc_return_pressed()
   if (ooc_name.isEmpty())
   {
     bool ok;
-    QString name;
     do
     {
       ooc_name = QInputDialog::getText(this, "Enter a name",

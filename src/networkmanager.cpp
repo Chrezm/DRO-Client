@@ -23,7 +23,8 @@ NetworkManager::NetworkManager(AOApplication *parent) : QObject(parent)
 }
 
 NetworkManager::~NetworkManager()
-{}
+{
+}
 
 void NetworkManager::connect_to_master()
 {
@@ -99,7 +100,7 @@ void NetworkManager::handle_ms_packet()
 
   QStringList packet_list = in_data.split("%", DR::SkipEmptyParts);
 
-  for (QString packet : packet_list)
+  for (const QString &packet : packet_list)
   {
     AOPacket *f_packet = new AOPacket(packet);
 
@@ -233,7 +234,7 @@ void NetworkManager::handle_server_packet()
 
   QStringList packet_list = in_data.split("%", DR::SkipEmptyParts);
 
-  for (QString packet : packet_list)
+  for (const QString &packet : packet_list)
   {
     AOPacket *f_packet = new AOPacket(packet);
 

@@ -28,7 +28,6 @@ void AOMovie::set_play_once(bool p_play_once)
 void AOMovie::play(QString p_file, QString p_char)
 {
   m_movie->stop();
-  QVector<QString> f_vec;
   QString file_path = "";
 
   // Remove ! at the beginning of p_file if needed

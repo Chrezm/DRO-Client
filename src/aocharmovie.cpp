@@ -84,13 +84,11 @@ bool AOCharMovie::play_pre(QString p_chr, QString p_emote)
 
 void AOCharMovie::play_talking(QString p_chr, QString p_emote)
 {
-  QString gif_path = ao_app->get_character_path(p_chr, "(b)" + p_emote);
   play(p_chr, p_emote, "(b)", false);
 }
 
 void AOCharMovie::play_idle(QString p_chr, QString p_emote)
 {
-  QString gif_path = ao_app->get_character_path(p_chr, "(a)" + p_emote);
   play(p_chr, p_emote, "(a)", false);
 }
 

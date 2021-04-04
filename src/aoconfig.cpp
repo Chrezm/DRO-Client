@@ -207,7 +207,7 @@ void AOConfigPrivate::save_file()
 
 void AOConfigPrivate::invoke_signal(QString p_method_name, QGenericArgument p_arg1)
 {
-  for (QObject *i_child : children)
+  for (QObject *i_child : qAsConst(children))
   {
     QMetaObject::invokeMethod(i_child, p_method_name.toStdString().c_str(), p_arg1);
   }

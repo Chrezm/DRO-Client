@@ -423,8 +423,11 @@ void Courtroom::set_widget_names()
   reset_widget_names();
 
   // set existing widget names
-  for (QString widget_name : widget_names.keys())
+  for (auto it = widget_names.begin(), end = widget_names.end(); it != end; ++it)
+  {
+    const QString widget_name = it.key();
     widget_names[widget_name]->setObjectName(widget_name);
+  }
 
   // setup table of widgets and names
   insert_widget_names(effect_names, ui_effects);
@@ -1152,7 +1155,8 @@ void Courtroom::delete_widget(QWidget *p_widget)
     grand_parent = this;
 
   // set new parent
-  for (QWidget *child : p_widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly))
+  QList<QWidget *> children = p_widget->findChildren<QWidget *>(QString(), Qt::FindDirectChildrenOnly);
+  for (QWidget *child : children)
     child->setParent(grand_parent);
 
   // delete widget
@@ -1162,7 +1166,7 @@ void Courtroom::delete_widget(QWidget *p_widget)
 void Courtroom::load_effects()
 {
   // Close any existing effects to prevent memory leaks
-  for (QWidget *widget : ui_effects)
+  for (QWidget *widget : qAsConst(ui_effects))
     delete_widget(widget);
 
   // And create new effects
@@ -1197,7 +1201,7 @@ void Courtroom::load_effects()
 
 void Courtroom::load_free_blocks()
 {
-  for (QWidget *widget : ui_free_blocks)
+  for (QWidget *widget : qAsConst(ui_free_blocks))
     delete_widget(widget);
 
   // And create new free block buttons
@@ -1229,7 +1233,7 @@ void Courtroom::load_free_blocks()
 
 void Courtroom::load_shouts()
 {
-  for (QWidget *widget : ui_shouts)
+  for (QWidget *widget : qAsConst(ui_shouts))
     delete_widget(widget);
 
   // And create new shouts
@@ -1267,7 +1271,7 @@ void Courtroom::load_shouts()
 
 void Courtroom::load_wtce()
 {
-  for (QWidget *widget : ui_wtce)
+  for (QWidget *widget : qAsConst(ui_wtce))
     delete_widget(widget);
 
   // And create new wtce buttons
@@ -1356,7 +1360,7 @@ void Courtroom::set_judge_wtce()
   }
   else
   {
-    for (AOButton *i_wtce : ui_wtce)
+    for (AOButton *i_wtce : qAsConst(ui_wtce))
       i_wtce->show();
   }
 }
@@ -1511,12 +1515,12 @@ void Courtroom::set_mute_list()
 
   QStringList sorted_mute_list;
 
-  for (char_type i_char : char_list)
+  for (const char_type &i_char : qAsConst(char_list))
     sorted_mute_list.append(i_char.name);
 
   sorted_mute_list.sort();
 
-  for (QString i_chr_name : sorted_mute_list)
+  for (const QString &i_chr_name : sorted_mute_list)
   {
     QListWidgetItem *i_item = new QListWidgetItem(i_chr_name, ui_mute_list);
     i_item->setFlags(i_item->flags() | Qt::ItemFlag::ItemIsUserCheckable);

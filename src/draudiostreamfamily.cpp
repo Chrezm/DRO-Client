@@ -7,7 +7,8 @@
 #include <QDebug>
 
 DRAudioStreamFamily::DRAudioStreamFamily(DRAudio::Family p_family) : m_family(p_family)
-{}
+{
+}
 
 int32_t DRAudioStreamFamily::get_capacity() const
 {
@@ -131,7 +132,7 @@ float DRAudioStreamFamily::calculate_volume()
 
 void DRAudioStreamFamily::update_device()
 {
-  for (DRAudioStream::ptr i_stream : m_stream_list)
+  for (DRAudioStream::ptr i_stream : qAsConst(m_stream_list))
     i_stream->update_device();
 }
 

@@ -23,7 +23,7 @@ void AOApplication::ms_packet_received(AOPacket *p_packet)
   {
     server_list.clear();
 
-    for (QString i_string : p_packet->get_contents())
+    for (const QString &i_string : qAsConst(p_packet->get_contents()))
     {
       server_type f_server;
       QStringList sub_contents = i_string.split("&");
@@ -577,7 +577,7 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     {
       QVector<evi_type> f_evi_list;
 
-      for (QString f_string : f_contents)
+      for (const QString &f_string : f_contents)
       {
         QStringList sub_contents = f_string.split("&");
 

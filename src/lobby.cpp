@@ -477,7 +477,7 @@ void Lobby::list_servers()
 
   ui_server_list->clear();
 
-  for (server_type i_server : ao_app->get_server_list())
+  for (const server_type &i_server : qAsConst(ao_app->get_server_list()))
   {
     ui_server_list->addItem(i_server.name);
   }
@@ -487,7 +487,7 @@ void Lobby::list_favorites()
 {
   ui_server_list->clear();
 
-  for (server_type i_server : ao_app->get_favorite_list())
+  for (const server_type &i_server : qAsConst(ao_app->get_favorite_list()))
   {
     ui_server_list->addItem(i_server.name);
   }

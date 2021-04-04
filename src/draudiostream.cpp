@@ -52,7 +52,7 @@ void DRAudioStream::play()
   if (result == FALSE)
   {
     qWarning() << DRAudioError(
-                      QString("failed to play file %1: %2").arg(m_file.value()).arg(DRAudio::get_last_bass_error()))
+                      QString("failed to play file %1: %2").arg(m_file.value(), DRAudio::get_last_bass_error()))
                       .what();
     Q_EMIT finished();
   }
@@ -82,8 +82,7 @@ std::optional<DRAudioError> DRAudioStream::set_file(QString p_file)
 
   HSTREAM stream_handle = BASS_StreamCreateFile(FALSE, m_file->utf16(), 0, 0, BASS_UNICODE | BASS_ASYNCFILE);
   if (stream_handle == 0)
-    return DRAudioError(
-        QString("failed to create stream for file %1: %2").arg(p_file).arg(DRAudio::get_last_bass_error()));
+    return DRAudioError(QString("failed to create stream for file %1: %2").arg(p_file, DRAudio::get_last_bass_error()));
   m_hstream = stream_handle;
 
   // bass events
@@ -180,8 +179,7 @@ void DRAudioStream::update_device()
   if (m_position.has_value())
   {
     if (BASS_ChannelSetPosition(m_hstream.value(), m_position.value(), BASS_POS_BYTE) == FALSE)
-      qWarning() << DRAudioError(
-                        QString("failed to set position for %1: %2").arg(file).arg(DRAudio::get_last_bass_error()))
+      qWarning() << DRAudioError(QString("failed to set position for %1: %2").arg(file, DRAudio::get_last_bass_error()))
                         .what();
     m_position.reset();
   }

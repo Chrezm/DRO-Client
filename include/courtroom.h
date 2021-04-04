@@ -88,7 +88,6 @@ public:
       QString malplaced = area_list.last();
       area_list.removeLast();
       append_music(malplaced);
-      //      qDebug() << "what" << malplaced;
     }
   }
 

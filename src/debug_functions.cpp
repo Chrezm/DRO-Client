@@ -11,7 +11,6 @@ void call_error(QString p_message)
   f_box->setWindowTitle("Error");
   qDebug() << f_box->text();
 
-  // msgBox->setWindowModality(Qt::NonModal);
   f_box->exec();
   delete f_box;
 }
@@ -24,7 +23,6 @@ void call_notice(QString p_message)
   f_box->setWindowTitle("Notice");
   qDebug() << f_box->text();
 
-  // msgBox->setWindowModality(Qt::NonModal);
   f_box->exec();
   delete f_box;
 }

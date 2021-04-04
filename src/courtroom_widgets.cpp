@@ -263,8 +263,7 @@ void Courtroom::connect_widgets()
   connect(ui_music_list, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_music_list_double_clicked(QModelIndex)));
   connect(ui_area_list, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_area_list_double_clicked(QModelIndex)));
 
-  // connect events for shout/effect/wtce buttons happen in load_shouts(),
-  // load_effects(), load_wtce()
+  // connect events for shout/effect/wtce buttons happen in load_shouts(), load_effects(), load_wtce()
   connect(ui_shout_up, SIGNAL(clicked(bool)), this, SLOT(on_cycle_clicked()));
   connect(ui_shout_down, SIGNAL(clicked(bool)), this, SLOT(on_cycle_clicked()));
 
@@ -677,23 +676,10 @@ void Courtroom::set_widgets()
   set_size_and_pos(ui_prosecution_bar, "prosecution_bar");
   ui_prosecution_bar->set_image("prosecutionbar" + QString::number(prosecution_bar_state) + ".png");
 
-  //  set_size_and_pos(ui_shouts[0], "hold_it");
-  //  ui_shouts[0]->show();
-  //  set_size_and_pos(ui_shouts[1], "objection");
-  //  ui_shouts[1]->show();
-  //  set_size_and_pos(ui_shouts[2], "take_that");
-  //  ui_shouts[2]->show();
-  //  set_size_and_pos(ui_shouts[3], "custom_objection");
-  //  set_size_and_pos(ui_shouts[4], "got_it");
-  //  set_size_and_pos(ui_shouts[5], "cross_swords");
-  //  set_size_and_pos(ui_shouts[6], "counter_alt");
   for (int i = 0; i < shout_names.size(); ++i)
   {
     set_size_and_pos(ui_shouts[i], shout_names[i]);
   }
-  //  ui_shouts[0]->show();
-  //  ui_shouts[1]->show();
-  //  ui_shouts[2]->show();
   draw_shout_buttons();
 
   set_size_and_pos(ui_shout_up, "shout_up");
@@ -715,10 +701,6 @@ void Courtroom::set_widgets()
     ui_shout_down->show();
   }
 
-  //  set_size_and_pos(ui_effects[0], "effect_flash");
-  //  set_size_and_pos(ui_effects[1], "effect_gloom");
-  //  set_size_and_pos(ui_effects[2], "effect_question");
-  //  set_size_and_pos(ui_effects[3], "effect_pow");
   for (int i = 0; i < effect_names.size(); ++i)
   {
     set_size_and_pos(ui_effects[i], effect_names[i]);
@@ -1260,13 +1242,11 @@ void Courtroom::load_shouts()
     QString name = ao_app->get_spbutton("[SHOUTS]", i).trimmed();
     if (!name.isEmpty())
     {
-      qDebug() << "SHOUT " << name << " " << ui_shouts[i - 1];
       shout_names.append(name);
       widget_names[name] = ui_shouts[i - 1];
       ui_shouts[i - 1]->setObjectName(name);
     }
   }
-  qDebug() << widget_names;
 }
 
 void Courtroom::load_wtce()

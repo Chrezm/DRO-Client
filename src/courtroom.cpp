@@ -576,10 +576,6 @@ void Courtroom::on_chat_return_pressed()
   if ((anim_state < 3 || text_state < 2) && m_shout_state == 0)
     return;
 
-  //  qDebug() << "prev_emote = " << prev_emote << "current_emote = " <<
-  //  current_emote;
-
-  //  qDebug() << "same_emote = " << same_emote;
   // MS#
   // deskmod#
   // pre-emote#
@@ -622,9 +618,6 @@ void Courtroom::on_chat_return_pressed()
 
   packet_contents.append(f_side);
 
-  //  packet_contents.append(ao_app->get_sfx_name(current_char, current_emote));
-  //  packet_contents.append(ui_sfx_search->text());
-
   int row = ui_sfx_list->currentRow();
   if (row == -1 || row == 0) // default
     packet_contents.append(ao_app->get_sfx_name(current_char, current_emote));
@@ -632,9 +625,7 @@ void Courtroom::on_chat_return_pressed()
   {
     double d_ind = item->statusTip().toDouble();
     int ind = int(d_ind);
-    qDebug() << ind;
     packet_contents.append(sfx_names.at(ind));
-    //    packet_contents.append(sfx_names.at(row));
   }
 
   int f_emote_mod = ao_app->get_emote_mod(current_char, current_emote);
@@ -1038,27 +1029,15 @@ void Courtroom::handle_chatmessage_3()
     ui_vp_effect->play(overlay_name, f_char);
     realization_timer->start(60);
   }
-  //  else if (effect == 2)
-  //  {
-  //    if (overlay_sfx == "")
-  //      overlay_sfx = ao_app->get_sfx("effect_gloom");
-  //    m_sfx_player->play(overlay_sfx);
-  //    ui_vp_effect->set_play_once(false);
-  //    if (overlay_name == "")
-  //      overlay_name = "effect_gloom";
-  //    ui_vp_effect->play(overlay_name, f_char);
-  //  }
   else if (do_it && effect > 0 && effect <= ui_effects.size() && effect_names.size() > 0) // check to prevent crashing
   {
     QString s_eff = effect_names.at(effect - 1);
     QStringList f_eff = ao_app->get_effect(effect);
 
-    //    QString s_eff = f_eff.at(0).trimmed();
     bool once = f_eff.at(1).trimmed().toInt();
 
     if (overlay_sfx == "")
       overlay_sfx = ao_app->get_sfx(s_eff);
-    //    qDebug() << overlay_sfx << ao_app->get_sfx(s_eff);
     m_effects_player->play(overlay_sfx);
     ui_vp_effect->set_play_once(once);
     if (overlay_name == "")
@@ -1364,7 +1343,6 @@ void Courtroom::start_chat_ticking()
 
   QString f_gender = ao_app->get_gender(m_chatmessage[CMChrName]);
 
-  //  m_blip_player->set_file(f_gender);
   m_blips_player->set_blips("sfx-blip" + f_gender + ".wav");
 
   // means text is currently ticking
@@ -1766,60 +1744,6 @@ void Courtroom::on_ooc_return_pressed()
   {
     m_effects_player->play(ao_app->get_sfx("coinflip"));
   }
-  else if (ooc_message.startsWith("/tr "))
-  {
-    // Timer resume
-    int space_location = ooc_message.indexOf(" ");
-
-    int timer_id;
-    if (space_location == -1)
-      timer_id = 0;
-    else
-      timer_id = ooc_message.mid(space_location + 1).toInt();
-    resume_timer(timer_id);
-  }
-  else if (ooc_message.startsWith("/ts "))
-  {
-    // Timer set
-    QStringList arguments = ooc_message.split(" ");
-    int size = arguments.size();
-
-    // Note arguments[0] == "/ts", so every index (and thus length) is off by
-    // one.
-    if (size > 5)
-      return;
-
-    int timer_id = (size > 1 ? arguments[1].toInt() : 0);
-    int new_time = (size > 2 ? arguments[2].toInt() : 300) * 1000;
-    int timestep_length = (size > 3 ? arguments[3].toDouble() : -.016) * 1000;
-    int firing_interval = (size > 4 ? arguments[4].toDouble() : .016) * 1000;
-    set_timer_time(timer_id, new_time);
-    set_timer_timestep(timer_id, timestep_length);
-    set_timer_firing(timer_id, firing_interval);
-  }
-  else if (ooc_message.startsWith("/tp "))
-  {
-    // Timer pause
-    int space_location = ooc_message.indexOf(" ");
-
-    int timer_id;
-    if (space_location == -1)
-      timer_id = 0;
-    else
-      timer_id = ooc_message.mid(space_location + 1).toInt();
-    pause_timer(timer_id);
-  }
-  QStringList packet_contents;
-  packet_contents.append(ooc_name);
-  packet_contents.append(ooc_message);
-
-  AOPacket *f_packet = new AOPacket("CT", packet_contents);
-
-  ao_app->send_server_packet(f_packet);
-
-  ui_ooc_chat_message->clear();
-
-  ui_ooc_chat_message->setFocus();
 }
 
 void Courtroom::on_music_search_edited(QString p_text)
@@ -2152,7 +2076,6 @@ void Courtroom::draw_judge_wtce_buttons()
 
 void Courtroom::on_wtce_clicked()
 {
-  //  qDebug() << "AA: wtce clicked!";
   if (is_client_muted)
     return;
 

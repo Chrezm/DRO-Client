@@ -500,7 +500,6 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
           w_courtroom->fix_last_area();
           w_courtroom->append_music(f_contents.at(n_element));
           areas--;
-          //              qDebug() << "wtf!!" << f_contents.at(n_element);
         }
         else
         {
@@ -641,7 +640,6 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
   }
   else if (header == "CL")
   {
-    qDebug() << f_contents;
     w_courtroom->handle_clock(f_contents.at(1));
   }
   else if (header == "GM")

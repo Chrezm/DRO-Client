@@ -138,18 +138,6 @@ QString AOApplication::get_version_string()
   return QString::number(RELEASE) + "." + QString::number(MAJOR_VERSION) + "." + QString::number(MINOR_VERSION);
 }
 
-void AOApplication::set_gamemode(QString p_gamemode)
-{
-  config->set_gamemode(p_gamemode);
-  Q_EMIT reload_theme();
-}
-
-void AOApplication::set_timeofday(QString p_timeofday)
-{
-  config->set_timeofday(p_timeofday);
-  Q_EMIT reload_theme();
-}
-
 void AOApplication::on_config_theme_changed()
 {
   Q_EMIT reload_theme();
@@ -217,59 +205,9 @@ void AOApplication::toggle_config_panel()
   }
 }
 
-bool AOApplication::get_server_alerts_enabled()
-{
-  return config->server_alerts_enabled();
-}
-
-bool AOApplication::get_manual_gamemode_enabled()
-{
-  return config->manual_gamemode_enabled();
-}
-
-bool AOApplication::get_manual_timeofday_enabled()
-{
-  return config->manual_timeofday_enabled();
-}
-
-bool AOApplication::get_always_pre_enabled()
-{
-  return config->always_pre_enabled();
-}
-
 bool AOApplication::get_first_person_enabled()
 {
   return config->get_bool("first_person", false);
-}
-
-bool AOApplication::get_chatlog_scrolldown()
-{
-  return config->log_is_topdown_enabled();
-}
-
-int AOApplication::get_chatlog_max_lines()
-{
-  return config->log_max_lines();
-}
-
-int AOApplication::get_chat_tick_interval()
-{
-  return config->chat_tick_interval();
-}
-
-bool AOApplication::get_chatlog_newline()
-{
-  return config->log_format_use_newline_enabled();
-}
-
-bool AOApplication::get_enable_logging_enabled()
-{
-  return config->log_is_recording_enabled();
-}
-
-bool AOApplication::get_music_change_log_enabled()
-{
-  return config->log_display_music_switch_enabled();
 }
 
 void AOApplication::add_favorite_server(int p_server)

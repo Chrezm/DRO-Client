@@ -27,6 +27,14 @@ Courtroom::Courtroom(AOApplication *p_ao_app) : QMainWindow()
   ao_app = p_ao_app;
   ao_config = new AOConfig(this);
 
+  m_reload_delay = new QTimer(this);
+  m_reload_delay->setInterval(200);
+  m_reload_delay->setSingleShot(true);
+  connect(m_reload_delay, SIGNAL(timeout()), this, SLOT(on_app_reload_theme_requested()));
+  connect(ao_config, SIGNAL(theme_changed(QString)), m_reload_delay, SLOT(start()));
+  connect(ao_config, SIGNAL(gamemode_changed(QString)), m_reload_delay, SLOT(start()));
+  connect(ao_config, SIGNAL(timeofday_changed(QString)), m_reload_delay, SLOT(start()));
+
   create_widgets();
   connect_widgets();
 
@@ -42,46 +50,15 @@ Courtroom::~Courtroom()
 
 void Courtroom::enter_courtroom(int p_cid)
 {
-  bool changed_character = (m_cid != p_cid);
-  m_cid = p_cid;
+  qDebug() << "enter_courtroom";
 
-  QString l_chr_name;
+  // unmute audio
+  suppress_audio(false);
 
-  if (is_spectating())
-  {
-    ao_app->discord->clear_character_name();
-    ao_config->clear_showname_placeholder();
-  }
-  else
-  {
-    l_chr_name = ao_app->get_char_name(char_list.at(m_cid).name);
-    const QString l_ini_showname = ao_app->get_showname(l_chr_name);
-    const QString l_final_showname = l_ini_showname.trimmed().isEmpty() ? l_chr_name : l_ini_showname;
-    ao_app->discord->set_character_name(l_final_showname);
-    ao_config->set_showname_placeholder(l_final_showname);
+  const int l_prev_emote_id = m_emote_id;
+  const int l_prev_emote_page = m_emote_page;
 
-    if (ao_app->m_FL_chrini_enabled)
-    {
-      QStringList l_content{l_chr_name, l_final_showname};
-      AOPacket *l_packet = new AOPacket("chrini", l_content);
-      ao_app->send_server_packet(l_packet);
-    }
-  }
-  current_char = l_chr_name;
-  m_emote_list = ao_app->get_emote_list(current_char);
-
-  m_current_emote_id = 0;
-  current_emote_page = 0;
-
-  if (is_spectating())
-    ui_emotes->hide();
-  else
-    ui_emotes->show();
-
-  set_emote_page();
-  set_emote_dropdown();
-  ui_pre->setChecked(ui_pre || ao_config->always_pre_enabled());
-
+  // widgets ===================================================================
   current_evidence_page = 0;
   current_evidence = 0;
 
@@ -96,15 +73,6 @@ void Courtroom::enter_courtroom(int p_cid)
   on_chat_config_changed();
 
   set_evidence_page();
-
-  // Refresh character position. If the character was changed, use the new
-  // position, otherwise use the old one. Even if the else is useless now (it
-  // can be omitted), I am keeping it in case we expand set_character_position
-  // to do more.
-  if (changed_character)
-    set_character_position(ao_app->get_char_side(l_chr_name));
-  else
-    set_character_position(ui_pos_dropdown->currentText());
 
   // Update widgets first, then check if everything is valid
   // This will also handle showing the correct shouts, effects and wtce buttons,
@@ -131,26 +99,87 @@ void Courtroom::enter_courtroom(int p_cid)
 
   list_music();
   list_areas();
-  update_sfx_list();
-  select_default_sfx();
-
-  // unmute audio
-  suppress_audio(false);
 
   testimony_in_progress = false;
 
-  // ui_server_chatlog->setHtml(ui_server_chatlog->toHtml());
-
-  ui_char_select_background->hide();
-
-  ui_ic_chat_message->setEnabled(!is_spectating());
-  ui_ic_chat_message->setFocus();
+  set_widget_names();
+  set_widget_layers();
 
   for (int i = 0; i < ui_timers.length(); ++i)
     ui_timers[i]->redraw();
 
-  set_widget_names();
-  set_widget_layers();
+  ui_char_select_background->hide();
+
+  // character =================================================================
+  const bool l_changed_chr_id = (m_cid != p_cid);
+  m_cid = p_cid;
+
+  QLineEdit *l_current_field = ui_ic_chat_message;
+  if (ui_ooc_chat_message->hasFocus())
+    l_current_field = ui_ooc_chat_message;
+  const int l_current_cursor_pos = l_current_field->cursorPosition();
+
+  QString l_chr_name;
+  if (is_spectating())
+  {
+    ao_app->discord->clear_character_name();
+    ao_config->clear_showname_placeholder();
+  }
+  else
+  {
+    l_chr_name = ao_app->get_char_name(char_list.at(m_cid).name);
+    const QString l_ini_showname = ao_app->get_showname(l_chr_name);
+    const QString l_final_showname = l_ini_showname.trimmed().isEmpty() ? l_chr_name : l_ini_showname;
+    ao_app->discord->set_character_name(l_final_showname);
+    ao_config->set_showname_placeholder(l_final_showname);
+
+    if (ao_app->m_FL_chrini_enabled)
+    {
+      QStringList l_content{l_chr_name, l_final_showname};
+      AOPacket *l_packet = new AOPacket("chrini", l_content);
+      ao_app->send_server_packet(l_packet);
+    }
+  }
+  const bool l_changed_chr = l_chr_name != current_char;
+  current_char = l_chr_name;
+
+  const int l_prev_emote_count = m_emote_list.count();
+  m_emote_list = ao_app->get_emote_list(current_char);
+
+  const QString l_prev_emote = ui_emote_dropdown->currentText();
+  set_emote_dropdown();
+
+  if (l_changed_chr || l_prev_emote_count != m_emote_list.count())
+  {
+    ui_pre->setChecked(ui_pre->isChecked() || ao_config->always_pre_enabled());
+  }
+  else
+  {
+    m_emote_id = l_prev_emote_id;
+    m_emote_page = l_prev_emote_page;
+    ui_emote_dropdown->setCurrentText(l_prev_emote);
+  }
+  set_emote_page();
+
+  // Refresh character position. If the character was changed, use the new
+  // position, otherwise use the old one. Even if the else is useless now (it
+  // can be omitted), I am keeping it in case we expand set_character_position
+  // to do more.
+  if (l_changed_chr_id)
+    set_character_position(ao_app->get_char_side(l_chr_name));
+  else
+    set_character_position(ui_pos_dropdown->currentText());
+
+  update_sfx_list();
+  select_default_sfx();
+
+  ui_emotes->setHidden(is_spectating());
+  ui_emote_dropdown->setHidden(is_spectating());
+  ui_ic_chat_message->setEnabled(!is_spectating());
+
+  // restore line field focus
+  l_current_field->setFocus();
+  l_current_field->setCursorPosition(l_current_cursor_pos);
 }
 
 void Courtroom::done_received()
@@ -324,28 +353,6 @@ void Courtroom::handle_clock(QString time)
   }
   ui_vp_clock->play(clock_filename);
   ui_vp_clock->show();
-}
-
-void Courtroom::handle_gamemode(QString gamemode)
-{
-  // only manual gamemode changes are allowed
-  if (ao_app->get_manual_gamemode_enabled())
-    return;
-  if (ao_app->get_gamemode() == gamemode)
-    return;
-  ao_app->set_gamemode(gamemode);
-  on_app_reload_theme_requested();
-}
-
-void Courtroom::handle_timeofday(QString timeofday)
-{
-  // only manual gamemode changes are allowed
-  if (ao_app->get_manual_timeofday_enabled())
-    return;
-  if (ao_app->get_timeofday() == timeofday)
-    return;
-  ao_app->set_timeofday(timeofday);
-  on_app_reload_theme_requested();
 }
 
 void Courtroom::list_music()
@@ -645,7 +652,7 @@ void Courtroom::on_ic_message_return_pressed()
 
   QStringList packet_contents;
 
-  const DREmote &l_emote = get_emote(m_current_emote_id);
+  const DREmote &l_emote = get_emote(m_emote_id);
 
   const QString l_desk_modifier =
       l_emote.desk_modifier == -1 ? QString("chat") : QString::number(l_emote.desk_modifier);
@@ -1093,7 +1100,7 @@ void Courtroom::handle_chatmessage_3()
     }
   }
 
-  chat_tick_timer->start(ao_app->get_chat_tick_interval());
+  chat_tick_timer->start(ao_config->chat_tick_interval());
 }
 
 void Courtroom::on_chat_config_changed()
@@ -1533,7 +1540,7 @@ void Courtroom::chat_tick()
     if ((f_message.at(tick_pos) != ' ' || ao_config->blank_blips_enabled()))
     {
 
-      if (blip_pos % ao_app->read_blip_rate() == 0)
+      if (blip_pos % ao_config->blip_rate() == 0)
       {
         blip_pos = 0;
 
@@ -1764,7 +1771,7 @@ void Courtroom::send_ooc_packet(QString ooc_name, QString ooc_message)
 void Courtroom::mod_called(QString p_ip)
 {
   ui_server_chatlog->append(p_ip);
-  if (ao_app->get_server_alerts_enabled())
+  if (ao_config->server_alerts_enabled())
   {
     m_system_player->play(ao_app->get_sfx("mod_call"));
     ao_app->alert(this);

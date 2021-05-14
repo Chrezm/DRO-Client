@@ -2,6 +2,7 @@
 #define LOBBY_H
 
 #include "aobutton.h"
+#include "aoconfig.h"
 #include "aoimagedisplay.h"
 #include "aopacket.h"
 #include "aotextarea.h"
@@ -54,6 +55,7 @@ public:
 
 private:
   AOApplication *ao_app = nullptr;
+  AOConfig *ao_config = nullptr;
 
   AOImageDisplay *ui_background = nullptr;
 

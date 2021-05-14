@@ -642,15 +642,19 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
   }
   else if (header == "GM")
   {
-    if (!courtroom_constructed)
+    if (f_contents.length() < 1)
       goto end;
-    w_courtroom->handle_gamemode(f_contents.at(0));
+    if (config->manual_gamemode_enabled())
+      goto end;
+    config->set_gamemode(f_contents.at(0));
   }
   else if (header == "TOD")
   {
-    if (!courtroom_constructed)
+    if (f_contents.length() < 1)
       goto end;
-    w_courtroom->handle_timeofday(f_contents.at(0));
+    if (config->manual_timeofday_enabled())
+      goto end;
+    config->set_timeofday(f_contents.at(0));
   }
   else if (header == "TR")
   {

@@ -154,9 +154,9 @@ QString AOApplication::find_theme_asset_path(QString p_file, QStringList p_ext_l
   QStringList l_path_list;
 
   // Only add gamemode and/or time of day if non empty.
-  const QString l_gamemode = get_gamemode();
-  const QString l_timeofday = get_timeofday();
-  const QString l_theme_root = get_base_path() + "themes/" + get_theme();
+  const QString l_gamemode = config->gamemode();
+  const QString l_timeofday = config->timeofday();
+  const QString l_theme_root = get_base_path() + "themes/" + config->theme();
 
   if (!l_gamemode.isEmpty())
   {

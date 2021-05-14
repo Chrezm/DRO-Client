@@ -11,46 +11,6 @@
 #include <QTextStream>
 #include <QVector>
 
-QString AOApplication::get_theme()
-{
-  return config->theme();
-}
-
-QString AOApplication::get_gamemode()
-{
-  return config->gamemode();
-}
-
-QString AOApplication::get_timeofday()
-{
-  return config->timeofday();
-}
-
-int AOApplication::read_blip_rate()
-{
-  return config->blip_rate();
-}
-
-bool AOApplication::read_chatlog_newline()
-{
-  return config->log_format_use_newline_enabled();
-}
-
-int AOApplication::get_default_music()
-{
-  return config->music_volume();
-}
-
-int AOApplication::get_default_sfx()
-{
-  return config->effect_volume();
-}
-
-int AOApplication::get_default_blip()
-{
-  return config->blip_volume();
-}
-
 QStringList AOApplication::get_callwords()
 {
 #if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
@@ -329,11 +289,12 @@ QMap<DR::Color, DR::ColorInfo> AOApplication::get_chatmessage_colors()
   QString path = find_theme_asset_path(file_name);
   if (path.isEmpty())
   {
-    qInfo().noquote()
-        << QString("[color] theme %1 is missing file: %2, using default colors instead").arg(get_theme(), file_name);
+    qInfo().noquote() << QString("[color] theme %1 is missing file: %2, using default colors instead")
+                             .arg(config->theme())
+                             .arg(file_name);
     return color_map;
   }
-  qInfo().noquote() << QString("[color] loading colors for theme %1").arg(get_theme());
+  qInfo().noquote() << QString("[color] loading colors for theme %1").arg(config->theme());
 
   QSettings color_settings(path, QSettings::IniFormat);
 
@@ -738,11 +699,6 @@ QStringList AOApplication::get_overlay(QString p_chr, int p_overlay)
   while (r_overlay.length() < 2)
     r_overlay.append(nullptr);
   return r_overlay;
-}
-
-bool AOApplication::get_blank_blip()
-{
-  return config->blank_blips_enabled();
 }
 
 QString AOApplication::read_theme_ini(QString p_identifier, QString p_file)

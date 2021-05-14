@@ -15,6 +15,7 @@
 Lobby::Lobby(AOApplication *p_ao_app) : QMainWindow()
 {
   ao_app = p_ao_app;
+  ao_config = new AOConfig(this);
 
   this->setWindowTitle("Danganronpa Online");
 
@@ -89,7 +90,7 @@ void Lobby::set_widgets()
                 "\n"
                 "3. If it is there, check that your current theme folder exists in "
                 "base/themes. According to base/config.ini, your current theme is " +
-                ao_app->get_theme());
+                ao_config->theme());
 
     this->resize(517, 666);
   }

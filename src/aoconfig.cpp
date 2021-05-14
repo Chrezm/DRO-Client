@@ -321,26 +321,62 @@ bool AOConfig::discord_hide_character() const
   return d->discord_hide_character;
 }
 
+/**
+ * @brief Return the current theme name.
+ * @return Name of current theme.
+ */
 QString AOConfig::theme() const
 {
   return d->theme;
 }
 
+/**
+ * @brief Return the current gamemode. If no gamemode is set, return the
+ * empty string.
+ *
+ * @return Current gamemode, or empty string if not set.
+ */
 QString AOConfig::gamemode() const
 {
   return d->gamemode;
 }
 
+/**
+ * @brief Returns the current manual gamemode status.
+ *
+ * @details If true, a player can change gamemodes manually and their client
+ * will ignore orders to change gamemode from the server. If false, neither is
+ * possible and the client will follow orders from the server to change
+ * gamemode.
+ *
+ * @return Current manual gamemode status.
+ */
 bool AOConfig::manual_gamemode_enabled() const
 {
   return d->manual_gamemode;
 }
 
+/**
+ * @brief Returns the current time of day. If no time of day is set, return
+ * the empty string.
+ *
+ * @return Current gamemode, or empty string if not set.
+ */
 QString AOConfig::timeofday() const
 {
   return d->timeofday;
 }
 
+/**
+ * @brief Returns the current manual time of day status.
+ *
+ * @details If true, a player can change time of day manually and their client
+ * will ignore orders to change time of day from the server. If false, neither
+ * is possible and the client will follow orders from the server to change
+ * time of day.
+ *
+ * @return Current manual time of day status.
+ */
 bool AOConfig::manual_timeofday_enabled() const
 {
   return d->manual_timeofday;

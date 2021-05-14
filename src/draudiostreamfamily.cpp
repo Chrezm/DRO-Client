@@ -163,15 +163,16 @@ void DRAudioStreamFamily::on_stream_finished()
   if (invoker == nullptr)
     return;
 
+  if (auto file = invoker->get_file(); file)
+    qInfo() << "removing" << file.value();
+  else
+    qWarning() << "removing unspecified stream";
+
   stream_list new_stream_list;
   for (auto &i_stream : m_stream_list)
   {
     if (i_stream.get() == invoker)
-    {
-      if (auto file = i_stream->get_file(); file)
-        qDebug() << "removing" << file.value();
       continue;
-    }
     new_stream_list.append(std::move(i_stream));
   }
   m_stream_list = std::move(new_stream_list);

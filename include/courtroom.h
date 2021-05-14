@@ -95,13 +95,8 @@ public:
   void set_widgets();
   // sets font properties based on theme ini files
   void set_font(QWidget *widget, QString p_identifier);
-  // same as above, but use override color as color if it is not an empty
-  // string, otherwise use normal logic for color of set_font
-  void set_font(QWidget *widget, QString p_identifier, QString override_color);
-  // sets font properties for DRTextEdit (same as above but also text outline)
+  // sets font properties for DRTextEdit (same as above but also text outline, and alignments)
   void set_drtextedit_font(DRTextEdit *widget, QString p_identifier);
-  // same as second set_font but for drtextedit
-  void set_drtextedit_font(DRTextEdit *widget, QString p_identifier, QString override_color);
   // helper function that calls above function on the relevant widgets
   void set_fonts();
 
@@ -129,6 +124,20 @@ public:
 
   // sets the character position
   void set_character_position(QString p_pos);
+
+  /**
+   * @brief Send a OOC packet (CT) out to the server.
+   * @param ooc_name The username.
+   * @param ooc_message The message.
+   */
+  void send_ooc_packet(QString ooc_name, QString ooc_message);
+
+  /**
+   * @brief Send a packet to set the showname of the user to
+   * the server.
+   * @param p_showname The showname.
+   */
+  void send_showname_packet(QString p_showname);
 
   // called when a DONE#% from the server was received
   void done_received();
@@ -162,6 +171,9 @@ public:
     return current_char;
   }
 
+  // Set the showname of the client
+  void set_showname(QString p_showname);
+
   // properly sets up some varibles: resets user state
   void enter_courtroom(int p_cid);
 
@@ -171,7 +183,11 @@ public:
 
   void list_areas();
 
-  void list_sfx();
+  QString current_sfx_file();
+  void update_sfx_list();
+  void update_sfx_widget_list();
+  void select_default_sfx();
+  void clear_sfx_selection();
 
   void list_note_files();
 
@@ -221,7 +237,7 @@ public:
   // selected
   // or the user isn't already scrolled to the top
   void update_ic_log(bool p_reset_log);
-  void append_ic_text(QString p_name, QString p_line, bool p_system, bool p_music);
+  void append_ic_text(QString p_name, QString p_line, bool p_system, bool p_music, bool p_self);
 
   /**
    * @brief Appends a message arriving from system to the IC chatlog.
@@ -303,7 +319,6 @@ private:
   QVector<evi_type> evidence_list;
   QVector<QString> music_list;
   QVector<QString> area_list;
-  QVector<QString> sfx_names;
   QVector<QString> area_names;
   QVector<QString> note_list;
 
@@ -319,15 +334,13 @@ private:
   // used to determine how often blips sound
   int blip_pos = 0;
   int rainbow_counter = 0;
+  bool m_showname_sent = false;
   bool rainbow_appended = false;
   bool note_shown = false;
   bool contains_add_button = false;
 
   //////////////
   QScrollArea *note_scroll_area = nullptr;
-
-  // delay before chat messages starts ticking
-  QTimer *text_delay_timer = nullptr;
 
   // delay before sfx plays
   QTimer *sfx_delay_timer = nullptr;
@@ -398,6 +411,11 @@ private:
   // if enabled, disable showing our own sprites when we talk in ic
   bool m_msg_is_first_person = false;
 
+  // Cached values for chat_tick
+  bool m_chatbox_message_outline = false;
+  bool m_chatbox_message_enable_highlighting = false;
+  QVector<QStringList> m_chatbox_message_highlight_colors;
+
   // cid and this may differ in cases of ini-editing
   QString current_char;
 
@@ -426,9 +444,9 @@ private:
   int char_rows = 9;
   int max_chars_on_page = 90;
 
+  QVector<DREmote> m_emote_list;
+  int m_current_emote_id = 0;
   int current_emote_page = 0;
-  int current_emote = 0;
-  int prev_emote = 0;
   int emote_columns = 5;
   int emote_rows = 2;
   int max_emotes_on_page = 10;
@@ -445,7 +463,6 @@ private:
 
   int current_clock = -1;
   int timer_number = 0;
-  int current_sfx_id = -1;
 
   QString current_background = "gs4";
 
@@ -459,11 +476,6 @@ private:
   AOEvidenceDisplay *ui_vp_evidence_display = nullptr;
 
   AONoteArea *ui_note_area = nullptr;
-
-  //  AONotepad *ui_vp_notepad = nullptr;
-  // list of characters that require a second application ID
-  // note that since it's hardcoded, it won't be of much use in other servers
-  QVector<QString> rpc_char_list;
 
   AOImageDisplay *ui_vp_notepad_image = nullptr;
   DRTextEdit *ui_vp_notepad = nullptr;
@@ -498,12 +510,18 @@ private:
   QListWidget *ui_mute_list = nullptr;
   QListWidget *ui_area_list = nullptr;
   QListWidget *ui_music_list = nullptr;
-  QListWidget *ui_sfx_list = nullptr;
 
+  QListWidget *ui_sfx_list = nullptr;
+  QVector<DR::SFX> m_sfx_list;
+  const QString m_sfx_default_file = "__DEFAULT__";
+  QColor m_sfx_color_found;
+  QColor m_sfx_color_missing;
+
+  QLineEdit *ui_ic_chat_showname = nullptr;
   QLineEdit *ui_ic_chat_message = nullptr;
 
-  QLineEdit *ui_ooc_chat_message = nullptr;
   QLineEdit *ui_ooc_chat_name = nullptr;
+  QLineEdit *ui_ooc_chat_message = nullptr;
 
   QLineEdit *ui_music_search = nullptr;
 
@@ -661,6 +679,8 @@ private:
   void reset_emote_page();
   void set_emote_page();
   void set_emote_dropdown();
+  DREmote get_emote(const int id);
+  DREmote get_current_emote();
 
   void construct_evidence();
   void set_evidence_page();
@@ -669,7 +689,7 @@ private:
   void save_note();
   void save_textlog(QString p_text);
 
-  void set_char_rpc();
+  bool is_spectating();
 
 public slots:
   void objection_done();
@@ -683,25 +703,30 @@ public slots:
   void mod_called(QString p_ip);
 
 private slots:
-  void start_chat_ticking();
+  void setup_chat();
   void play_sfx();
 
   void chat_tick();
 
   void on_mute_list_item_changed(QListWidgetItem *p_item);
 
-  void on_chat_return_pressed();
+  void on_showname_changed(QString);
+  void on_showname_placeholder_changed(QString);
+  void on_ic_showname_editing_finished();
+  void on_ic_message_return_pressed();
   void on_chat_config_changed();
 
+  void on_ooc_name_editing_finished();
   void on_ooc_return_pressed();
 
-  void on_music_search_edited(QString p_text);
+  void on_music_search_edited();
   void on_music_list_clicked();
   void on_area_list_clicked();
   void on_music_list_double_clicked(QModelIndex p_model);
   void on_area_list_double_clicked(QModelIndex p_model);
 
-  void on_sfx_search_edited(QString p_text);
+  void on_sfx_search_editing_finished();
+  void on_sfx_widget_list_row_changed();
 
   void select_emote(int p_id);
 
@@ -764,12 +789,13 @@ private slots:
    * @details If a sprite cannot be found for a shout button, a regular
    * push button is displayed for it with its shout name instead.
    */
-  void draw_shout_buttons();
+  void reset_shout_buttons();
 
   /**
    * @brief a general purpose function to toggle button selection
    */
-  void on_shout_clicked();
+  void on_shout_button_clicked(const bool);
+  void on_shout_button_toggled(const bool);
 
   /**
    * @brief Set the sprites of the effect buttons, and mark the currently
@@ -778,8 +804,9 @@ private slots:
    * @details If a sprite cannot be found for a shout button, a regular
    * push button is displayed for it with its shout name instead.
    */
-  void draw_effect_buttons();
-  void on_effect_button_clicked();
+  void reset_effect_buttons();
+  void on_effect_button_clicked(const bool);
+  void on_effect_button_toggled(const bool);
 
   void on_mute_clicked();
 
@@ -798,7 +825,7 @@ private slots:
    * @details If a sprite cannot be found for a shout button, a regular
    * push button is displayed for it with its shout name instead.
    */
-  void draw_judge_wtce_buttons();
+  void reset_wtce_buttons();
   void on_wtce_clicked();
 
   void on_change_character_clicked();
@@ -817,8 +844,6 @@ private slots:
   void on_pre_clicked();
   void on_flip_clicked();
   void on_hidden_clicked();
-
-  void on_sfx_list_clicked(QModelIndex p_index);
 
   void on_evidence_button_clicked();
 

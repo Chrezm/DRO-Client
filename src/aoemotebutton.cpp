@@ -28,13 +28,10 @@ int AOEmoteButton::get_emote_number()
   return m_emote_number;
 }
 
-void AOEmoteButton::set_image(QString p_chr, int p_emote_number, bool p_enabled)
+void AOEmoteButton::set_image(DREmote p_emote, bool p_enabled)
 {
-  // In the land of AO2, cohesion and consistency is unknown to the world for
-  // the sake of lazy-users convenience!
-  const int true_emote_number = p_emote_number + 1;
-
-  QString texture_path = ao_app->get_character_path(p_chr, QString("emotions/button%1_off.png").arg(true_emote_number));
+  QString texture_path =
+      ao_app->get_character_path(p_emote.character, QString("emotions/button%1_off.png").arg(p_emote.key));
 
   // reset states
   w_selected->hide();
@@ -43,7 +40,7 @@ void AOEmoteButton::set_image(QString p_chr, int p_emote_number, bool p_enabled)
   if (p_enabled)
   {
     const QString enabled_texture_path =
-        ao_app->get_character_path(p_chr, QString("emotions/button%1_on.png").arg(true_emote_number));
+        ao_app->get_character_path(p_emote.character, QString("emotions/button%1_on.png").arg(p_emote.key));
 
     if (file_exists(enabled_texture_path))
     {
@@ -51,7 +48,7 @@ void AOEmoteButton::set_image(QString p_chr, int p_emote_number, bool p_enabled)
     }
     else
     {
-      const QString selected_texture_path = ao_app->get_character_path(p_chr, "emotions/selected.png");
+      const QString selected_texture_path = ao_app->get_character_path(p_emote.character, "emotions/selected.png");
 
       if (file_exists(selected_texture_path))
       {
@@ -68,7 +65,7 @@ void AOEmoteButton::set_image(QString p_chr, int p_emote_number, bool p_enabled)
   }
 
   const bool texture_exist = file_exists(texture_path);
-  setText(texture_exist ? QString() : ao_app->get_emote_comment(p_chr, p_emote_number));
+  setText(texture_exist ? nullptr : p_emote.comment);
   setStyleSheet(texture_exist
                     ? QString("%1 { border-image: url(\"%2\"); }").arg(metaObject()->className(), texture_path)
                     : QString());

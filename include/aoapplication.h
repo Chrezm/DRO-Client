@@ -45,11 +45,13 @@ public:
   void send_ms_packet(AOPacket *p_packet);
   void send_server_packet(AOPacket *p_packet, bool encoded = true);
 
-#ifdef DRO_ACKMS // TODO WARNING remove entire block on 1.0.0 release
   ///////////////server metadata////////////////
+#ifdef DRO_ACKMS // TODO WARNING remove entire block on 1.0.0 release
 
-  bool ackMS_enabled = false;
+  bool m_FL_ackMS_enabled = false;
 #endif
+  bool m_FL_showname_enabled = false;
+  bool m_FL_chrini_enabled = false;
 
   ///////////////loading info///////////////////
 
@@ -107,6 +109,7 @@ public:
   // implementation in path_functions.cpp
   QString get_base_path();
   QString get_data_path();
+  QString get_character_folder_path(QString character);
   QString get_character_path(QString p_character, QString p_file);
   // QString get_demothings_path();
   QString get_sounds_path(QString p_file);
@@ -114,6 +117,16 @@ public:
   QString get_background_path(QString p_file);
   QString get_default_background_path(QString p_file);
   QString get_evidence_path(QString p_file);
+
+  /**
+   * @brief Check the path for various known exploits.
+   *
+   * In order:
+   * - Directory traversal (most commonly: "../" jumps)
+   * @param p_file The path to check.
+   * @return A sanitized path. If any check fails, the path returned is an empty string. The sanitized path does not
+   * necessarily exist.
+   */
   QString sanitize_path(QString p_file);
 
   /**
@@ -332,6 +345,10 @@ public:
    */
   QString read_theme_ini(QString p_identifier, QString p_file);
 
+  bool read_theme_ini_bool(QString p_identifier, QString p_file);
+
+  int read_theme_ini_int(QString p_identifier, QString p_file);
+
   // Returns the coordinates of widget with p_identifier from p_file
   QPoint get_button_spacing(QString p_identifier, QString p_file);
 
@@ -351,7 +368,9 @@ public:
   QString get_sfx(QString p_identifier);
 
   // Returns the value of p_search_line within target_tag and terminator_tag
-  QString read_char_ini(QString p_char, QString p_search_line, QString target_tag, QString terminator_tag);
+
+  QVariant read_char_ini(QString character, QString group, QString key, QVariant default_value);
+  QVariant read_char_ini(QString character, QString group, QString key);
 
   // Returns the text between target_tag and terminator_tag in p_file
   QString get_stylesheet(QString target_tag, QString p_file);
@@ -383,44 +402,23 @@ public:
   // Returns the value of chat from the specific p_char's ini file
   QString get_chat(QString p_char);
 
-  // Not in use
-  int get_text_delay(QString p_char, QString p_emote);
-
   // Returns the name of p_char
   QString get_char_name(QString p_char);
 
-  // Returns the total amount of emotes of p_char
-  int get_emote_number(QString p_char);
+  QStringList get_char_include(QString character);
 
-  // Returns the emote comment of p_char's p_emote
-  QString get_emote_comment(QString p_char, int p_emote);
+  QStringList get_char_include_tree(QString character);
 
-  // Returns the base name of p_char's p_emote
-  QString get_emote(QString p_char, int p_emote);
+  // Returns p_char's gender
+  QString get_gender(QString p_char);
 
-  // Returns the preanimation name of p_char's p_emote
-  QString get_pre_emote(QString p_char, int p_emote);
+  QVector<DREmote> get_emote_list(QString p_chr);
 
   // Returns x,y offset for effect p_effect
   QStringList get_effect_offset(QString p_char, int p_effect);
 
   // Returns overlay at p_effect in char_path/overlay
   QStringList get_overlay(QString p_char, int p_effect);
-
-  // Returns the sfx of p_char's p_emote
-  QString get_sfx_name(QString p_char, int p_emote);
-
-  // Not in use
-  int get_sfx_delay(QString p_char, int p_emote);
-
-  // Returns the modifier for p_char's p_emote
-  int get_emote_mod(QString p_char, int p_emote);
-
-  // Returns the desk modifier for p_char's p_emote
-  int get_desk_mod(QString p_char, int p_emote);
-
-  // Returns p_char's gender
-  QString get_gender(QString p_char);
 
 signals:
   void reload_theme();

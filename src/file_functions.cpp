@@ -1,7 +1,7 @@
+#include "file_functions.h"
+
 #include <QDir>
 #include <QFileInfo>
-
-#include "file_functions.h"
 
 QStringList animated_or_static_extensions()
 {

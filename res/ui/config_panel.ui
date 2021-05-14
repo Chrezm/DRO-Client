@@ -29,7 +29,7 @@
    <item>
     <widget class="QTabWidget" name="tab_widget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
@@ -108,6 +108,13 @@
          </layout>
         </widget>
        </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="server_alerts_label">
+         <property name="text">
+          <string>Server alerts:</string>
+         </property>
+        </widget>
+       </item>
        <item row="4" column="1">
         <widget class="QCheckBox" name="server_alerts">
          <property name="sizePolicy">
@@ -118,13 +125,6 @@
          </property>
          <property name="text">
           <string/>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="server_alerts_label">
-         <property name="text">
-          <string>Server alerts:</string>
          </property>
         </widget>
        </item>
@@ -226,65 +226,6 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="always_pre_label">
-         <property name="text">
-          <string>Always-anim:</string>
-         </property>
-         <property name="wordWrap">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QCheckBox" name="always_pre">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="tristate">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0">
-        <widget class="QLabel" name="chat_tick_interval_label">
-         <property name="text">
-          <string>Chat-tick interval:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QSpinBox" name="chat_tick_interval">
-         <property name="suffix">
-          <string> ms</string>
-         </property>
-         <property name="minimum">
-          <number>10</number>
-         </property>
-         <property name="maximum">
-          <number>999</number>
-         </property>
-        </widget>
-       </item>
-       <item row="6" column="1">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
        <item row="2" column="1">
         <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
@@ -311,6 +252,75 @@
           <enum>Qt::Horizontal</enum>
          </property>
         </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="showname_label">
+         <property name="text">
+          <string>Showname:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QLineEdit" name="showname"/>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="chat_tick_interval_label">
+         <property name="text">
+          <string>Chat-tick interval:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QSpinBox" name="chat_tick_interval">
+         <property name="suffix">
+          <string> ms</string>
+         </property>
+         <property name="minimum">
+          <number>10</number>
+         </property>
+         <property name="maximum">
+          <number>999</number>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0">
+        <widget class="QLabel" name="always_pre_label">
+         <property name="text">
+          <string>Always-anim:</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QCheckBox" name="always_pre">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="tristate">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -360,27 +370,15 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
-            <property name="toolTip">
-             <string>Extra newlines are </string>
-            </property>
             <property name="text">
-             <string>Display Timestamp</string>
+             <string>Display timestamp</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QCheckBox" name="log_format_use_newline">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Extra newlines are </string>
-            </property>
+           <widget class="QCheckBox" name="log_display_self_highlight">
             <property name="text">
-             <string>Format use newline</string>
+             <string>Display self-identification highlight</string>
             </property>
            </widget>
           </item>
@@ -391,9 +389,6 @@
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
-            </property>
-            <property name="toolTip">
-             <string>Extra newlines are </string>
             </property>
             <property name="text">
              <string>Display empty messages</string>
@@ -410,6 +405,22 @@
             </property>
             <property name="text">
              <string>Display music switch</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="log_format_use_newline">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Extra newlines are added between the name and message.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Format use newline</string>
             </property>
            </widget>
           </item>
@@ -790,7 +801,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, the audio channel will not be suppressed when the option [&lt;font style=&quot; color:#0000ff;&quot;&gt;Suppress Background Audio&lt;/font&gt;] is enabled and activated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>System</string>
+             <string>Ignore System</string>
             </property>
             <property name="checkable">
              <bool>true</bool>
@@ -806,7 +817,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, the audio channel will not be suppressed when the option [&lt;span style=&quot; color:#0000ff;&quot;&gt;Suppress Background Audio&lt;/span&gt;] is enabled and activated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Music</string>
+             <string>Ignore Music</string>
             </property>
            </widget>
           </item>
@@ -816,7 +827,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, the audio channel will not be suppressed when the option [&lt;font style=&quot; color:#0000ff;&quot;&gt;Suppress Background Audio&lt;/font&gt;] is enabled and activated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Effects</string>
+             <string>Ignore Effects</string>
             </property>
            </widget>
           </item>
@@ -826,7 +837,7 @@
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, the audio channel will not be suppressed when the option [&lt;font style=&quot; color:#0000ff;&quot;&gt;Suppress Background Audio&lt;/font&gt;] is enabled and activated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="text">
-             <string>Blips</string>
+             <string>Ignore Blips</string>
             </property>
            </widget>
           </item>

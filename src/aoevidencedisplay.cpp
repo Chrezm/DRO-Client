@@ -52,7 +52,7 @@ void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_sid
   this->setMovie(evidence_movie);
 
   evidence_movie->start();
-  sfx_player->play(ao_app->get_sfx("evidence_present"));
+  sfx_player->play_effect(ao_app->get_sfx("evidence_present"));
 }
 
 void AOEvidenceDisplay::frame_change(int p_frame)

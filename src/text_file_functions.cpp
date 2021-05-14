@@ -513,299 +513,231 @@ QStringList AOApplication::get_effect(int index)
 
 QStringList AOApplication::get_sfx_list()
 {
-  QStringList return_value;
-  QFile base_sfx_list_ini;
-  QFile char_sfx_list_ini;
+  QStringList r_sfx_list;
 
-  base_sfx_list_ini.setFileName(get_base_path() + "configs/sounds.ini");
-  char_sfx_list_ini.setFileName(get_character_path(get_current_char(), "sounds.ini"));
+  QStringList l_file_list;
+  l_file_list.append(get_base_path() + "configs/sounds.ini");
+  for (const QString &i_chr : get_char_include_tree(get_current_char()))
+    l_file_list.append(get_character_path(i_chr, "sounds.ini"));
 
-  if (!char_sfx_list_ini.open(QIODevice::ReadOnly) && !base_sfx_list_ini.open(QIODevice::ReadOnly))
+  for (const QString &i_file_path : qAsConst(l_file_list))
   {
-    return return_value;
+    QFile l_file(i_file_path);
+    if (l_file.open(QIODevice::ReadOnly))
+    {
+      QTextStream l_in(&l_file);
+      while (!l_in.atEnd())
+        r_sfx_list.append(l_in.readLine());
+    }
   }
 
-  QTextStream in_a(&base_sfx_list_ini);
-  QTextStream in_b(&char_sfx_list_ini);
-
-  while (!in_a.atEnd())
-  {
-    QString line = in_a.readLine();
-    return_value.append(line);
-  }
-
-  while (!in_b.atEnd())
-  {
-    QString line = in_b.readLine();
-    return_value.append(line);
-  }
-
-  return return_value;
+  return r_sfx_list;
 }
 
 // returns whatever is to the right of "search_line =" within target_tag and
 // terminator_tag, trimmed returns the empty string if the search line couldnt
 // be found
-QString AOApplication::read_char_ini(QString p_char, QString p_search_line, QString target_tag, QString terminator_tag)
+
+QVariant AOApplication::read_char_ini(QString p_chr, QString p_group, QString p_key, QVariant p_def)
 {
-  QString char_ini_path = get_character_path(p_char, "char.ini");
+  QSettings s(get_character_path(p_chr, "char.ini"), QSettings::IniFormat);
+  s.setIniCodec("UTF-8");
+  s.beginGroup(p_group);
+  return s.value(p_key, p_def);
+}
 
-  QFile char_ini;
+QVariant AOApplication::read_char_ini(QString p_chr, QString p_group, QString p_key)
+{
+  return read_char_ini(p_chr, p_group, p_key, QVariant());
+}
 
-  char_ini.setFileName(char_ini_path);
+QString AOApplication::get_char_name(QString p_chr)
+{
+  return read_char_ini(p_chr, "options", "name", p_chr).toString();
+}
 
-  if (!char_ini.open(QIODevice::ReadOnly))
-    return "";
+#include <QQueue>
 
-  QTextStream in(&char_ini);
+QStringList AOApplication::get_char_include(QString p_chr)
+{
+  QStringList r_list;
 
-  bool tag_found = false;
-
-  while (!in.atEnd())
+  QStringList l_queue{p_chr};
+  while (!l_queue.isEmpty())
   {
-    QString line = in.readLine();
+    const QString l_target_chr = l_queue.takeFirst().trimmed();
+    if (r_list.contains(l_target_chr) || l_target_chr.isEmpty())
+      continue;
+    r_list.append(l_target_chr);
+    l_queue.append(read_char_ini(l_target_chr, "options", "include").toStringList());
+  }
+  r_list.removeAll(p_chr);
 
-    if (QString::compare(line, terminator_tag, Qt::CaseInsensitive) == 0)
-      break;
+  return r_list;
+}
 
-    if (line.startsWith(target_tag, Qt::CaseInsensitive))
+QStringList AOApplication::get_char_include_tree(QString p_chr)
+{
+  QStringList r_list = get_char_include(p_chr);
+  r_list.prepend(p_chr);
+  return r_list;
+}
+
+QString AOApplication::get_showname(QString p_chr)
+{
+  return read_char_ini(p_chr, "options", "showname", p_chr).toString();
+}
+
+QString AOApplication::get_char_side(QString p_chr)
+{
+  return read_char_ini(p_chr, "options", "side", "wit").toString();
+}
+
+QString AOApplication::get_gender(QString p_chr)
+{
+  return read_char_ini(p_chr, "options", "gender", "male").toString();
+}
+
+QString AOApplication::get_chat(QString p_chr)
+{
+  return read_char_ini(p_chr, "options", "chat").toString().toLower();
+}
+
+QVector<DREmote> AOApplication::get_emote_list(QString p_chr)
+{
+  QVector<DREmote> r_emote_list;
+
+  QStringList l_chr_list = get_char_include(p_chr);
+  l_chr_list.append(p_chr);
+
+#ifdef QT_DEBUG
+  qDebug().noquote() << QString("Compiling char.ini for character <%1>").arg(p_chr);
+#endif
+  for (const QString &i_chr : l_chr_list)
+  {
+    if (!dir_exists(get_character_folder_path(i_chr)))
     {
-      tag_found = true;
+      qWarning().noquote()
+          << QString("Parent character <%1> not found, character <%2> cannot use it.").arg(i_chr, p_chr);
       continue;
     }
+#ifdef QT_DEBUG
+    qDebug().noquote() << QString("Adding <%1>").arg(i_chr);
+#endif
 
-    if (!line.startsWith(p_search_line, Qt::CaseInsensitive))
-      continue;
+    QSettings l_chrini(get_character_path(i_chr, "char.ini"), QSettings::IniFormat);
+    l_chrini.setIniCodec("UTF-8");
 
-    QStringList line_elements = line.split("=");
+    QStringList l_keys;
+    { // recover all numbered keys, ignore words
+      l_chrini.beginGroup("emotions");
+      l_keys = l_chrini.childKeys();
+      l_chrini.endGroup();
 
-    if (QString::compare(line_elements.at(0).trimmed(), p_search_line, Qt::CaseInsensitive) != 0)
-      continue;
+      // remove keywords
+      l_keys.removeAll("firstmode");
+      l_keys.removeAll("number");
 
-    if (line_elements.size() < 2)
-      continue;
+      // remove all negative and non-numbers
+      for (int i = 0; i < l_keys.length(); ++i)
+      {
+        const QString &i_key = l_keys.at(i);
+        bool ok = false;
+        const int l_num = i_key.toInt(&ok);
+        if (ok && l_num >= 0)
+          continue;
+        l_keys.removeAt(i--);
+      }
 
-    if (tag_found)
+      std::stable_sort(l_keys.begin(), l_keys.end(), [](const QString &a, const QString &b) -> bool {
+        // if 0s are added at the beginning of the key, consider a whole number
+        if (a.length() < b.length())
+          return true;
+        return a.toInt() < b.toInt();
+      });
+    }
+
+    for (const QString &i_key : qAsConst(l_keys))
     {
-      char_ini.close();
-      return line_elements.at(1).trimmed();
+      l_chrini.beginGroup("emotions");
+      const QStringList l_emotions = l_chrini.value(i_key).toString().split("#", DR::KeepEmptyParts);
+      l_chrini.endGroup();
+
+      if (l_emotions.length() < 4)
+      {
+        qWarning().noquote() << QString("Emote <%2> of <%1>; emote is malformed.").arg(i_chr, i_key);
+        continue;
+      }
+      enum EmoteField
+      {
+        Comment,
+        Animation,
+        Dialog,
+        Modifier,
+        DeskModifier,
+      };
+
+      DREmote l_emote;
+      l_emote.key = i_key;
+      l_emote.character = i_chr;
+      l_emote.comment = l_emotions.at(Comment);
+      l_emote.anim = l_emotions.at(Animation);
+      l_emote.dialog = l_emotions.at(Dialog);
+      l_emote.modifier = qMax(l_emotions.at(Modifier).toInt(), 0);
+      if (DeskModifier < l_emotions.length())
+        l_emote.desk_modifier = l_emotions.at(DeskModifier).toInt();
+
+      l_chrini.beginGroup("soundn");
+      l_emote.sound_file = l_chrini.value(i_key).toString();
+      l_chrini.endGroup();
+
+      l_chrini.beginGroup("soundt");
+      l_emote.sound_delay = qMax(l_chrini.value(i_key).toInt(), 0);
+      l_chrini.endGroup();
+
+      // add the emote
+      r_emote_list.append(l_emote);
     }
   }
 
-  char_ini.close();
-  return "";
-}
-
-QString AOApplication::get_char_name(QString p_char)
-{
-  QString f_result = read_char_ini(p_char, "name", "[Options]", "[Time]");
-
-  if (f_result == "")
-    return p_char;
-  else
-    return f_result;
-}
-
-QString AOApplication::get_showname(QString p_char)
-{
-  QString f_result = read_showname(p_char);
-  if (f_result == "")
-    f_result = read_char_ini(p_char, "showname", "[Options]", "[Time]");
-
-  if (f_result == "")
-    return p_char;
-  else
-    return f_result;
-}
-
-QString AOApplication::read_showname(QString p_char)
-{
-  QString f_filename = get_base_path() + "configs/shownames.ini";
-  QFile f_file(f_filename);
-  if (!f_file.open(QIODevice::ReadOnly))
+  // remove duplicate emotes and bring the last one to the front
+  QVector<DREmote> l_filtered_list;
+  QStringList l_dialog_filter_list;
+  for (auto it = r_emote_list.cbegin(); it != r_emote_list.cend(); ++it)
   {
-    qDebug() << "Error reading" << f_filename;
-    return "";
-  }
-
-  QTextStream in(&f_file);
-  while (!in.atEnd())
-  {
-    QString f_line = in.readLine();
-    if (!f_line.startsWith(p_char))
+    const DREmote &it_emote = *it;
+    if (l_dialog_filter_list.contains(it_emote.dialog))
       continue;
+    l_dialog_filter_list.append(it_emote.dialog);
 
-    QStringList line_elements = f_line.split("=");
-    if (line_elements.at(0).trimmed() == p_char)
-      return line_elements.at(1).trimmed();
+    for (auto rit = r_emote_list.crbegin(); rit != r_emote_list.crend(); ++rit)
+    {
+      const DREmote &rit_emote = *rit;
+      if (it_emote.dialog == rit_emote.dialog)
+      {
+        l_filtered_list.append(rit_emote);
+        break;
+      }
+    }
   }
-  return "";
+  r_emote_list = std::move(l_filtered_list);
+  return r_emote_list;
 }
 
-QString AOApplication::get_char_side(QString p_char)
+QStringList AOApplication::get_effect_offset(QString p_chr, int p_effect)
 {
-  QString f_result = read_char_ini(p_char, "side", "[Options]", "[Time]");
-
-  if (f_result == "")
-    return "wit";
-  else
-    return f_result;
+  QStringList r_offset = read_char_ini(p_chr, "offsets", QString::number(p_effect)).toString().split(",");
+  while (r_offset.length() < 2)
+    r_offset.append(nullptr);
+  return r_offset;
 }
 
-QString AOApplication::get_gender(QString p_char)
+QStringList AOApplication::get_overlay(QString p_chr, int p_overlay)
 {
-  QString f_result = read_char_ini(p_char, "gender", "[Options]", "[Time]");
-
-  if (f_result == "")
-    return "male";
-  else
-    return f_result;
-}
-
-QString AOApplication::get_chat(QString p_char)
-{
-  QString f_result = read_char_ini(p_char, "chat", "[Options]", "[Time]");
-
-  // handling the correct order of chat is a bit complicated, we let the caller
-  // do it
-  return f_result.toLower();
-}
-
-int AOApplication::get_emote_number(QString p_char)
-{
-  QString f_result = read_char_ini(p_char, "number", "[Emotions]", "[Offsets]");
-
-  if (f_result == "")
-    return 0;
-  else
-    return f_result.toInt();
-}
-
-QString AOApplication::get_emote_comment(QString p_char, int p_emote)
-{
-  QString f_result = read_char_ini(p_char, QString::number(p_emote + 1), "[Emotions]", "[Offsets]");
-
-  QStringList result_contents = f_result.split("#");
-
-  if (result_contents.size() < 4)
-  {
-    qDebug() << "W: misformatted char.ini: " << p_char << ", " << p_emote;
-    return "normal";
-  }
-  else
-    return result_contents.at(0);
-}
-
-QString AOApplication::get_pre_emote(QString p_char, int p_emote)
-{
-  QString f_result = read_char_ini(p_char, QString::number(p_emote + 1), "[Emotions]", "[Offsets]");
-
-  QStringList result_contents = f_result.split("#");
-
-  if (result_contents.size() < 4)
-  {
-    qDebug() << "W: misformatted char.ini: " << p_char << ", " << p_emote;
-    return "";
-  }
-  else
-    return result_contents.at(1);
-}
-
-QString AOApplication::get_emote(QString p_char, int p_emote)
-{
-  QString f_result = read_char_ini(p_char, QString::number(p_emote + 1), "[Emotions]", "[Offsets]");
-
-  QStringList result_contents = f_result.split("#");
-
-  if (result_contents.size() < 4)
-  {
-    qDebug() << "W: misformatted char.ini: " << p_char << ", " << p_emote;
-    return "normal";
-  }
-  else
-    return result_contents.at(2);
-}
-
-int AOApplication::get_emote_mod(QString p_char, int p_emote)
-{
-  QString f_result = read_char_ini(p_char, QString::number(p_emote + 1), "[Emotions]", "[Offsets]");
-
-  QStringList result_contents = f_result.split("#");
-
-  if (result_contents.size() < 4)
-  {
-    qDebug() << "W: misformatted char.ini: " << p_char << ", " << QString::number(p_emote);
-    return 0;
-  }
-  else
-    return result_contents.at(3).toInt();
-}
-
-int AOApplication::get_desk_mod(QString p_char, int p_emote)
-{
-  QString f_result = read_char_ini(p_char, QString::number(p_emote + 1), "[Emotions]", "[Offsets]");
-
-  QStringList result_contents = f_result.split("#");
-
-  if (result_contents.size() < 5)
-    return -1;
-
-  QString string_result = result_contents.at(4);
-  if (string_result == "")
-    return -1;
-
-  else
-    return string_result.toInt();
-}
-
-QStringList AOApplication::get_effect_offset(QString p_char, int p_effect)
-{
-  QStringList f_result = read_char_ini(p_char, QString::number(p_effect), "[Offsets]", "[Overlay]").split(",");
-
-  if (f_result.size() < 2)
-    return decltype(f_result){0, 0};
-
-  return f_result;
-}
-
-QStringList AOApplication::get_overlay(QString p_char, int p_effect)
-{
-  QStringList f_result = read_char_ini(p_char, QString::number(p_effect), "[Overlay]", "[SoundN]").split("#");
-
-  if (f_result.size() < 2)
-    f_result.push_back("");
-
-  return f_result;
-}
-
-QString AOApplication::get_sfx_name(QString p_char, int p_emote)
-{
-  QString f_result = read_char_ini(p_char, QString::number(p_emote + 1), "[SoundN]", "[SoundT]");
-
-  if (f_result == "")
-    return "1";
-  else
-    return f_result;
-}
-
-int AOApplication::get_sfx_delay(QString p_char, int p_emote)
-{
-  QString f_result = read_char_ini(p_char, QString::number(p_emote + 1), "[SoundT]", "[TextDelay]");
-
-  if (f_result == "")
-    return 1;
-  else
-    return f_result.toInt();
-}
-
-int AOApplication::get_text_delay(QString p_char, QString p_emote)
-{
-  QString f_result = read_char_ini(p_char, p_emote, "[TextDelay]", "END_OF_FILE");
-
-  if (f_result == "")
-    return -1;
-  else
-    return f_result.toInt();
+  QStringList r_overlay = read_char_ini(p_chr, "overlay", QString::number(p_overlay)).toString().split("#");
+  while (r_overlay.length() < 2)
+    r_overlay.append(nullptr);
+  return r_overlay;
 }
 
 bool AOApplication::get_blank_blip()
@@ -823,4 +755,14 @@ QString AOApplication::read_theme_ini(QString p_identifier, QString p_file)
     return "";
 
   return read_ini(p_identifier, path); // Could be the empty string
+}
+
+bool AOApplication::read_theme_ini_bool(QString p_identifier, QString p_file)
+{
+  return read_theme_ini(p_identifier, p_file) == "true";
+}
+
+int AOApplication::read_theme_ini_int(QString p_identifier, QString p_file)
+{
+  return read_theme_ini(p_identifier, p_file).toInt();
 }

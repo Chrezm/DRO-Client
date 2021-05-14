@@ -140,8 +140,10 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     f_hdid = get_hdid();
 
 #ifdef DRO_ACKMS // TODO WARNING remove entire block on 1.0.0 release
-    ackMS_enabled = false;
+    m_FL_ackMS_enabled = false;
 #endif
+    m_FL_showname_enabled = false;
+    m_FL_chrini_enabled = false;
 
     AOPacket *hi_packet = new AOPacket("HI#" + f_hdid + "#%");
     send_server_packet(hi_packet);
@@ -167,8 +169,9 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
   else if (header == "FL")
   {
 #ifdef DRO_ACKMS // TODO WARNING remove entire block on 1.0.0 release
-    if (f_packet.contains("ackMS", Qt::CaseInsensitive))
-      ackMS_enabled = true;
+    m_FL_ackMS_enabled = f_packet.contains("ackMS", Qt::CaseInsensitive);
+    m_FL_showname_enabled = f_packet.contains("showname", Qt::CaseInsensitive);
+    m_FL_chrini_enabled = f_packet.contains("chrini", Qt::CaseInsensitive);
 #endif
   }
   else if (header == "PN")
@@ -654,7 +657,8 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     // Timer resume
     if (f_contents.size() != 1)
       goto end;
-
+    if (!courtroom_constructed)
+      goto end;
     int timer_id = f_contents.at(0).toInt();
     w_courtroom->resume_timer(timer_id);
   }
@@ -663,7 +667,8 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     // Timer set time
     if (f_contents.size() != 2)
       goto end;
-
+    if (!courtroom_constructed)
+      goto end;
     int timer_id = f_contents.at(0).toInt();
     int new_time = f_contents.at(1).toInt();
     w_courtroom->set_timer_time(timer_id, new_time);
@@ -673,7 +678,8 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     // Timer set timeStep length
     if (f_contents.size() != 2)
       goto end;
-
+    if (!courtroom_constructed)
+      goto end;
     int timer_id = f_contents.at(0).toInt();
     int timestep_length = f_contents.at(1).toInt();
     w_courtroom->set_timer_timestep(timer_id, timestep_length);
@@ -683,7 +689,8 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     // Timer set Firing interval
     if (f_contents.size() != 2)
       goto end;
-
+    if (!courtroom_constructed)
+      goto end;
     int timer_id = f_contents.at(0).toInt();
     int firing_interval = f_contents.at(1).toInt();
     w_courtroom->set_timer_firing(timer_id, firing_interval);
@@ -693,7 +700,8 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     // Timer pause
     if (f_contents.size() != 1)
       goto end;
-
+    if (!courtroom_constructed)
+      goto end;
     int timer_id = f_contents.at(0).toInt();
     w_courtroom->pause_timer(timer_id);
   }
@@ -702,8 +710,22 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
     // Set position
     if (f_contents.size() != 1)
       goto end;
-
+    if (!courtroom_constructed)
+      goto end;
     w_courtroom->set_character_position(f_contents.at(0));
+  }
+  else if (header == "SN")
+  {
+    // Server-set showname.
+    // This has priority over user-set showname.
+    if (f_contents.size() != 1)
+      goto end;
+    if (!courtroom_constructed)
+      goto end;
+    const QString l_showname = f_contents.at(0);
+    // By updating now, we prevent the client from sending an SN back when we later on go ahead and modify the
+    // showname box.
+    config->set_showname(l_showname);
   }
 
 end:

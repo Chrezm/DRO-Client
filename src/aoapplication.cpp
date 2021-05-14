@@ -185,10 +185,14 @@ QString AOApplication::get_current_char()
 
 QString AOApplication::sanitize_path(QString p_file)
 {
+  if (!p_file.contains(".."))
+    return p_file;
+
   QStringList list = p_file.split(QRegularExpression("[\\/]"));
   while (!list.isEmpty())
     if (list.takeFirst().contains(QRegularExpression("\\.{2,}")))
       return nullptr;
+
   return p_file;
 }
 
@@ -237,6 +241,7 @@ bool AOApplication::get_first_person_enabled()
 {
   return config->get_bool("first_person", false);
 }
+
 bool AOApplication::get_chatlog_scrolldown()
 {
   return config->log_is_topdown_enabled();

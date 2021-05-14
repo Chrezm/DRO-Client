@@ -24,7 +24,7 @@ AOCharMovie::AOCharMovie(QWidget *p_parent, AOApplication *p_ao_app) : QLabel(p_
   connect(m_frame_timer, SIGNAL(timeout()), this, SLOT(on_timer_timeout()));
 }
 
-void AOCharMovie::play(QString p_chr, QString p_emote, QString p_emote_prefix, bool p_play_once)
+bool AOCharMovie::play(QString p_chr, QString p_emote, QString p_prefix, bool p_play_once)
 {
   // Asset lookup order
   // 1. In the character folder, look for
@@ -34,62 +34,49 @@ void AOCharMovie::play(QString p_chr, QString p_emote, QString p_emote_prefix, b
   // 3. In the theme folder (gamemode-timeofday/main/default), look for
   // "placeholder" + extensions in `exts` in order
 
-  QString target_path = ao_app->find_asset_path(
-      {
-          ao_app->get_character_path(p_chr, p_emote_prefix + p_emote),
-          ao_app->get_character_path(p_chr, p_emote),
-      },
-      animated_or_static_extensions());
-  if (target_path.isEmpty())
-    target_path = ao_app->find_theme_asset_path("placeholder", animated_extensions());
+  bool r_exist = true;
+
+  QStringList l_file_list;
+  for (const QString &i_chr : ao_app->get_char_include_tree(p_chr))
+  {
+    if (!p_prefix.isEmpty())
+      l_file_list.append(ao_app->get_character_path(i_chr, QString("%1%2").arg(p_emote, p_prefix)));
+    l_file_list.append(ao_app->get_character_path(i_chr, p_emote));
+  }
+
+  QString l_file = ao_app->find_asset_path(l_file_list, animated_or_static_extensions());
+  if (l_file.isEmpty())
+  {
+    l_file = ao_app->find_theme_asset_path("placeholder", animated_extensions());
+    r_exist = false;
+  }
 
   stop();
-  m_movie->setFileName(target_path);
+  m_movie->setFileName(l_file);
   m_play_once = p_play_once;
   m_movie->start();
+
+  return r_exist;
 }
 
-void AOCharMovie::play(QString p_chr, QString p_emote, bool p_play_once)
+bool AOCharMovie::play(QString p_chr, QString p_emote, bool p_play_once)
 {
-  play(p_chr, p_emote, QString(), p_play_once);
+  return play(p_chr, p_emote, nullptr, p_play_once);
 }
 
 bool AOCharMovie::play_pre(QString p_chr, QString p_emote)
 {
-  QString f_file_path = ao_app->get_character_path(p_chr, p_emote);
-  bool f_file_exist = false;
-
-  { // figure out what extension the animation is using
-    QString f_source_path = ao_app->get_character_path(p_chr, p_emote);
-    for (QString &i_ext : animated_or_static_extensions())
-    {
-      QString f_target_path = ao_app->get_case_sensitive_path(f_source_path + i_ext);
-      if (file_exists(f_target_path))
-      {
-        f_file_path = f_target_path;
-        f_file_exist = true;
-        break;
-      }
-    }
-  }
-
-  // play if it exist
-  if (f_file_exist)
-  {
-    play(p_chr, p_emote, true);
-  }
-
-  return f_file_exist;
+  return play(p_chr, p_emote, true);
 }
 
-void AOCharMovie::play_talking(QString p_chr, QString p_emote)
+bool AOCharMovie::play_talk(QString p_chr, QString p_emote)
 {
-  play(p_chr, p_emote, "(b)", false);
+  return play(p_chr, p_emote, "(b)", false);
 }
 
-void AOCharMovie::play_idle(QString p_chr, QString p_emote)
+bool AOCharMovie::play_idle(QString p_chr, QString p_emote)
 {
-  play(p_chr, p_emote, "(a)", false);
+  return play(p_chr, p_emote, "(a)", false);
 }
 
 void AOCharMovie::set_mirror_enabled(bool p_enabled)

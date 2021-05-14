@@ -2,6 +2,7 @@
 
 #include "courtroom.h"
 #include "debug_functions.h"
+#include "drpather.h"
 
 #include <QDebug>
 #include <QFileDialog>
@@ -44,7 +45,8 @@ void Courtroom::on_set_file_button_clicked()
 {
   AOButton *f_button = static_cast<AOButton *>(sender());
   AONotePicker *f_notepicker = static_cast<AONotePicker *>(f_button->parent());
-  QString f_filename = QFileDialog::getOpenFileName(this, "Open File", QDir::currentPath(), "Text files (*.txt)");
+  QString f_filename =
+      QFileDialog::getOpenFileName(this, "Open File", DRPather::get_application_path(), "Text files (*.txt)");
 
   if (f_filename != "")
   {

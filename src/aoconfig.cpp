@@ -1,11 +1,11 @@
 #include "aoconfig.h"
 #include "datatypes.h"
 #include "draudioengine.h"
+#include "drpather.h"
 
 // qt
 #include <QApplication>
 #include <QDebug>
-#include <QDir>
 #include <QPointer>
 #include <QSettings>
 #include <QSharedPointer>
@@ -56,10 +56,13 @@ private:
   bool manual_gamemode;
   QString timeofday;
   bool manual_timeofday;
+  QString showname;
+  QString showname_placeholder;
   bool always_pre;
   int chat_tick_interval;
   int log_max_lines;
   bool log_display_timestamp;
+  bool log_display_self_highlight;
   bool log_display_empty_messages;
   bool log_is_topdown;
   bool log_format_use_newline;
@@ -85,7 +88,7 @@ private:
 };
 
 AOConfigPrivate::AOConfigPrivate()
-    : QObject(nullptr), cfg(QDir::currentPath() + "/base/config.ini", QSettings::IniFormat),
+    : QObject(nullptr), cfg(DRPather::get_application_path() + "/base/config.ini", QSettings::IniFormat),
       audio_engine(new DRAudioEngine(this))
 {
   Q_ASSERT_X(qApp, "initialization", "QGuiApplication is required");
@@ -107,6 +110,7 @@ void AOConfigPrivate::read_file()
 {
   autosave = cfg.value("autosave", true).toBool();
   username = cfg.value("username").toString();
+  showname = cfg.value("showname").toString();
   callwords = cfg.value("callwords").toString();
   server_alerts = cfg.value("server_alerts", true).toBool();
 
@@ -126,8 +130,9 @@ void AOConfigPrivate::read_file()
   chat_tick_interval = cfg.value("chat_tick_interval", 60).toInt();
   log_max_lines = cfg.value("chatlog_limit", 200).toInt();
   log_is_topdown = cfg.value("chatlog_scrolldown", true).toBool();
-  log_display_timestamp = cfg.value("chatlog_display_timestamp", false).toBool();
-  log_display_empty_messages = cfg.value("log_display_empty_messages", false).toBool();
+  log_display_timestamp = cfg.value("chatlog_display_timestamp", true).toBool();
+  log_display_self_highlight = cfg.value("chatlog_display_self_highlight", true).toBool();
+  log_display_empty_messages = cfg.value("chatlog_display_empty_messages", false).toBool();
   log_format_use_newline = cfg.value("chatlog_newline", false).toBool();
   log_display_music_switch = cfg.value("music_change_log", true).toBool();
   log_is_recording = cfg.value("enable_logging", true).toBool();
@@ -165,6 +170,7 @@ void AOConfigPrivate::save_file()
 {
   cfg.setValue("autosave", autosave);
   cfg.setValue("username", username);
+  cfg.setValue("showname", showname);
   cfg.setValue("callwords", callwords);
   cfg.setValue("server_alerts", server_alerts);
 
@@ -181,6 +187,7 @@ void AOConfigPrivate::save_file()
   cfg.setValue("chat_tick_interval", chat_tick_interval);
   cfg.setValue("chatlog_limit", log_max_lines);
   cfg.setValue("chatlog_display_timestamp", log_display_timestamp);
+  cfg.setValue("chatlog_display_self_highlight", log_display_self_highlight);
   cfg.setValue("chatlog_newline", log_format_use_newline);
   cfg.setValue("chatlog_display_empty_messages", log_display_empty_messages);
   cfg.setValue("music_change_log", log_display_music_switch);
@@ -279,6 +286,16 @@ QString AOConfig::username() const
   return d->username;
 }
 
+QString AOConfig::showname() const
+{
+  return d->showname;
+}
+
+QString AOConfig::showname_placeholder() const
+{
+  return d->showname_placeholder;
+}
+
 QString AOConfig::callwords() const
 {
   return d->callwords;
@@ -347,6 +364,11 @@ int AOConfig::log_max_lines() const
 bool AOConfig::log_display_timestamp_enabled() const
 {
   return d->log_display_timestamp;
+}
+
+bool AOConfig::log_display_self_highlight_enabled() const
+{
+  return d->log_display_self_highlight;
 }
 
 bool AOConfig::log_display_empty_messages_enabled() const
@@ -452,6 +474,27 @@ void AOConfig::set_username(QString p_string)
     return;
   d->username = p_string;
   d->invoke_signal("username_changed", Q_ARG(QString, p_string));
+}
+
+void AOConfig::set_showname(QString p_string)
+{
+  if (d->showname == p_string)
+    return;
+  d->showname = p_string;
+  d->invoke_signal("showname_changed", Q_ARG(QString, p_string));
+}
+
+void AOConfig::set_showname_placeholder(QString p_string)
+{
+  if (d->showname_placeholder == p_string)
+    return;
+  d->showname_placeholder = p_string;
+  d->invoke_signal("showname_placeholder_changed", Q_ARG(QString, p_string));
+}
+
+void AOConfig::clear_showname_placeholder()
+{
+  set_showname_placeholder(nullptr);
 }
 
 void AOConfig::set_callwords(QString p_string)
@@ -564,6 +607,14 @@ void AOConfig::set_log_display_timestamp(bool p_enabled)
     return;
   d->log_display_timestamp = p_enabled;
   d->invoke_signal("log_display_timestamp_changed", Q_ARG(bool, p_enabled));
+}
+
+void AOConfig::set_log_display_self_highlight(bool p_enabled)
+{
+  if (d->log_display_self_highlight == p_enabled)
+    return;
+  d->log_display_self_highlight = p_enabled;
+  d->invoke_signal("log_display_self_highlight_changed", Q_ARG(bool, p_enabled));
 }
 
 void AOConfig::set_log_display_empty_messages(bool p_enabled)

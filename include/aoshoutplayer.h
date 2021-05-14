@@ -10,7 +10,7 @@ class AOShoutPlayer : public AOObject
 public:
   AOShoutPlayer(AOApplication *p_ao_app, QObject *p_parent = nullptr);
 
-  void play(QString p_name, QString p_char);
+  void play(QString character, QString shout);
 };
 
 #endif // AOSHOUTPLAYER_HPP

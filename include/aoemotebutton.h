@@ -3,6 +3,7 @@
 
 // src
 #include "aoapplication.h"
+#include "datatypes.h"
 
 // qt
 #include <QLabel>
@@ -17,7 +18,7 @@ public:
 
   int get_emote_number();
   void set_emote_number(int p_emote_number);
-  void set_image(QString p_chr, int p_emote_number, bool p_enabled);
+  void set_image(DREmote emote, bool enabled);
 
 signals:
   void emote_clicked(int p_emote_number);

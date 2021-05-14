@@ -3,11 +3,11 @@
 #include "aoapplication.h"
 #include "aosfxplayer.h"
 #include "debug_functions.h"
+#include "drpather.h"
 #include "drtextedit.h"
 #include "networkmanager.h"
 
 #include <QDebug>
-#include <QDir>
 #include <QImageReader>
 #include <QMessageBox>
 #include <QScrollBar>
@@ -85,7 +85,7 @@ void Lobby::set_widgets()
                 "the DRO Discord including the large 'base' folder.\n"
                 "2. If you did, check that the base folder is in the same folder "
                 "where you launched Danganronpa Online from: " +
-                QDir::currentPath() +
+                DRPather::get_application_path() +
                 "\n"
                 "3. If it is there, check that your current theme folder exists in "
                 "base/themes. According to base/config.ini, your current theme is " +

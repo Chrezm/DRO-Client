@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-#if (defined(_WIN32) || defined(_WIN64))
+#ifdef Q_OS_WINDOWS
 #include <windows.h>
 
 DWORD dwVolSerial;
@@ -19,9 +19,7 @@ QString get_hdid()
     // what could possibly go wrong
     return "gxsps32sa9fnwic92mfbs0";
 }
-
-#elif (defined(LINUX) || defined(__linux__))
-
+#elif defined(Q_OS_LINUX)
 #include <QFile>
 #include <QTextStream>
 
@@ -48,9 +46,35 @@ QString get_hdid()
 
   return "gxcpz32sa9fnwic92mfbs0";
 }
+#elif defined(Q_OS_MACOS)
+#include <CoreFoundation/CoreFoundation.h>
+#include <IOKit/IOKitLib.h>
 
+QString get_hdid()
+{
+  // This code is from AO.
+  CFStringRef serial;
+  char buffer[64] = {0};
+  QString hdid;
+  io_service_t platformExpert =
+      IOServiceGetMatchingService(kIOMasterPortDefault, IOServiceMatching("IOPlatformExpertDevice"));
+  if (platformExpert)
+  {
+    CFTypeRef serialNumberAsCFString =
+        IORegistryEntryCreateCFProperty(platformExpert, CFSTR(kIOPlatformSerialNumberKey), kCFAllocatorDefault, 0);
+    if (serialNumberAsCFString)
+    {
+      serial = (CFStringRef)serialNumberAsCFString;
+    }
+    if (CFStringGetCString(serial, buffer, 64, kCFStringEncodingUTF8))
+    {
+      hdid = buffer;
+    }
+
+    IOObjectRelease(platformExpert);
+  }
+  return hdid;
+}
 #else
-
 #error This operating system is unsupported for hardware functions.
-
 #endif

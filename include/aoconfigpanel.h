@@ -45,6 +45,7 @@ private slots:
   void on_reload_theme_clicked();
   void on_gamemode_index_changed(QString p_text);
   void on_timeofday_index_changed(QString p_text);
+  void on_showname_placeholder_changed(QString p_text);
   void on_log_is_topdown_changed(bool p_enabled);
   void on_device_current_index_changed(int p_index);
   void on_audio_device_changed(DRAudioDevice p_device);
@@ -85,12 +86,14 @@ private:
   QCheckBox *w_manual_gamemode = nullptr;
   QComboBox *w_timeofday = nullptr;
   QCheckBox *w_manual_timeofday = nullptr;
+  QLineEdit *w_showname = nullptr;
   QCheckBox *w_always_pre = nullptr;
   QSpinBox *w_chat_tick_interval = nullptr;
 
   // IC Chatlog
   QSpinBox *w_log_max_lines = nullptr;
   QCheckBox *w_log_display_timestamp = nullptr;
+  QCheckBox *w_log_display_self_highlight = nullptr;
   QCheckBox *w_log_format_use_newline = nullptr;
   QCheckBox *w_log_display_empty_messages = nullptr;
   QCheckBox *w_log_display_music_switch = nullptr;
@@ -117,6 +120,11 @@ private:
   QLabel *w_blip_value = nullptr;
   QSpinBox *w_blip_rate = nullptr;
   QCheckBox *w_blank_blips = nullptr;
+
+private slots:
+  void username_editing_finished();
+  void showname_editing_finished();
+  void callwords_editing_finished();
 };
 
 #endif // AOCONFIGPANEL_H

@@ -75,9 +75,9 @@ void Courtroom::reconstruct_emotes()
 void Courtroom::reset_emote_page()
 {
   current_emote_page = 0;
-  current_emote = 0;
+  m_current_emote_id = 0;
 
-  if (m_cid == -1)
+  if (is_spectating())
     ui_emotes->hide();
   else
     ui_emotes->show();
@@ -91,15 +91,12 @@ void Courtroom::set_emote_page()
   ui_emote_left->hide();
   ui_emote_right->hide();
 
-  if (m_cid == -1)
+  if (is_spectating())
     return;
 
-  int total_emotes = ao_app->get_emote_number(current_char);
-
+  const int total_emotes = m_emote_list.length();
   for (AOEmoteButton *i_button : qAsConst(ui_emote_list))
-  {
     i_button->hide();
-  }
 
   int total_pages = total_emotes / max_emotes_on_page;
   int emotes_on_page = 0;
@@ -124,53 +121,61 @@ void Courtroom::set_emote_page()
 
   for (int n_emote = 0; n_emote < emotes_on_page; ++n_emote)
   {
-    int n_real_emote = n_emote + current_emote_page * max_emotes_on_page;
-    AOEmoteButton *f_emote = ui_emote_list.at(n_emote);
-    f_emote->set_image(current_char, n_real_emote, n_real_emote == current_emote);
-    f_emote->show();
+    const int l_real_id = n_emote + current_emote_page * max_emotes_on_page;
+    AOEmoteButton *l_button = ui_emote_list.at(n_emote);
+    l_button->set_image(get_emote(l_real_id), l_real_id == m_current_emote_id);
+    l_button->show();
   }
 }
 
 void Courtroom::set_emote_dropdown()
 {
+  QSignalBlocker l_blocker(ui_emote_dropdown);
   ui_emote_dropdown->clear();
 
-  int total_emotes = ao_app->get_emote_number(current_char);
-  QStringList emote_list;
+  QStringList l_emote_list;
+  for (const DREmote &i_emote : m_emote_list)
+    l_emote_list.append(i_emote.comment);
+  ui_emote_dropdown->addItems(l_emote_list);
+}
 
-  for (int n = 0; n < total_emotes; ++n)
-  {
-    emote_list.append(ao_app->get_emote_comment(current_char, n));
-  }
+DREmote Courtroom::get_emote(const int id)
+{
+  if (id < 0 || id >= m_emote_list.length())
+    return DREmote();
+  return m_emote_list.at(id);
+}
 
-  ui_emote_dropdown->addItems(emote_list);
+DREmote Courtroom::get_current_emote()
+{
+  return get_emote(m_current_emote_id);
 }
 
 void Courtroom::select_emote(int p_id)
 {
-  int min = current_emote_page * max_emotes_on_page;
-  int max = (max_emotes_on_page - 1) + current_emote_page * max_emotes_on_page;
+  const int l_min = current_emote_page * max_emotes_on_page;
+  const int l_max = (max_emotes_on_page - 1) + current_emote_page * max_emotes_on_page;
 
-  if (current_emote >= min && current_emote <= max)
-    ui_emote_list.at(current_emote % max_emotes_on_page)->set_image(current_char, current_emote, false);
+  const DREmote &l_prev_emote = get_emote(m_current_emote_id);
+  if (m_current_emote_id >= l_min && m_current_emote_id <= l_max)
+    ui_emote_list.at(m_current_emote_id % max_emotes_on_page)->set_image(l_prev_emote, false);
 
-  int old_emote = current_emote;
+  const int l_prev_emote_id = m_current_emote_id;
+  m_current_emote_id = p_id;
+  const DREmote &l_emote = get_emote(m_current_emote_id);
 
-  current_emote = p_id;
+  if (m_current_emote_id >= l_min && m_current_emote_id <= l_max)
+    ui_emote_list.at(m_current_emote_id % max_emotes_on_page)->set_image(l_emote, true);
 
-  if (current_emote >= min && current_emote <= max)
-    ui_emote_list.at(current_emote % max_emotes_on_page)->set_image(current_char, current_emote, true);
-
-  int emote_mod = ao_app->get_emote_mod(current_char, current_emote);
-
-  if (old_emote == current_emote) // toggle
+  const int emote_mod = l_emote.modifier;
+  if (l_prev_emote_id == m_current_emote_id) // toggle
     ui_pre->setChecked(!ui_pre->isChecked());
-  else if (emote_mod == 1 || ao_app->get_always_pre_enabled())
-    ui_pre->setChecked(true);
   else
-    ui_pre->setChecked(false);
+    ui_pre->setChecked(emote_mod == 1 || ao_app->get_always_pre_enabled());
 
-  ui_emote_dropdown->setCurrentIndex(current_emote);
+  select_default_sfx();
+
+  ui_emote_dropdown->setCurrentIndex(m_current_emote_id);
 
   ui_ic_chat_message->setFocus();
 }

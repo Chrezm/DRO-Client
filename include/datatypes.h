@@ -8,6 +8,20 @@
 
 #include <memory>
 
+class DREmote
+{
+public:
+  QString character;
+  QString key;
+  QString comment;
+  QString anim;
+  QString dialog;
+  int modifier = 0;
+  int desk_modifier = -1;
+  QString sound_file;
+  int sound_delay = 0;
+};
+
 namespace DR
 {
 class ChatRecord
@@ -30,6 +44,10 @@ public:
   {
     return message;
   }
+  bool is_self() const
+  {
+    return self;
+  }
   bool is_system() const
   {
     return system;
@@ -40,6 +58,12 @@ public:
   }
 
   // set
+  void set_self(const bool p_enabled)
+  {
+    if (self == p_enabled)
+      return;
+    self = p_enabled;
+  }
   void set_system(bool p_enabled)
   {
     if (system == p_enabled)
@@ -57,8 +81,22 @@ private:
   QDateTime timestamp = QDateTime::currentDateTime();
   QString name;
   QString message;
+  bool self = false;
   bool system = false;
   bool music = false;
+};
+
+struct SFX
+{
+public:
+  SFX() = default;
+  SFX(QString p_name, QString p_file, bool p_is_found = false)
+      : name(p_name.trimmed()), file(p_file.trimmed()), is_found(p_is_found)
+  {}
+
+  QString name;
+  QString file;
+  bool is_found;
 };
 } // namespace DR
 

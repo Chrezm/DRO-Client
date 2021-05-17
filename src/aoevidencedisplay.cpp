@@ -10,11 +10,11 @@ AOEvidenceDisplay::AOEvidenceDisplay(QWidget *p_parent, AOApplication *p_ao_app)
 {
   ao_app = p_ao_app;
 
-  evidence_movie = new QMovie(this);
-  evidence_icon = new QLabel(this);
-  sfx_player = new AOSfxPlayer(ao_app, this);
+  m_movie = new QMovie(this);
+  w_icon = new QLabel(this);
+  dr_sfx = new AOSfxPlayer(ao_app, this);
 
-  connect(evidence_movie, SIGNAL(frameChanged(int)), this, SLOT(frame_change(int)));
+  connect(m_movie, SIGNAL(frameChanged(int)), this, SLOT(frame_change(int)));
 }
 
 void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_side)
@@ -40,43 +40,38 @@ void AOEvidenceDisplay::show_evidence(QString p_evidence_image, bool is_left_sid
 
   pos_size_type icon_dimensions = ao_app->get_element_dimensions(icon_identifier, "courtroom_design.ini");
 
-  evidence_icon->move(icon_dimensions.x, icon_dimensions.y);
-  evidence_icon->resize(icon_dimensions.width, icon_dimensions.height);
-  evidence_icon->setPixmap(f_pixmap.scale(evidence_icon->size()));
+  w_icon->move(icon_dimensions.x, icon_dimensions.y);
+  w_icon->resize(icon_dimensions.width, icon_dimensions.height);
+  w_icon->setPixmap(f_pixmap.scale(w_icon->size()));
 
   QString f_path = ao_app->find_theme_asset_path(gif_name);
-  evidence_movie->setFileName(f_path);
-  if (evidence_movie->frameCount() < 1)
+  m_movie->setFileName(f_path);
+  if (m_movie->frameCount() < 1)
     return;
 
-  this->setMovie(evidence_movie);
+  this->setMovie(m_movie);
 
-  evidence_movie->start();
-  sfx_player->play_effect(ao_app->get_sfx("evidence_present"));
+  m_movie->start();
+  dr_sfx->play_effect(ao_app->get_sfx("evidence_present"));
 }
 
 void AOEvidenceDisplay::frame_change(int p_frame)
 {
-  if (p_frame == (evidence_movie->frameCount() - 1))
+  if (p_frame == (m_movie->frameCount() - 1))
   {
     // we need this or else the last frame wont show
-    delay(evidence_movie->nextFrameDelay());
+    delay(m_movie->nextFrameDelay());
 
-    evidence_movie->stop();
+    m_movie->stop();
     this->clear();
 
-    evidence_icon->show();
+    w_icon->show();
   }
 }
 
 void AOEvidenceDisplay::reset()
 {
-  evidence_movie->stop();
-  evidence_icon->hide();
+  m_movie->stop();
+  w_icon->hide();
   this->clear();
-}
-
-QLabel *AOEvidenceDisplay::get_evidence_icon()
-{
-  return evidence_icon;
 }

@@ -23,14 +23,16 @@ public:
   AOApplication(int &argc, char **argv);
   ~AOApplication();
 
-  NetworkManager *net_manager = nullptr;
-  Lobby *w_lobby = nullptr;
-  Courtroom *w_courtroom = nullptr;
-  DRDiscord *discord = nullptr;
-  AOConfig *config = nullptr;
-  AOConfigPanel *config_panel = nullptr;
+  AOConfig *ao_config = nullptr;
+  AOConfigPanel *ao_config_panel = nullptr;
+  DRDiscord *dr_discord = nullptr;
 
+  NetworkManager *net_manager = nullptr;
+
+  Lobby *m_lobby = nullptr;
   bool lobby_constructed = false;
+
+  Courtroom *m_courtroom = nullptr;
   bool courtroom_constructed = false;
 
   void construct_lobby();
@@ -68,46 +70,19 @@ public:
 
   bool courtroom_loaded = false;
 
-  //////////////////versioning///////////////
-
-  int get_release()
-  {
-    return RELEASE;
-  }
-  int get_major_version()
-  {
-    return MAJOR_VERSION;
-  }
-  int get_minor_version()
-  {
-    return MINOR_VERSION;
-  }
-  QString get_version_string();
-
   ///////////////////////////////////////////
 
   void set_favorite_list();
-  QVector<server_type> &get_favorite_list()
-  {
-    return favorite_list;
-  }
+  QVector<server_type> &get_favorite_list();
   void add_favorite_server(int p_server);
 
-  void set_server_list();
-  QVector<server_type> &get_server_list()
-  {
-    return server_list;
-  }
-
-  // reads the theme from config.ini and sets it accordingly
-  void set_theme_name(QString p_name);
+  QVector<server_type> &get_server_list();
 
   // Returns the character the player has currently selected
   QString get_current_char();
 
   // implementation in path_functions.cpp
   QString get_base_path();
-  QString get_data_path();
   QString get_character_folder_path(QString character);
   QString get_character_path(QString p_character, QString p_file);
   // QString get_demothings_path();
@@ -117,78 +92,14 @@ public:
   QString get_default_background_path(QString p_file);
   QString get_evidence_path(QString p_file);
 
-  /**
-   * @brief Check the path for various known exploits.
-   *
-   * In order:
-   * - Directory traversal (most commonly: "../" jumps)
-   * @param p_file The path to check.
-   * @return A sanitized path. If any check fails, the path returned is an empty string. The sanitized path does not
-   * necessarily exist.
-   */
   QString sanitize_path(QString p_file);
 
-  /**
-   * @brief Returns the first case-sensitive file that is the combination of one
-   * of the given root and extensions, or empty string if no combination exists.
-   *
-   * @details A root is matched to all given extensions in order before
-   * continuing to the next root.
-   *
-   * @param possible_roots The potential roots the filepath could have.
-   * Case-insensitive.
-   * @param possible_exts The potential extensions the filepath could have.
-   * Case-insensitive.
-   *
-   * @return The first case-sensitive root+extension path for which a file
-   * exists, or an empty string, if not one does.
-   */
   QString find_asset_path(QStringList possible_roots, QStringList possible_exts = {""});
-
-  /**
-   * @brief Returns the first case-sensitive file in the theme folder that is
-   * of the form name+extension, or empty string if it fails.
-   *
-   * @details The p_exts list is browsed in order. A name+extension file is
-   * searched in order in the following directories before checking the next
-   * extension:
-   * 1. The current time of day folder in the current gamemode folder
-   * 2. The current gamemode folder
-   * 3. The current time of day folder
-   * 4. The current theme folder.
-   * The first path that is matched is the one that is returned. If no file
-   * is found at all, it returns an empty string.
-   *
-   * @param p_name Name of the file to look for. Case-insensitive.
-   * @param p_exts The potential extensions the filepath could have.
-   * Case-insensitive.
-   *
-   * @return The first case-sensitive root+extension path that corresponds to an
-   * actual file, or an empty string, if not one does.
-   */
   QString find_theme_asset_path(QString p_root, QStringList p_exts = {""});
 
-  /**
-   * @brief Returns the 'correct' path for the file given as the parameter by
-   * trying to match the case of the actual path.
-   *
-   * @details This function is mostly used on case-sensitive file systems, like
-   * ext4, generally used on Linux. On FAT, there is no difference between
-   * "file" and "FILE". On ext4, those are two different files. This results in
-   * assets that are detected correctly on Windows not being detected on Linux.
-   *
-   * For this reason, the implementation of this function is system-dependent:
-   * on case-insensitive systems, it just returns the parameter itself.
-   *
-   * @param p_file The path whose casing must be checked against the actual
-   * directory structure.
-   *
-   * @return The parameter path with fixed casing.
-   */
   QString get_case_sensitive_path(QString p_file);
 
   ////// Functions for accessing the config panel //////
-
   void toggle_config_panel();
 
   ////// Functions for reading and writing files //////
@@ -218,32 +129,8 @@ public:
   // Returns the contents of serverlist.txt
   QVector<server_type> read_serverlist_txt();
 
-  /**
-   * @brief Reads p_path and returns the value associated with key
-   * p_identifier. If the file or key do not exist, return empty.
-   *
-   * @param p_identifier Key to look for.
-   * @param p_path Full path to ini file
-   * @return Value associated with key, or empty if not found.
-   */
   QString read_ini(QString p_identifier, QString p_path);
 
-  /**
-   * @brief Searches p_file in theme folder and returns the value associated
-   * with key p_identifier. If the file or key do not exist, return empty.
-   *
-   * @details p_file is looked for in the following directories. The earliest
-   * directory where it is found is the one that is considered.
-   * 1. The current time of day folder in the current gamemode folder
-   * 2. The current gamemode folder
-   * 3. The current time of day folder
-   * 4. The current theme folder.
-   * 5. The default theme folder.
-   *
-   * @param p_identifier Key to look for.
-   * @param p_file Name of file+ini to look for.
-   * @return Value associated with key, or empty if not found.
-   */
   QString read_theme_ini(QString p_identifier, QString p_file);
 
   bool read_theme_ini_bool(QString p_identifier, QString p_file);
@@ -325,10 +212,6 @@ signals:
   void reload_theme();
 
 private:
-  const int RELEASE = 1;
-  const int MAJOR_VERSION = 0;
-  const int MINOR_VERSION = 0;
-
   QVector<server_type> server_list;
   QVector<server_type> favorite_list;
 

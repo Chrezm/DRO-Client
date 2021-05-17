@@ -38,15 +38,8 @@ public:
   void set_fonts();
   void set_font(QWidget *widget, QString p_identifier);
   void set_drtextedit_font(DRTextEdit *widget, QString p_identifier);
-  void show_loading_overlay()
-  {
-    ui_loading_background->show();
-  }
-  void hide_loading_overlay()
-  {
-    ui_loading_background->hide();
-  }
-  QString get_chatlog();
+  void show_loading_overlay();
+  void hide_loading_overlay();
   int get_selected_server();
 
   void set_loading_value(int p_value);

@@ -30,12 +30,7 @@ void NetworkManager::connect_to_master()
 {
   ms_socket->close();
   ms_socket->abort();
-
-#ifdef MS_FAILOVER_SUPPORTED
-  perform_srv_lookup();
-#else
   connect_to_master_nosrv();
-#endif
 }
 
 void NetworkManager::connect_to_master_nosrv()
@@ -106,78 +101,6 @@ void NetworkManager::handle_ms_packet()
 
     ao_app->ms_packet_received(f_packet);
   }
-}
-
-void NetworkManager::perform_srv_lookup()
-{
-#ifdef MS_FAILOVER_SUPPORTED
-  ms_dns = new QDnsLookup(QDnsLookup::SRV, ms_srv_hostname, this);
-
-  connect(ms_dns, SIGNAL(finished()), this, SLOT(on_srv_lookup()));
-  ms_dns->lookup();
-#endif
-}
-
-void NetworkManager::on_srv_lookup()
-{
-#ifdef MS_FAILOVER_SUPPORTED
-  bool connected = false;
-  if (ms_dns->error() != QDnsLookup::NoError)
-  {
-    qWarning("SRV lookup of the master server DNS failed.");
-    ms_dns->deleteLater();
-  }
-  else
-  {
-    const auto srv_records = ms_dns->serviceRecords();
-
-    for (const QDnsServiceRecord &record : srv_records)
-    {
-      qDebug() << "Connecting to " << record.target() << ":" << record.port();
-      ms_socket->connectToHost(record.target(), record.port());
-      QTime timer;
-      timer.start();
-      do
-      {
-        ao_app->processEvents();
-        if (ms_socket->state() == QAbstractSocket::ConnectedState)
-        {
-          connected = true;
-          break;
-        }
-        else if (ms_socket->state() != QAbstractSocket::ConnectingState &&
-                 ms_socket->state() != QAbstractSocket::HostLookupState && ms_socket->error() != -1)
-        {
-          qDebug() << ms_socket->error();
-          qWarning() << "Error connecting to master server:" << ms_socket->errorString();
-          ms_socket->abort();
-          ms_socket->close();
-          break;
-        }
-      } while (timer.elapsed() < timeout_milliseconds); // Very expensive spin-wait loop - it will
-                                                        // bring CPU to 100%!
-      if (connected)
-      {
-        // Connect a one-shot signal in case the master server disconnects
-        // randomly
-        QObject::connect(ms_socket, SIGNAL(error(QAbstractSocket::SocketError)), this,
-                         SLOT(on_ms_socket_error(QAbstractSocket::SocketError)));
-        break;
-      }
-      else
-      {
-        ms_socket->abort();
-        ms_socket->close();
-      }
-    }
-  }
-
-  // Failover to non-SRV connection
-  if (!connected)
-    connect_to_master_nosrv();
-  else
-    Q_EMIT ms_connect_finished(connected, false);
-#endif
 }
 
 void NetworkManager::on_ms_nosrv_connect_success()

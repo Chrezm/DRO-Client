@@ -6,6 +6,7 @@
 #include "drpather.h"
 #include "drtextedit.h"
 #include "networkmanager.h"
+#include "version.h"
 
 #include <QDebug>
 #include <QImageReader>
@@ -118,7 +119,7 @@ void Lobby::set_widgets()
   ui_connect->set_image("connect.png");
 
   set_size_and_pos(ui_version, "version");
-  ui_version->setText("Version: " + ao_app->get_version_string());
+  ui_version->setText("Version: " + get_version_string());
 
   set_size_and_pos(ui_about, "about");
   ui_about->set_image("about.png");
@@ -303,18 +304,21 @@ void Lobby::set_drtextedit_font(DRTextEdit *widget, QString p_identifier)
   widget->set_vertical_alignment(valignment);
 }
 
+void Lobby::show_loading_overlay()
+{
+  ui_loading_background->show();
+}
+
+void Lobby::hide_loading_overlay()
+{
+  ui_loading_background->hide();
+}
+
 void Lobby::set_loading_text(QString p_text)
 {
   ui_loading_text->clear();
   ui_loading_text->setAlignment(Qt::AlignCenter);
   ui_loading_text->append(p_text);
-}
-
-QString Lobby::get_chatlog()
-{
-  QString return_value = ui_chatbox->toPlainText();
-
-  return return_value;
 }
 
 int Lobby::get_selected_server()
@@ -413,7 +417,7 @@ void Lobby::on_about_clicked()
                    "<p>Running on Qt version %2 with the BASS audio engine.<br>"
                    "APNG plugin loaded: %3"
                    "<p>Built on %4")
-                    .arg(ao_app->get_version_string())
+                    .arg(get_version_string())
                     .arg(QLatin1String(QT_VERSION_STR))
                     .arg(hasApng ? tr("Yes") : tr("No"))
                     .arg(QLatin1String(__DATE__));

@@ -1,4 +1,5 @@
 #include "courtroom.h"
+
 #include "debug_functions.h"
 #include "file_functions.h"
 #include "hardware_functions.h"
@@ -122,17 +123,17 @@ void Courtroom::set_char_select_page()
     button->hide();
   }
 
-  int total_pages = char_list.size() / max_chars_on_page;
+  int total_pages = m_chr_list.size() / max_chars_on_page;
   int chars_on_page = 0;
 
-  if (char_list.size() % max_chars_on_page != 0)
+  if (m_chr_list.size() % max_chars_on_page != 0)
   {
     ++total_pages;
     // i. e. not on the last page
     if (total_pages > current_char_page + 1)
       chars_on_page = max_chars_on_page;
     else
-      chars_on_page = char_list.size() % max_chars_on_page;
+      chars_on_page = m_chr_list.size() % max_chars_on_page;
   }
   else
     chars_on_page = max_chars_on_page;
@@ -146,16 +147,16 @@ void Courtroom::set_char_select_page()
   // show all buttons for this page
   for (int n_button = 0; n_button < chars_on_page; ++n_button)
   {
-    if (char_list.length() <= n_button)
+    if (m_chr_list.length() <= n_button)
       continue;
 
     int n_real_char = n_button + current_char_page * max_chars_on_page;
     AOCharButton *f_button = ui_char_button_list.at(n_button);
 
-    f_button->set_image(char_list.at(n_real_char).name);
+    f_button->set_image(m_chr_list.at(n_real_char).name);
     f_button->show();
 
-    if (char_list.at(n_real_char).taken)
+    if (m_chr_list.at(n_real_char).taken)
       f_button->set_taken();
   }
 }
@@ -164,7 +165,7 @@ void Courtroom::char_clicked(int n_char)
 {
   int n_real_char = n_char + current_char_page * max_chars_on_page;
 
-  QString char_ini_path = ao_app->get_character_path(char_list.at(n_real_char).name, "char.ini");
+  QString char_ini_path = ao_app->get_character_path(m_chr_list.at(n_real_char).name, "char.ini");
   qDebug() << "char_ini_path" << char_ini_path;
 
   if (!file_exists(char_ini_path))

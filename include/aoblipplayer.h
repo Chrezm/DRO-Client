@@ -30,6 +30,6 @@ public slots:
 
 private:
   DRAudioStreamFamily::ptr m_family;
-  std::optional<QString> m_blipName;
-  std::optional<QString> m_blipFile;
+  std::optional<QString> m_name;
+  std::optional<QString> m_file;
 };

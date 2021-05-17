@@ -28,7 +28,7 @@ DRAudioEnginePrivate::~DRAudioEnginePrivate()
 void DRAudioEnginePrivate::invoke_signal(QString p_method_name, QGenericArgument p_arg1)
 {
   // Does this do anything? children seems to always be an empty QObjectList
-  for (QObject *i_child : children)
+  for (QObject *i_child : qAsConst(children))
   {
     QMetaObject::invokeMethod(i_child, p_method_name.toStdString().c_str(), p_arg1);
   }

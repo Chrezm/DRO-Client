@@ -13,9 +13,10 @@ QStringList animated_extensions()
   return QStringList{".webp", ".apng", ".gif"};
 }
 
-QStringList audio_extensions()
+QStringList audio_extensions(bool no_suffix)
 {
-  return QStringList{"", ".wav", ".ogg", ".opus", ".mp3"};
+  static QStringList s_ext_list{"", ".wav", ".ogg", ".opus", ".mp3"};
+  return no_suffix ? s_ext_list.mid(1) : s_ext_list;
 }
 
 bool file_exists(QString file_path)

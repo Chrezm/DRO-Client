@@ -20,6 +20,16 @@ AOPacket::AOPacket(QString p_header, QStringList &p_contents)
   m_contents = p_contents;
 }
 
+QString AOPacket::get_header()
+{
+  return m_header;
+}
+
+QStringList &AOPacket::get_contents()
+{
+  return m_contents;
+}
+
 QString AOPacket::to_string()
 {
   QString f_string = m_header;

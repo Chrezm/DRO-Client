@@ -13,11 +13,7 @@
 
 QStringList AOApplication::get_callwords()
 {
-#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
-  return config->callwords().split(" ", QString::SkipEmptyParts);
-#else
-  return config->callwords().split(" ", Qt::SkipEmptyParts);
-#endif
+  return ao_config->callwords().split(" ", DR::SkipEmptyParts);
 }
 
 QString AOApplication::read_note(QString filename)
@@ -119,6 +115,14 @@ QVector<server_type> AOApplication::read_serverlist_txt()
   return f_server_list;
 }
 
+/**
+ * @brief Reads p_path and returns the value associated with key
+ * p_identifier. If the file or key do not exist, return empty.
+ *
+ * @param p_identifier Key to look for.
+ * @param p_path Full path to ini file
+ * @return Value associated with key, or empty if not found.
+ */
 QString AOApplication::read_ini(QString p_identifier, QString p_path)
 {
   QFile ini;
@@ -290,11 +294,11 @@ QMap<DR::Color, DR::ColorInfo> AOApplication::get_chatmessage_colors()
   if (path.isEmpty())
   {
     qInfo().noquote() << QString("[color] theme %1 is missing file: %2, using default colors instead")
-                             .arg(config->theme())
+                             .arg(ao_config->theme())
                              .arg(file_name);
     return color_map;
   }
-  qInfo().noquote() << QString("[color] loading colors for theme %1").arg(config->theme());
+  qInfo().noquote() << QString("[color] loading colors for theme %1").arg(ao_config->theme());
 
   QSettings color_settings(path, QSettings::IniFormat);
 
@@ -701,6 +705,22 @@ QStringList AOApplication::get_overlay(QString p_chr, int p_overlay)
   return r_overlay;
 }
 
+/**
+ * @brief Searches p_file in theme folder and returns the value associated
+ * with key p_identifier. If the file or key do not exist, return empty.
+ *
+ * @details p_file is looked for in the following directories. The earliest
+ * directory where it is found is the one that is considered.
+ * 1. The current time of day folder in the current gamemode folder
+ * 2. The current gamemode folder
+ * 3. The current time of day folder
+ * 4. The current theme folder.
+ * 5. The default theme folder.
+ *
+ * @param p_identifier Key to look for.
+ * @param p_file Name of file+ini to look for.
+ * @return Value associated with key, or empty if not found.
+ */
 QString AOApplication::read_theme_ini(QString p_identifier, QString p_file)
 {
   // File lookup order
@@ -710,7 +730,7 @@ QString AOApplication::read_theme_ini(QString p_identifier, QString p_file)
   if (path.isEmpty())
     return "";
 
-  return read_ini(p_identifier, path); // Could be the empty string
+  return read_ini(p_identifier, path); // may be an empty string
 }
 
 bool AOApplication::read_theme_ini_bool(QString p_identifier, QString p_file)

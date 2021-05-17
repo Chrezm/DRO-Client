@@ -56,40 +56,10 @@ public:
   explicit Courtroom(AOApplication *p_ao_app);
   ~Courtroom();
 
-  void append_char(char_type p_char)
-  {
-    char_list.append(p_char);
-  }
-  void append_evidence(evi_type p_evi)
-  {
-    evidence_list.append(p_evi);
-  }
-  void append_music(QString f_music)
-  {
-    music_list.append(f_music);
-  }
-  void append_area(QString f_area)
-  {
-    area_list.append(f_area);
-  }
-  void clear_music()
-  {
-    music_list.clear();
-  }
-  void clear_areas()
-  {
-    area_list.clear();
-  }
-
-  void fix_last_area()
-  {
-    if (area_list.size() > 0)
-    {
-      QString malplaced = area_list.last();
-      area_list.removeLast();
-      append_music(malplaced);
-    }
-  }
+  void append_char(char_type p_char);
+  void append_evidence(evi_type p_evi);
+  void set_area_list(QStringList area_list);
+  void set_music_list(QStringList music_list);
 
   // sets position of widgets based on theme ini files
   void set_widgets();
@@ -125,18 +95,8 @@ public:
   // sets the character position
   void set_character_position(QString p_pos);
 
-  /**
-   * @brief Send a OOC packet (CT) out to the server.
-   * @param ooc_name The username.
-   * @param ooc_message The message.
-   */
   void send_ooc_packet(QString ooc_name, QString ooc_message);
 
-  /**
-   * @brief Send a packet to set the showname of the user to
-   * the server.
-   * @param p_showname The showname.
-   */
   void send_showname_packet(QString p_showname);
 
   // called when a DONE#% from the server was received
@@ -162,14 +122,8 @@ public:
   QString get_background_path(QString p_file);
 
   // cid = character id, returns the cid of the currently selected character
-  int get_cid()
-  {
-    return m_cid;
-  }
-  QString get_current_char()
-  {
-    return current_char;
-  }
+  int get_cid();
+  QString get_current_char();
 
   // Set the showname of the client
   void set_showname(QString p_showname);
@@ -195,27 +149,12 @@ public:
 
   void move_widget(QWidget *p_widget, QString p_identifier);
 
-  /**
-   * @brief Show the currently selected shout button, hide the remaining ones.
-   * If no shouts exist, this method does nothing.
-   */
   void set_shouts();
 
-  /**
-   * @brief Show the currently selected effect button, hide the remaining ones.
-   * If no effects exist, this method does nothing.
-   */
   void set_effects();
 
-  /**
-   * @brief Show the currently selected splash button, hide the remaining ones.
-   * If no splashes exist, this method does nothing.
-   */
   void set_judge_wtce();
 
-  /**
-   * @brief Show all free blocks and restart their animations.
-   */
   void set_free_blocks();
   void set_judge_enabled(bool p_enabled);
 
@@ -239,12 +178,6 @@ public:
   void update_ic_log(bool p_reset_log);
   void append_ic_text(QString p_name, QString p_line, bool p_system, bool p_music, bool p_self);
 
-  /**
-   * @brief Appends a message arriving from system to the IC chatlog.
-   *
-   * @param p_showname The showname used by the system. Can be an empty string.
-   * @param p_line The message that the system is sending.
-   */
   void append_system_text(QString p_showname, QString p_line);
 
   // prints who played the song to IC chat and plays said song(if found on local
@@ -302,11 +235,10 @@ private:
   int m_viewport_width = 256;
   int m_viewport_height = 192;
 
-  QVector<char_type> char_list;
-  QVector<evi_type> evidence_list;
-  QVector<QString> music_list;
-  QVector<QString> area_list;
-  QVector<QString> area_names;
+  QVector<char_type> m_chr_list;
+  QVector<evi_type> m_evidence_list;
+  QStringList m_area_list;
+  QStringList m_music_list;
   QVector<QString> note_list;
 
   QSignalMapper *char_button_mapper = nullptr;
@@ -449,7 +381,6 @@ private:
   int max_evidence_on_page = 18;
 
   int current_clock = -1;
-  int timer_number = 0;
 
   QString current_background = "gs4";
 
@@ -489,8 +420,8 @@ private:
   QVector<AOTimer *> ui_timers;
 
   DRTextEdit *ui_ic_chatlog = nullptr;
-  QList<DR::ChatRecord> m_ic_record_list;
-  QQueue<DR::ChatRecord> m_ic_record_queue;
+  QList<DRChatRecord> m_ic_record_list;
+  QQueue<DRChatRecord> m_ic_record_queue;
 
   AOTextArea *ui_server_chatlog = nullptr;
 
@@ -499,7 +430,7 @@ private:
   QListWidget *ui_music_list = nullptr;
 
   QListWidget *ui_sfx_list = nullptr;
-  QVector<DR::SFX> m_sfx_list;
+  QVector<DRSfx> m_sfx_list;
   const QString m_sfx_default_file = "__DEFAULT__";
   QColor m_sfx_color_found;
   QColor m_sfx_color_missing;
@@ -545,18 +476,12 @@ private:
   QVector<AOMovie *> ui_free_blocks;
 
   // holds all the names for sound files for the shouts
-  //  QVector<QString> shout_names = {"holdit", "objection", "takethat",
-  //  "custom", "gotit", "crossswords", "counteralt"};
   QVector<QString> shout_names;
 
   // holds all the names for sound/anim files for the effects
-  // QVector<QString> effect_names = {"effect_flash", "effect_gloom",
-  // "effect_question", "effect_pow"};
   QVector<QString> effect_names;
 
   // holds all the names for sound/anim files for the shouts
-  // QVector<QString> shout_names = {"witnesstestimony", "crossexamination",
-  // "investigation", "nonstop"};
   QVector<QString> wtce_names;
 
   // holds all the names for free blocks
@@ -567,14 +492,6 @@ private:
   QVector<bool> effects_enabled;
   QVector<bool> wtce_enabled;
   QVector<bool> free_blocks_enabled;
-
-  //  AOButton* ui_shout_hold_it      = nullptr; // 1
-  //  AOButton* ui_shout_objection    = nullptr; // 2
-  //  AOButton* ui_shout_take_that    = nullptr; // 3
-  //  AOButton* ui_shout_custom       = nullptr; // 4
-  //  AOButton* ui_shout_got_it       = nullptr; // 5
-  //  AOButton* ui_shout_cross_swords = nullptr; // 6
-  //  AOButton* ui_shout_counter_alt  = nullptr; // 7
 
   AOButton *ui_witness_testimony = nullptr;
   AOButton *ui_cross_examination = nullptr;
@@ -739,23 +656,8 @@ private slots:
 
   void on_cycle_clicked();
 
-  /**
-   * @brief Selects the shout p_delta slots ahead of the current one, wrapping
-   * around if needed. If p_delta is negative, look -p_delta slots behind.
-   * @param Shout slots to advance. May be negative.
-   */
   void cycle_shout(int p_delta);
-  /**
-   * @brief Selects the effect p_delta slots ahead of the current one, wrapping
-   * around if needed. If p_delta is negative, look -p_delta slots behind.
-   * @param Shout slots to advance. May be negative.
-   */
   void cycle_effect(int p_delta);
-  /**
-   * @brief Selects the splash p_delta slots ahead of the current one, wrapping
-   * around if needed. If p_delta is negative, look -p_delta slots behind.
-   * @param Shout slots to advance. May be negative.
-   */
   void cycle_wtce(int p_delta);
 
   void on_add_button_clicked();
@@ -769,28 +671,11 @@ private slots:
   void load_effects();
   void load_wtce();
   void load_free_blocks();
-  /**
-   * @brief Set the sprites of the shout buttons, and mark the currently
-   * selected shout as such.
-   *
-   * @details If a sprite cannot be found for a shout button, a regular
-   * push button is displayed for it with its shout name instead.
-   */
   void reset_shout_buttons();
 
-  /**
-   * @brief a general purpose function to toggle button selection
-   */
   void on_shout_button_clicked(const bool);
   void on_shout_button_toggled(const bool);
 
-  /**
-   * @brief Set the sprites of the effect buttons, and mark the currently
-   * selected effect as such.
-   *
-   * @details If a sprite cannot be found for a shout button, a regular
-   * push button is displayed for it with its shout name instead.
-   */
   void reset_effect_buttons();
   void on_effect_button_clicked(const bool);
   void on_effect_button_toggled(const bool);
@@ -806,12 +691,6 @@ private slots:
 
   void on_witness_testimony_clicked();
   void on_cross_examination_clicked();
-  /**
-   * @brief Set the sprites of the splash buttons.
-   *
-   * @details If a sprite cannot be found for a shout button, a regular
-   * push button is displayed for it with its shout name instead.
-   */
   void reset_wtce_buttons();
   void on_wtce_clicked();
 

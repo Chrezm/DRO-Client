@@ -61,7 +61,8 @@ HEADERS += \
   include/hardware_functions.h \
   include/lobby.h \
   include/misc_functions.h \
-  include/networkmanager.h
+  include/networkmanager.h \
+  include/version.h
 
 SOURCES += \
   src/aoapplication.cpp \
@@ -119,7 +120,8 @@ SOURCES += \
   src/networkmanager.cpp \
   src/packet_distribution.cpp \
   src/path_functions.cpp \
-  src/text_file_functions.cpp
+  src/text_file_functions.cpp \
+  src/version.cpp
 
 # 1. You need to get BASS and put the x86 bass DLL/headers in the project root folder
 #    AND the compilation output folder. If you want a static link, you'll probably

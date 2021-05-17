@@ -1511,7 +1511,7 @@ void Courtroom::set_mute_list()
 
   QStringList sorted_mute_list;
 
-  for (const char_type &i_char : qAsConst(char_list))
+  for (const char_type &i_char : qAsConst(m_chr_list))
     sorted_mute_list.append(i_char.name);
 
   sorted_mute_list.sort();

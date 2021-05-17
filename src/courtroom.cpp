@@ -1871,8 +1871,11 @@ void Courtroom::on_ooc_return_pressed()
   {
     m_effects_player->play_effect(ao_app->get_sfx("coinflip"));
   }
-  else if (ooc_message.startsWith("/tp "))
+  else if (ooc_message.startsWith("/tr "))
   {
+    // Timer resume
+    int space_location = ooc_message.indexOf(" ");
+
     int timer_id;
     if (space_location == -1)
       timer_id = 0;

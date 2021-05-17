@@ -538,7 +538,7 @@ void AOApplication::server_packet_received(AOPacket *p_packet)
   }
   else if (header == "CL")
   {
-    w_courtroom->handle_clock(f_contents.at(1));
+    m_courtroom->handle_clock(f_contents.at(1));
   }
   else if (header == "GM")
   {

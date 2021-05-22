@@ -56,6 +56,7 @@ jobs:
       with:
         version: '5.15.2'
         cached: ${{steps.cache-qt.outputs.cache-hit}}
+        arch: 'win32_mingw53'
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{github.workspace}}/build

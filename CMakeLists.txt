@@ -19,7 +19,7 @@ if(CMAKE_VERSION VERSION_LESS "3.7.0")
 endif()
 
 # DRO
-add_executable(Danganronpa_Online resources.qrc)
+add_executable(Danganronpa_Online res.qrc)
 
 # WIN32
 if(WIN32)

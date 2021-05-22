@@ -3,6 +3,7 @@ aoapplication.cpp
 aoblipplayer.cpp
 aobutton.cpp
 aocharbutton.cpp
+aocharmovie.cpp
 aoconfig.cpp
 aoconfigpanel.cpp
 aoemotebutton.cpp

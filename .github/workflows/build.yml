@@ -55,7 +55,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
       with:
-        version: '5.4.2'
+        version: '5.14.2'
         cached: ${{steps.cache-qt.outputs.cache-hit}}
         arch: 'win32_mingw73'
 

@@ -1,23 +1,86 @@
-name: C/C++ CI
+# Original code from skyedeving and oldmud0
+# at https://github.com/AttorneyOnline/AO2-Client/blob/master/.github/workflows/build.yml
+name: build
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [ actions ]
+  # pull_request:
+  #  branches: [ master ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
+  windows:
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+
+    - name: Install Catch2
+      shell: bash
+      run: |
+        curl -L https://github.com/catchorg/Catch2/archive/v2.13.4.tar.gz -o catch2.tar.gz
+        tar xvf catch2.tar.gz
+        cd Catch2-2.13.4
+        cmake -Bbuild -H. -DBUILD_TESTING=OFF
+        cmake --build build/ --target install
+    - name: Fetch external libs
+      run: |
+        # QtApng
+        curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-msvc2017_64-5.14.1.zip -o apng.zip
+        unzip apng.zip
+        # discord-rpc
+        curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-win.zip -o discord_rpc_win.zip
+        unzip discord_rpc_win.zip
+        cp ./discord-rpc/win64-dynamic/lib/discord-rpc.lib ./lib
+        # BASS
+        curl http://www.un4seen.com/files/bass24.zip -o bass.zip
+        unzip bass.zip
+        cp ./c/x64/bass.lib ./lib
+        # BASS Opus
+        curl http://www.un4seen.com/files/bassopus24.zip -o bassopus.zip
+        unzip bassopus.zip
+        cp ./c/x64/bassopus.lib ./lib
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-qt5
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.15.2'
+        cached: ${{steps.cache-qt.outputs.cache-hit}}
+
+    - name: Create Build Environment
+      run: cmake -E make_directory ${{github.workspace}}/build
+
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{github.workspace}}/build
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
+
+    - name: Build
+      working-directory: ${{github.workspace}}/build
+      shell: bash
+      run: cmake --build . --config $BUILD_TYPE --target Danganronpa_Online
+
+    - name: Deploy
+      working-directory: ${{github.workspace}}/build/Release
+      shell: bash
+      run: |
+        windeployqt .
+        cp ../../msvc2017_64/plugins/imageformats/qapng.dll ./imageformats/
+        cp ../../discord-rpc/win64-dynamic/bin/discord-rpc.dll .
+        cp ../../x64/bass.dll .
+        cp ../../x64/bassopus.dll .
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: Danganronpa_Online
+        path: ${{github.workspace}}/build/Release/

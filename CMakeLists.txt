@@ -41,6 +41,6 @@ target_link_libraries(Danganronpa_Online PRIVATE Qt5::Core Qt5::Gui Qt5::Network
 target_compile_definitions(Danganronpa_Online PRIVATE DISCORD)
 
 # Subdirectories
-add_subdirectory(test)
+# add_subdirectory(test) # We currently do not support tests
 add_subdirectory(src)
 add_subdirectory(include)

@@ -97,8 +97,9 @@ jobs:
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
-        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all -B/d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8 -B/d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
+        
     - name: Deploy
       working-directory: ${{github.workspace}}/build/Release
       shell: bash

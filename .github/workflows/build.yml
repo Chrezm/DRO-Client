@@ -93,7 +93,7 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         ls release -R
-        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./release/Makefile qmake_all
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
                 
     # - name: Create Build Environment
     #  run: cmake -E make_directory ${{github.workspace}}/build

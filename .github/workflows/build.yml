@@ -26,7 +26,7 @@ jobs:
         echo "parentworkspace=${{github.workspace}}/.." >> $GITHUB_ENV
         mkdir "3rd"
         mkdir "3rd/include"
-        mkdir "3rd/x86_64"
+        mkdir "3rd/x86"
         
     - name: Fetch Discord external library
       shell: bash
@@ -36,8 +36,8 @@ jobs:
         unzip discord_rpc_win.zip
         cp ./discord-rpc/win64-dynamic/include/discord_register.h ./DRO-Client/3rd/include
         cp ./discord-rpc/win64-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
-        cp ./discord-rpc/win64-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86_64
-        cp ./discord-rpc/win64-dynamic/lib/discord-rpc.lib ./DRO-Client/3rd/x86_64
+        cp ./discord-rpc/win64-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86
+        cp ./discord-rpc/win64-dynamic/lib/discord-rpc.lib ./DRO-Client/3rd/x86
       
     - name: Fetch Bass external library
       shell: bash
@@ -46,8 +46,8 @@ jobs:
         curl http://www.un4seen.com/files/bass24.zip -o bass.zip
         unzip bass.zip
         cp ./c/bass.h ./DRO-Client/3rd/include
-        cp ./x64/bass.dll ./DRO-Client/3rd/x86_64
-        cp ./c/x64/bass.lib ./DRO-Client/3rd/x86_64
+        cp ./x64/bass.dll ./DRO-Client/3rd/x86
+        cp ./c/x64/bass.lib ./DRO-Client/3rd/x86
         ls ./DRO-Client/3rd -R
         
     - name: Fetch QtApng external library

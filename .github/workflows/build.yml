@@ -37,7 +37,7 @@ jobs:
         unzip discord_rpc_win.zip
         cp ./discord-rpc/win32-dynamic/include/discord_register.h ./DRO-Client/3rd/include
         cp ./discord-rpc/win32-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
-        cp ./discord-rpc/win32-dynamic/include/bass.h ./DRO-Client/3rd/x86
+        cp ./discord-rpc/win32-dynamic/include/discord-rpc.dll ./DRO-Client/3rd/x86
         # BASS
         curl http://www.un4seen.com/files/bass24.zip -o bass.zip
         unzip bass.zip

@@ -89,7 +89,9 @@ jobs:
     - name: Run qmake
       shell: bash
       working-directory: ${{env.parentworkspace}}
-      run: ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"    
+      run: |
+        ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"  
+        cat ./Makefile
   
     - name: Run MinGW
       shell: bash

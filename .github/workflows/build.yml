@@ -39,7 +39,7 @@ jobs:
         cp ./discord-rpc/win32-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86
         cp ./discord-rpc/win32-dynamic/lib/discord-rpc.lib ./DRO-Client/3rd/x86
         cp ./discord-rpc/win64-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86_64
-        cp ./discord-rpc/win64-dynamic/bin/discord-rpc.lib ./DRO-Client/3rd/x86_64
+        cp ./discord-rpc/win64-dynamic/lib/discord-rpc.lib ./DRO-Client/3rd/x86_64
       
     - name: Fetch Bass external library
       shell: bash

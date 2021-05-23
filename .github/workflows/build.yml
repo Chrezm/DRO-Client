@@ -34,8 +34,8 @@ jobs:
       run: |
         curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-win.zip -o discord_rpc_win.zip
         unzip discord_rpc_win.zip
-        cp ./discord-rpc/win32-dynamic/include/discord_register.h ./DRO-Client/3rd/include
-        cp ./discord-rpc/win32-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/win64-dynamic/include/discord_register.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/win64-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
         cp ./discord-rpc/win64-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86_64
         cp ./discord-rpc/win64-dynamic/lib/discord-rpc.lib ./DRO-Client/3rd/x86_64
       
@@ -48,6 +48,7 @@ jobs:
         cp ./c/bass.h ./DRO-Client/3rd/include
         cp ./x64/bass.dll ./DRO-Client/3rd/x86_64
         cp ./c/x64/bass.lib ./DRO-Client/3rd/x86_64
+        ls ./DRO-Client/3rd -R
         
     - name: Fetch QtApng external library
       shell: bash

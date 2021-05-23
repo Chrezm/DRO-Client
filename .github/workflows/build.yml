@@ -68,6 +68,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/../
       run: |
+        ls ./Qt/Tools/mingw73_32/bin/ -R
         ./Qt/Tools/mingw73_32/bin/mingw32-make.exe -f ./release/Makefile qmake_all
         ls release -R
                 

@@ -62,10 +62,14 @@ jobs:
     - name: qmake
       shell: bash
       working-directory: ${{github.workspace}}/../
+      run: ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"    
+  
+    - name: mingw
+      shell: bash
+      working-directory: ${{github.workspace}}/../
       run: |
-        ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"    
-        mkdir ./DRO-Client/build
-        ls
+        ./Qt/Tools/mingw73_32/bin/mingw32-make.exe -f ./release/Makefile qmake_all
+        ls release -R
                 
     # - name: Create Build Environment
     #  run: cmake -E make_directory ${{github.workspace}}/build

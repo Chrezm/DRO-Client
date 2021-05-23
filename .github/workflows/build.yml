@@ -64,13 +64,13 @@ jobs:
       working-directory: ${{github.workspace}}/../
       run: |
         rawpath=${{github.workspace}}/../
-        echo "github.parentworkspace=${rawpath//\\//}" >> $GITHUB_ENV
-        echo "${{env.github.parentworkspace}}"
+        echo "parentworkspace=3" >> $GITHUB_ENV
         
     - name: Install MinGW
       shell: bash
       working-directory: ${{env.github.parentworkspace}}
       run: |
+        echo "${{env.parentworkspace}}"
         pip install aqtinstall
         aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
         set PATH=%PATH%;${{env.github.parentworkspace}}/../Qt/Tools/mingw730_32/bin

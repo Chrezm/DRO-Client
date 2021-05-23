@@ -27,6 +27,7 @@ jobs:
         mkdir "3rd"
         mkdir "3rd/include"
         mkdir "3rd/x86"
+        mkdir "3rd/x86_64"
         
     - name: Fetch Discord external library
       shell: bash

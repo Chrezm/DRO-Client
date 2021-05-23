@@ -80,9 +80,14 @@ jobs:
     - name: Install MinGW
       shell: bash
       working-directory: ${{env.parentworkspace}}
+      run: aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
+      
+    - name: Update PATH
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
       run: |
-        aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
         export PATH=/d/a/DRO-Client/Qt/Tools/mingw730_32/bin:$PATH
+        PATH=$(echo "$PATH" | sed -e 's|:/mingw64/bin$||')
         echo $PATH
         ls /d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
         

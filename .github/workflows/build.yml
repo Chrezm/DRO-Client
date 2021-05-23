@@ -62,8 +62,10 @@ jobs:
     - name: qmake
       shell: bash
       working-directory: ${{github.workspace}}/../
-      run: ./Qt/5.14.2/mingw73_32/bin/qmake.exe ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"      
-      
+      run: |
+        ./Qt/5.14.2/mingw73_32/bin/qmake.exe ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"      
+        ls ./DRO-Client/ -R
+        
     # - name: Create Build Environment
     #  run: cmake -E make_directory ${{github.workspace}}/build
 

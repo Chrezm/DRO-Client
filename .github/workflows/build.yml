@@ -64,8 +64,9 @@ jobs:
       working-directory: ${{github.workspace}}/../
       run: |
         path=${{github.workspace}}/../
-        path2=$(echo $path | sed 's/\\/\//g')
-        echo "parentworkspace=${path2}" >> $GITHUB_ENV
+        asd=$(echo $path | sed 's/\\/\//g')
+        echo $asd
+        echo "parentworkspace=${asd}" >> $GITHUB_ENV
         
     - name: Install MinGW
       shell: bash

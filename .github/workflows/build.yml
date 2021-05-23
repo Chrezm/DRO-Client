@@ -38,12 +38,16 @@ jobs:
         cp ./discord-rpc/win32-dynamic/include/discord_register.h ./DRO-Client/3rd/include
         cp ./discord-rpc/win32-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
         cp ./discord-rpc/win32-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86
+        cp ./discord-rpc/win64-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86_64
         # BASS
         curl http://www.un4seen.com/files/bass24.zip -o bass.zip
         unzip bass.zip
         cp ./c/bass.h ./DRO-Client/3rd/include
         cp ./bass.dll ./DRO-Client/3rd/x86
-        
+        cp ./x64/bass.dll ./DRO-Client/3rd/x86_64
+        # QtApng
+        curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-mingw73_32-5.14.1.zip -o apng.zip
+        unzip apng.zip
     - name: Cache Qt
       id: cache-qt
       uses: actions/cache@v1
@@ -73,37 +77,24 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"    
   
-    - name: Run mingw
+    - name: Run MinGW
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8
-                
-    # - name: Create Build Environment
-    #  run: cmake -E make_directory ${{github.workspace}}/build
 
-    # - name: Configure CMake
-    #  shell: bash
-    #   working-directory: ${{github.workspace}}/build
-    #  run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=$BUILD_TYPE
-
-    # - name: Build
-    #  working-directory: ${{github.workspace}}/build
-    #  shell: bash
-    #  run: cmake --build . --config $BUILD_TYPE --target Danganronpa_Online
-
-    # - name: Deploy
-    #  working-directory: ${{github.workspace}}/build/Release
-    #  shell: bash
-    #  run: |
-    #    windeployqt .
-    #    cp ../../msvc2017_64/plugins/imageformats/qapng.dll ./imageformats/
-    #    cp ../../discord-rpc/win64-dynamic/bin/discord-rpc.dll .
-    #    cp ../../x64/bass.dll .
-    #    cp ../../x64/bassopus.dll .
-    # - name: Upload Artifact
-    #  uses: actions/upload-artifact@v2
-    #  with:
-    #    name: Danganronpa_Online
-    #    path: ${{github.workspace}}/build/Release/
+    - name: Deploy
+      working-directory: ${{github.workspace}}/build/Release
+      shell: bash
+      run: |
+        windeployqt .
+        cp ../../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/
+        cp ../../discord-rpc/win64-dynamic/bin/discord-rpc.dll .
+        cp ../../x64/bass.dll .
+   
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+         name: Danganronpa_Online
+         path: ${{github.workspace}}/build/Release/

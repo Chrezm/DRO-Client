@@ -83,6 +83,8 @@ jobs:
       run: |
         aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
         export PATH=/d/a/DRO-Client/Qt/Tools/mingw730_32/bin:$PATH
+        echo $PATH
+        ls /d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
         
     - name: Run qmake
       shell: bash

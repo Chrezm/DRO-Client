@@ -89,7 +89,7 @@ jobs:
         export PATH=/d/a/DRO-Client/Qt/Tools/mingw730_32/bin:$PATH
         echo $PATH
         ls /d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
-        rm -r /c/ProgramData/Chocolatey/mingw/
+        rm -r /c/ProgramData/Chocolatey/lib/mingw/
         
     - name: Run qmake
       shell: bash

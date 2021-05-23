@@ -26,7 +26,7 @@ jobs:
         echo "parentworkspace=${{github.workspace}}/.." >> $GITHUB_ENV
         mkdir "3rd"
         mkdir "3rd/include"
-        mkdir "3rd/x86_64"
+        mkdir "3rd/x86"
         
     - name: Fetch Discord external library
       shell: bash
@@ -34,10 +34,10 @@ jobs:
       run: |
         curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-win.zip -o discord_rpc_win.zip
         unzip discord_rpc_win.zip
-        cp ./discord-rpc/win64-dynamic/include/discord_register.h ./DRO-Client/3rd/include
-        cp ./discord-rpc/win64-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
-        cp ./discord-rpc/win64-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86_64
-        cp ./discord-rpc/win64-dynamic/lib/discord-rpc.lib ./DRO-Client/3rd/x86_64
+        cp ./discord-rpc/win32-dynamic/include/discord_register.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/win32-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/win32-dynamic/bin/discord-rpc.dll ./DRO-Client/3rd/x86
+        cp ./discord-rpc/win32-dynamic/lib/discord-rpc.lib ./DRO-Client/3rd/x86
       
     - name: Fetch Bass external library
       shell: bash
@@ -46,15 +46,15 @@ jobs:
         curl http://www.un4seen.com/files/bass24.zip -o bass.zip
         unzip bass.zip
         cp ./c/bass.h ./DRO-Client/3rd/include
-        cp ./x64/bass.dll ./DRO-Client/3rd/x86_64
-        cp ./c/x64/bass.lib ./DRO-Client/3rd/x86_64
+        cp ./bass.dll ./DRO-Client/3rd/x86
+        cp ./c/bass.lib ./DRO-Client/3rd/x86
         ls ./DRO-Client/3rd -R
         
     - name: Fetch QtApng external library
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-mingw73_64-5.14.1.zip -o apng.zip
+        curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-mingw73_32-5.14.1.zip -o apng.zip
         unzip apng.zip
         
     - name: Cache Qt
@@ -69,7 +69,7 @@ jobs:
       with:
         version: '5.14.2'
         cached: ${{steps.cache-qt.outputs.cache-hit}}
-        arch: 'win64_mingw73'
+        arch: 'win32_mingw73'
 
     - name: Install AQT
       shell: bash
@@ -79,26 +79,25 @@ jobs:
     - name: Install MinGW
       shell: bash
       working-directory: ${{env.parentworkspace}}
-      run: aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win64_mingw730
+      run: aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
 
     - name: Run qmake
       shell: bash
       working-directory: ${{env.parentworkspace}}
-      run: ./Qt/5.14.2/mingw73_64/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"    
+      run: ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"    
   
     - name: Run MinGW
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        ./Qt/Tools/mingw730_64/bin/mingw32-make.exe -f ./Makefile qmake_all
-        ./Qt/Tools/mingw730_64/bin/mingw32-make.exe -j8
-
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8
     - name: Deploy
       working-directory: ${{github.workspace}}/build/Release
       shell: bash
       run: |
         windeployqt .
-        cp ../../mingw73_64/plugins/imageformats/qapng.dll ./imageformats/
+        cp ../../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/
         cp ../../discord-rpc/win64-dynamic/bin/discord-rpc.dll .
         cp ../../x64/bass.dll .
    

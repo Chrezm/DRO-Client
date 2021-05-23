@@ -59,6 +59,14 @@ jobs:
         cached: ${{steps.cache-qt.outputs.cache-hit}}
         arch: 'win32_mingw73'
 
+    - name: Install MinGW
+      shell: bash
+      working-directory: ${{github.workspace}}/../
+      run: |
+        pip install aqtinstall
+        aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
+        set PATH=%PATH%;${{github.workspace}}/../Qt/Tools/mingw730_32/bin
+
     - name: qmake
       shell: bash
       working-directory: ${{github.workspace}}/../

@@ -90,7 +90,7 @@ jobs:
   
     - name: mingw
       shell: bash
-      working-directory: ${{env.github.parentworkspace}}
+      working-directory: ${{env.parentworkspace}}
       run: |
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./release/Makefile qmake_all
         ls release -R

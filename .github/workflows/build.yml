@@ -87,7 +87,7 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         export PATH=/d/a/DRO-Client/Qt/Tools/mingw730_32/bin:$PATH
-        PATH=$(echo "$PATH" | sed -e 's|:/mingw64/bin$||')
+        export PATH=$(echo "$PATH" | sed -e 's/:\/mingw64\/bin$//')
         echo $PATH
         ls /d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
         
@@ -102,8 +102,8 @@ jobs:
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all -B/d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
-        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8 -B/d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8
         
     - name: Deploy
       working-directory: ${{github.workspace}}/build/Release

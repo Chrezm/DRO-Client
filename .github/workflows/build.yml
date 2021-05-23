@@ -87,9 +87,9 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         export PATH=/d/a/DRO-Client/Qt/Tools/mingw730_32/bin:$PATH
-        export PATH=$(echo "$PATH" | sed -e 's/:\/mingw64\/bin$//')
         echo $PATH
         ls /d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
+        rm -r /c/ProgramData/Chocolatey/mingw/
         
     - name: Run qmake
       shell: bash

@@ -30,8 +30,8 @@ jobs:
         #  echo $asd
         #  echo "parentworkspace=${asd}" >> $GITHUB_ENV
         
-      run: |
-        echo "parentworkspace=D:/a/DRO-Client" >> $GITHUB_ENV
+      run:
+        echo "parentworkspace=${{github.workspace}}/../t" >> $GITHUB_ENV
     - name: Fetch external libs
       run: |
         # QtApng
@@ -72,10 +72,7 @@ jobs:
     - name: Install MinGW
       shell: bash
       working-directory: ${{env.parentworkspace}}
-      run: |
-        aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
-        ls ${{env.parentworkspace}}/Qt/Tools/mingw730_32/bin -R
-        set PATH=%PATH%:${{env.parentworkspace}}/Qt/Tools/mingw730_32/bin
+      run: aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
 
     - name: Run qmake
       shell: bash

@@ -21,34 +21,28 @@ jobs:
 
     - name: Setup workspace
       shell: bash
-      working-directory: ${{github.workspace}}/../
-      
-        # One day, I will get this working without hardcoding a directory...
-        # run: |
-        #  path=${{github.workspace}}/../
-        #  asd=$(echo $path | sed 's/\\/\//g')
-        #  echo $asd
-        #  echo "parentworkspace=${asd}" >> $GITHUB_ENV
-        
+      working-directory: ${{github.workspace}}
       run:
-        echo "parentworkspace=${{github.workspace}}/../t" >> $GITHUB_ENV
+        echo "parentworkspace=${{github.workspace}}/.." >> $GITHUB_ENV
+        mkdir "3rd"
+        mkdir "3rd/include"
+        mkdir "3rd/x86"
+        
     - name: Fetch external libs
+      shell: bash
+      working-directory: ${{parentworkspace}}
       run: |
-        # QtApng
-        curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-msvc2017_64-5.14.1.zip -o apng.zip
-        unzip apng.zip
         # discord-rpc
         curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-win.zip -o discord_rpc_win.zip
         unzip discord_rpc_win.zip
-        cp ./discord-rpc/win64-dynamic/lib/discord-rpc.lib ./lib
+        cp ./discord-rpc/win32-dynamic/include/discord_register.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/win32-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/win32-dynamic/include/bass.h ./DRO-Client/3rd/x86
         # BASS
         curl http://www.un4seen.com/files/bass24.zip -o bass.zip
         unzip bass.zip
-        cp ./c/x64/bass.lib ./lib
-        # BASS Opus
-        curl http://www.un4seen.com/files/bassopus24.zip -o bassopus.zip
-        unzip bassopus.zip
-        cp ./c/x64/bassopus.lib ./lib
+        cp ./c/bass.h ./DRO-Client/3rd/include
+        cp ./bass.dll ./DRO-Client/3rd/x86
         
     - name: Cache Qt
       id: cache-qt

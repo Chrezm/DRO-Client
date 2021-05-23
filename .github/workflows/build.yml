@@ -30,7 +30,7 @@ jobs:
         
     - name: Fetch external libs
       shell: bash
-      working-directory: ${{parentworkspace}}
+      working-directory: ${{env.parentworkspace}}
       run: |
         # discord-rpc
         curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-win.zip -o discord_rpc_win.zip

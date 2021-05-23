@@ -63,10 +63,9 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}/../
       run: |
-        echo "github.parentworkspace=${{github.workspace}}/../" >> $GITHUB_ENV
-        file(TO_CMAKE_PATH "${{github.parentworkspace}}" path)
-        echo "github.parentworkspace=${path}" >> $GITHUB_ENV
-        message(STATUS "path = ${path}")
+        rawpath = ${{github.workspace}}/../
+        echo "github.parentworkspace=${rawpath//\\//}" >> $GITHUB_ENV
+        echo "${{github.parentworkspace}}"
         
     - name: Install MinGW
       shell: bash

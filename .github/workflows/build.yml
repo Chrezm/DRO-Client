@@ -65,15 +65,15 @@ jobs:
       run: |
         rawpath=${{github.workspace}}/../
         echo "github.parentworkspace=${rawpath//\\//}" >> $GITHUB_ENV
-        echo "${{github.parentworkspace}}"
+        echo "${{env.github.parentworkspace}}"
         
     - name: Install MinGW
       shell: bash
-      working-directory: ${{github.workspace}}/../
+      working-directory: ${{env.github.parentworkspace}}
       run: |
         pip install aqtinstall
         aqt tool -O ./Qt windows tools_mingw 7.3.0-1-202004170606 qt.tools.win32_mingw730
-        set PATH=%PATH%;${{github.workspace}}/../Qt/Tools/mingw730_32/bin
+        set PATH=%PATH%;${{env.github.parentworkspace}}/../Qt/Tools/mingw730_32/bin
 
     - name: qmake
       shell: bash
@@ -82,7 +82,7 @@ jobs:
   
     - name: mingw
       shell: bash
-      working-directory: ${{github.workspace}}/../
+      working-directory: ${{env.github.parentworkspace}}
       run: |
         ls ./Qt/Tools/mingw73_32/bin/ -R
         ./Qt/Tools/mingw73_32/bin/mingw32-make.exe -f ./release/Makefile qmake_all

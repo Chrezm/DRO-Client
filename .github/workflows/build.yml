@@ -19,15 +19,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    # We don't use a testing environment for now
-    # - name: Install Catch2
-    #  shell: bash
-    #  run: |
-    #    curl -L https://github.com/catchorg/Catch2/archive/v2.13.4.tar.gz -o catch2.tar.gz
-    #    tar xvf catch2.tar.gz
-    #    cd Catch2-2.13.4
-    #    cmake -Bbuild -H. -DBUILD_TESTING=OFF
-    #    cmake --build build/ --target install
+    - name: Setup workspace
+      shell: bash
+      working-directory: ${{github.workspace}}/../
+      
+        # One day, I will get this working without hardcoding a directory...
+        # run: |
+        #  path=${{github.workspace}}/../
+        #  asd=$(echo $path | sed 's/\\/\//g')
+        #  echo $asd
+        #  echo "parentworkspace=${asd}" >> $GITHUB_ENV
+        
+      run: |
+        echo "parentworkspace=D:/a/DRO-Client" >> $GITHUB_ENV
     - name: Fetch external libs
       run: |
         # QtApng
@@ -45,6 +49,7 @@ jobs:
         curl http://www.un4seen.com/files/bassopus24.zip -o bassopus.zip
         unzip bassopus.zip
         cp ./c/x64/bassopus.lib ./lib
+        
     - name: Cache Qt
       id: cache-qt
       uses: actions/cache@v1
@@ -59,21 +64,10 @@ jobs:
         cached: ${{steps.cache-qt.outputs.cache-hit}}
         arch: 'win32_mingw73'
 
-    - name: Setup workspace
+    - name: Install AQT
       shell: bash
-      working-directory: ${{github.workspace}}/../
-      
-        # One day, I will get this working without hardcoding a directory...
-        # run: |
-        #  path=${{github.workspace}}/../
-        #  asd=$(echo $path | sed 's/\\/\//g')
-        #  echo $asd
-        #  echo "parentworkspace=${asd}" >> $GITHUB_ENV
-        
-      run: |
-        echo "parentworkspace=D:/a/DRO-Client" >> $GITHUB_ENV
-        echo "${{env.parentworkspace}}"
-        pip install aqtinstall
+      working-directory: ${{env.parentworkspace}} 
+      run: pip install aqtinstall
         
     - name: Install MinGW
       shell: bash
@@ -83,17 +77,17 @@ jobs:
         ls ${{env.parentworkspace}}/Qt/Tools/mingw730_32/bin -R
         set PATH=%PATH%:${{env.parentworkspace}}/Qt/Tools/mingw730_32/bin
 
-    - name: qmake
+    - name: Run qmake
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"    
   
-    - name: mingw
+    - name: Run mingw
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        ls release -R
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
+        ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8
                 
     # - name: Create Build Environment
     #  run: cmake -E make_directory ${{github.workspace}}/build

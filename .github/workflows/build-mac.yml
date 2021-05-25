@@ -18,4 +18,39 @@ jobs:
     - name: Setup workspace
       shell: bash
       working-directory: ${{github.workspace}}
-      run: pwd
+      run: |
+        echo "parentworkspace=/Users/runner/work/DRO-Client/" >> $GITHUB_ENV
+        mkdir "3rd"
+        mkdir "3rd/include"
+        mkdir "3rd/x86_64"
+        
+    - name: Fetch Discord external library
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-osx.zip -o discord_rpc_osx.zip
+        unzip discord_rpc_osx.zip
+        cp ./discord-rpc/osx-dynamic/include/discord_register.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/osx-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib ./DRO-Client/3rd/x86_64
+      
+    - name: Fetch Bass external library
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        curl http://www.un4seen.com/files/bass24-osx.zip -o bass.zip
+        unzip bass.zip
+        cp ./bass.h ./DRO-Client/3rd/include
+        cp ./bass.dylib ./DRO-Client/3rd/x86_64
+        ls ./DRO-Client/3rd -R
+        
+    - name: Fetch QtApng external library
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-clang_64-5.14.1.tar.xz -o qtapng.tar.xz
+        unzip qtapng.tar.xz
+        ls -R
+        unzip qtapng-clang_64-5.14.1.tar
+        ls -R
+        

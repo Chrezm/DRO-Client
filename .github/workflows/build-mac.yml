@@ -82,19 +82,32 @@ jobs:
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        mkdir "Danganronpa_Online"
-        cp -R ./dro-client.app "./Danganronpa_Online"
-        mv "./Danganronpa_Online/dro-client.app" "./Danganronpa_Online/Danganronpa_Online.app"
+        mkdir "Danganronpa Online"
+        cp -R ./dro-client.app "./Danganronpa Online"
+        mv "./Danganronpa Online/dro-client.app" "./Danganronpa Online/Danganronpa Online.app"
         
     - name: Deploy
-      working-directory: ${{env.parentworkspace}}/Danganronpa_Online
+      working-directory: "${{env.parentworkspace}}/Danganronpa Online"
       shell: bash
       run: |
         ls -R
-        ../Qt/5.14.2/clang_64/bin/macdeployqt Danganronpa_Online.app
-        cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib ./Danganronpa_Online.app/Contents/Frameworks/
-        cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib ./Danganronpa_Online.app/Contents/MacOS/
-        cp ../libbass.dylib ./Danganronpa_Online.app/Contents/Frameworks/
-        cp ../libbass.dylib ./Danganronpa_Online.app/Contents/MacOS/
-        cp -R ../clang_64/plugins/imageformats ./Danganronpa_Online.app/Contents/MacOS/
+        ../Qt/5.14.2/clang_64/bin/macdeployqt "Danganronpa Online.app"
+        cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib "./Danganronpa Online.app/Contents/Frameworks/"
+        cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib "./Danganronpa Online.app/Contents/MacOS/"
+        cp ../libbass.dylib "./Danganronpa Online.app/Contents/Frameworks/"
+        cp ../libbass.dylib "./Danganronpa Online.app/Contents/MacOS/"
+        cp -R ../clang_64/plugins/imageformats "./Danganronpa Online.app/Contents/MacOS/"
         ls -R
+
+    - name: Make DMG
+      working-directory: ${{env.parentworkspace}}
+      shell: bash
+      run: hdiutil create -volname "Danganronpa Online" -srcfolder "./Danganronpa Online" -ov -format UDZO "Danganronpa Online.dmg"
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+         name: "Danganronpa Online.dmg"
+         path: "${{env.parentworkspace}}/Danganronpa Online.dmg"
+      
+    

@@ -75,5 +75,5 @@ jobs:
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        ./usr/bin/make -f ./Makefile qmake_all
-        ./usr/bin/make -j12
+        /usr/bin/make -f ./Makefile qmake_all
+        /usr/bin/make -j12

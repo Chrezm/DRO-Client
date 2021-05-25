@@ -106,12 +106,16 @@ jobs:
       run: |
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8
-        
+      
+    - name: LS
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: ls -r
+      
     - name: Deploy
       working-directory: ${{github.workspace}}/build/Release
       shell: bash
       run: |
-        ls
         windeployqt.exe --quick .
         ls
         cp ../../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/

@@ -46,8 +46,21 @@ jobs:
     - name: Fetch QtApng external library
       shell: bash
       working-directory: ${{env.parentworkspace}}
+      # ./clang_64/plugins/imageformats/libqapng.dylib
       run: |
         curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-clang_64-5.14.1.tar.xz -o qtapng.tar.xz
         tar -xvf qtapng.tar.xz
         ls -R
         
+    - name: Cache Qt
+      id: cache-qt
+      uses: actions/cache@v1
+      with:
+        path: ../Qt
+        key: ${{ runner.os }}-qt5
+
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.14.2'
+        cached: ${{steps.cache-qt.outputs.cache-hit}}

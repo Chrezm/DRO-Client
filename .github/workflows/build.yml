@@ -107,24 +107,26 @@ jobs:
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -f ./Makefile qmake_all
         ./Qt/Tools/mingw730_32/bin/mingw32-make.exe -j8
       
-    - name: LS
+    - name: Set up deploy folder
       shell: bash
       working-directory: ${{env.parentworkspace}}
-      run: ls -R
+      run: |
+        mkdir "Danganronpa_Online"
+        cp ./release/dro-client.exe ./Danganronpa_Online/Danganronpa_Online.exe
       
     - name: Deploy
-      working-directory: ${{github.workspace}}/build/Release
+      working-directory: ${{env.parentworkspace}}/Danganronpa_Online
       shell: bash
       run: |
         windeployqt.exe --quick .
-        ls
-        cp ../../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/
-        cp ../../discord-rpc/win64-dynamic/bin/discord-rpc.dll .
-        cp ../../x64/bass.dll .
+        ls        
+        cp ../discord-rpc/win32-dynamic/bin/discord-rpc.dll .
+        cp ../bass.dll .
+        cp ../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/
         ls
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
          name: Danganronpa_Online
-         path: ${{github.workspace}}/build/Release/
+         path: ${{env.parentworkspace}}/Danganronpa_Online

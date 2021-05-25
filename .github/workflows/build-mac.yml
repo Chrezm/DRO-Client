@@ -91,7 +91,7 @@ jobs:
       shell: bash
       run: |
         ls -R
-        ~/Qt/5.14.2/clang_64/bin/macdeployqt Danganronpa_Online.app
+        ../Qt/5.14.2/clang_64/bin/macdeployqt Danganronpa_Online.app
         cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib ./Danganronpa_Online.app/Contents/Frameworks/
         cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib ./Danganronpa_Online.app/Contents/MacOS/
         cp ../libbass.dylib ./Danganronpa_Online.app/Contents/Frameworks/

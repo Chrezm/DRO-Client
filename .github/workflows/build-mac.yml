@@ -64,3 +64,16 @@ jobs:
       with:
         version: '5.14.2'
         cached: ${{steps.cache-qt.outputs.cache-hit}}
+
+    - name: Run qmake
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        ./Qt/5.14.2/clang_64/bin/qmake -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec macx-clang "CONFIG+=x86_64" "CONFIG+=qtquickcompiler"
+  
+    - name: Run Make
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        ./usr/bin/make -f ./Makefile qmake_all
+        ./usr/bin/make -j12

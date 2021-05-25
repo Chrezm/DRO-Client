@@ -77,6 +77,23 @@ jobs:
       run: |
         /usr/bin/make -f ./Makefile qmake_all
         /usr/bin/make -j12
-        ls
         
+    - name: Set up deploy folder
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        mkdir "Danganronpa_Online"
+        cp ./dro-client.app "./Danganronpa_Online/Danganronpa_Online.app"
         
+    - name: Deploy
+      working-directory: ${{env.parentworkspace}}/Danganronpa_Online
+      shell: bash
+      run: |
+        ls -R
+        ~/Qt/5.14.2/clang_64/bin/macdeployqt Danganronpa_Online.app
+        cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib ./Danganronpa_Online.app/Contents/Frameworks/
+        cp ../discord-rpc/osx-dynamic/lib/libdiscord-rpc.dylib ./Danganronpa_Online.app/Contents/MacOS/
+        cp ../libbass.dylib ./Danganronpa_Online.app/Contents/Frameworks/
+        cp ../libbass.dylib ./Danganronpa_Online.app/Contents/MacOS/
+        cp -R ../clang_64/plugins/imageformats ./Danganronpa_Online.app/Contents/MacOS/
+        ls -R

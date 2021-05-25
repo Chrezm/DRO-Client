@@ -42,15 +42,12 @@ jobs:
         unzip bass.zip
         cp ./bass.h ./DRO-Client/3rd/include
         cp ./libbass.dylib ./DRO-Client/3rd/x86_64
-        ls -R
         
     - name: Fetch QtApng external library
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
         curl -L https://github.com/Skycoder42/QtApng/releases/download/1.1.4/qtapng-clang_64-5.14.1.tar.xz -o qtapng.tar.xz
-        unzip qtapng.tar.xz
-        ls -R
-        unzip qtapng-clang_64-5.14.1.tar
+        tar -xvf qtapng.tar.xz
         ls -R
         

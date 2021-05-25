@@ -85,10 +85,11 @@ jobs:
     - name: Update PATH
       shell: bash
       working-directory: ${{env.parentworkspace}}
+      # For whatever reason, qmake insists on using the MinGW64 installation that came with the host machine rather than the newly installed MinGW32
+      # I could not find any way of making it use that MinGW32 folder, it always insisted on using MinGW64.
+      # Therefore, I just brought the MinGW32 folder to the MinGW64 folder.
       run: |
         export PATH=/d/a/DRO-Client/Qt/Tools/mingw730_32/bin:$PATH
-        echo $PATH
-        ls /d/a/DRO-Client/Qt/Tools/mingw730_32/bin/
         rm -r /c/ProgramData/Chocolatey/lib/mingw/tools/install/mingw64/
         cp -r /d/a/DRO-Client/Qt/Tools/mingw730_32/ /c/ProgramData/Chocolatey/lib/mingw/tools/install/mingw64/
         
@@ -96,9 +97,7 @@ jobs:
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        cat ./Qt/5.14.2/mingw73_32/mkspecs/win32-g++/qmake.conf
-        ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -d -d -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
-        cat ./Makefile
+        ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler"
   
     - name: Run MinGW
       shell: bash
@@ -111,11 +110,13 @@ jobs:
       working-directory: ${{github.workspace}}/build/Release
       shell: bash
       run: |
-        windeployqt .
+        windeployqt.exe
+        ls
         cp ../../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/
         cp ../../discord-rpc/win64-dynamic/bin/discord-rpc.dll .
         cp ../../x64/bass.dll .
-   
+        ls
+        
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:

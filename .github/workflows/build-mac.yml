@@ -83,7 +83,8 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         mkdir "Danganronpa_Online"
-        cp ./dro-client.app "./Danganronpa_Online/Danganronpa_Online.app"
+        cp -R ./dro-client.app "./Danganronpa_Online"
+        mv "./Danganronpa_Online/dro-client.app" "./Danganronpa_Online/Danganronpa_Online.app"
         
     - name: Deploy
       working-directory: ${{env.parentworkspace}}/Danganronpa_Online

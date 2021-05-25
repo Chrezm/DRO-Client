@@ -41,7 +41,7 @@ jobs:
         curl http://www.un4seen.com/files/bass24-osx.zip -o bass.zip
         unzip bass.zip
         cp ./bass.h ./DRO-Client/3rd/include
-        cp ./bass.dylib ./DRO-Client/3rd/x86_64
+        cp ./libbass.dylib ./DRO-Client/3rd/x86_64
         ls ./DRO-Client/3rd -R
         
     - name: Fetch QtApng external library

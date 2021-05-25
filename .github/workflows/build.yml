@@ -5,8 +5,8 @@ name: build
 on:
   push:
     branches: [ actions ]
-  # pull_request:
-  #  branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -72,7 +72,7 @@ jobs:
         cached: ${{steps.cache-qt.outputs.cache-hit}}
         arch: 'win32_mingw73'
 
-    - name: Install AQT
+    - name: Install AQt
       shell: bash
       working-directory: ${{env.parentworkspace}} 
       run: pip install aqtinstall
@@ -112,21 +112,25 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         mkdir "Danganronpa_Online"
-        cp ./release/dro-client.exe ./Danganronpa_Online/Danganronpa_Online.exe
+        cp ./release/dro-client.exe "./Danganronpa_Online/Danganronpa_Online.exe"
       
     - name: Deploy
       working-directory: ${{env.parentworkspace}}/Danganronpa_Online
       shell: bash
       run: |
         windeployqt.exe --quick .
-        ls        
         cp ../discord-rpc/win32-dynamic/bin/discord-rpc.dll .
         cp ../bass.dll .
         cp ../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/
-        ls
         
     - name: Upload Artifact
       uses: actions/upload-artifact@v2
       with:
          name: Danganronpa_Online
          path: ${{env.parentworkspace}}/Danganronpa_Online
+         
+    - name: Upload Artifact (just .exe)
+      uses: actions/upload-artifact@v2
+      with:
+         name: dro-client.exe
+         path: ${{env.parentworkspace}}/Danganronpa_Online/Danganronpa_Online.exe

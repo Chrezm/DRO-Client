@@ -96,7 +96,7 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         cat ./Qt/5.14.2/mingw73_32/mkspecs/win32-g++/qmake.conf
-        ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -d -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler" QMAKE_CXX="/d/a/DRO-Client/Qt/Tools/mingw730_32/bin/g++" 
+        ./Qt/5.14.2/mingw73_32/bin/qmake.exe -makefile -d -d -o Makefile ./DRO-Client/dronline-client.pro -spec win32-g++ "CONFIG+=qtquickcompiler" QMAKE_CXX="/d/a/DRO-Client/Qt/Tools/mingw730_32/bin/g++" 
         cat ./Makefile
   
     - name: Run MinGW

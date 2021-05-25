@@ -25,7 +25,7 @@ jobs:
       run: |
         rawparent=$(cd ..; pwd)
         echo $rawparent
-        echo "parentworkspace=$rawparent" >> $GITHUB_ENV
+        echo "parentworkspace=${{rawparent}}" >> $GITHUB_ENV
         mkdir "3rd"
         mkdir "3rd/include"
         mkdir "3rd/x86"

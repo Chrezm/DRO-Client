@@ -111,7 +111,8 @@ jobs:
       working-directory: ${{github.workspace}}/build/Release
       shell: bash
       run: |
-        windeployqt.exe
+        ls
+        windeployqt.exe --quick .
         ls
         cp ../../mingw73_32/plugins/imageformats/qapng.dll ./imageformats/
         cp ../../discord-rpc/win64-dynamic/bin/discord-rpc.dll .

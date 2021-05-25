@@ -1,0 +1,21 @@
+# Original code from skyedeving and oldmud0
+# at https://github.com/AttorneyOnline/AO2-Client/blob/master/.github/workflows/build.yml
+name: build-mac
+
+on: push
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  macos:
+    runs-on: macos-10.15
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup workspace
+      shell: bash
+      working-directory: ${{github.workspace}}
+      run: pwd

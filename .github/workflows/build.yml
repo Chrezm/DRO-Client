@@ -88,6 +88,7 @@ jobs:
       # For whatever reason, qmake insists on using the MinGW64 installation that came with the host machine rather than the newly installed MinGW32
       # I could not find any way of making it use that MinGW32 folder, it always insisted on using MinGW64.
       # Therefore, I just brought the MinGW32 folder to the MinGW64 folder.
+      # Tom Scott would be proud of this bodge
       run: |
         export PATH=/d/a/DRO-Client/Qt/Tools/mingw730_32/bin:$PATH
         rm -r /c/ProgramData/Chocolatey/lib/mingw/tools/install/mingw64/

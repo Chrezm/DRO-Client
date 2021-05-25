@@ -23,9 +23,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}
       run: |
-        export rawparent=$(cd ..; pwd)
-        echo $rawparent
-        echo "parentworkspace=${rawparent}" >> $GITHUB_ENV
+        echo "parentworkspace=/d/a/DRO-Client" >> $GITHUB_ENV
         mkdir "3rd"
         mkdir "3rd/include"
         mkdir "3rd/x86"

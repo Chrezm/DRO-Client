@@ -110,7 +110,7 @@ jobs:
     - name: LS
       shell: bash
       working-directory: ${{env.parentworkspace}}
-      run: ls -r
+      run: ls -R
       
     - name: Deploy
       working-directory: ${{github.workspace}}/build/Release

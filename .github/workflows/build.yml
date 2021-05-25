@@ -23,7 +23,7 @@ jobs:
       shell: bash
       working-directory: ${{github.workspace}}
       run: |
-        echo "rawparent=$(cd ..; pwd)
+        rawparent=$(cd ..; pwd)
         echo $rawparent
         echo "parentworkspace=$rawparent" >> $GITHUB_ENV
         mkdir "3rd"

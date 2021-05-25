@@ -42,7 +42,7 @@ jobs:
         unzip bass.zip
         cp ./bass.h ./DRO-Client/3rd/include
         cp ./libbass.dylib ./DRO-Client/3rd/x86_64
-        ls ./DRO-Client/3rd -R
+        ls -R
         
     - name: Fetch QtApng external library
       shell: bash

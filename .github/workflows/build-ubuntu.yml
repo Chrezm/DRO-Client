@@ -9,7 +9,7 @@ env:
   BUILD_TYPE: Release
 
 jobs:
-  macos:
+  ubuntu:
     runs-on: ubuntu-20.04
 
     steps:
@@ -18,4 +18,39 @@ jobs:
     - name: Setup workspace
       shell: bash
       working-directory: ${{github.workspace}}
-      run: pwd
+      run: |
+        echo "parentworkspace=/home/runner/work/DRO-Client/DRO-Client/" >> $GITHUB_ENV
+        mkdir "3rd"
+        mkdir "3rd/include"
+        mkdir "3rd/x86_64"
+        
+    - name: Fetch Discord external library
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-linux.zip -o discord_rpc_linux.zip
+        unzip discord_rpc_linux.zip
+        cp ./discord-rpc/linux-dynamic/include/discord_register.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/linux-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
+        cp ./discord-rpc/linux-dynamic/lib/libdiscord-rpc.so ./DRO-Client/3rd/x86_64
+        
+    - name: Fetch Bass external library
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        curl http://www.un4seen.com/files/bass24-linux.zip -o bass.zip
+        unzip bass.zip
+        cp ./bass.h ./DRO-Client/3rd/include
+        cp ./libbass.so ./DRO-Client/3rd/x86_64
+        
+    - name: Fetch QtApng external library
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        curl -L https://cdn.discordapp.com/attachments/422857337133596692/845396654642954260/libqapng.so -o libqapng.so
+        ls -R
+        
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v2
+      with:
+        version: '5.14.2'

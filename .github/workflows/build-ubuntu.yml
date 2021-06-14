@@ -44,7 +44,7 @@ jobs:
         curl http://www.un4seen.com/files/bass24-linux.zip -o bass.zip
         unzip bass.zip
         cp ./bass.h ./DRO-Client/3rd/include/bass.h
-        cp ./libbass.so ./DRO-Client/3rd/x86_64/libbass.so
+        cp ./x64/libbass.so ./DRO-Client/3rd/x86_64/libbass.so
         
     - name: Fetch QtApng external library
       shell: bash
@@ -78,3 +78,28 @@ jobs:
         mkdir "Danganronpa Online"
         cp -R ./DRO-Client/dro-client "./Danganronpa Online"
         mv "./Danganronpa Online/dro-client" "./Danganronpa Online/Danganronpa Online"
+        
+    - name: Deploy
+      working-directory: "${{env.parentworkspace}}/Danganronpa Online"
+      shell: bash
+      run: |
+        mkdir depends
+        cp ../discord-rpc/linux-dynamic/lib/libdiscord-rpc.so "./depends"
+        cp ../x64/libbass.so "./depends"
+        mkdir imageformats
+        cp -R ../libqapng.so "./imageformats"
+        echo "LD_LIBRARY_PATH=.:./depends:$LD_LIBRARY_PATH ./dro-client" > "dro-client.sh"
+        echo "Installation instructions
+
+        1. Download the Full Pack for Windows and extract on the same folder as this folder.
+
+        2. On your terminal, run 
+        sudo apt install qt5-default
+
+        3. Change directory to this folder, and run 
+        chmod +x dro-client.sh
+        chmod +x dro-client
+
+        4. To launch, run
+        ./dro-client.sh" > "Readme (Ubuntu).txt"
+        ls -R

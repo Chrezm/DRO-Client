@@ -23,11 +23,14 @@ jobs:
         mkdir "3rd"
         mkdir "3rd/include"
         mkdir "3rd/x86_64"
+        ls -R
         
     - name: Fetch Discord external library
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
+        pwd
+        ls -R
         curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-linux.zip -o discord_rpc_linux.zip
         unzip discord_rpc_linux.zip
         cp ./discord-rpc/linux-dynamic/include/discord_register.h ./DRO-Client/3rd/include

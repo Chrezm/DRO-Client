@@ -57,3 +57,24 @@ jobs:
       uses: jurplel/install-qt-action@v2
       with:
         version: '5.14.2'
+        
+    - name: Run qmake
+      shell: bash
+      working-directory: ${{github.workspace}}
+      run: |
+        qmake
+  
+    - name: Run Make
+      shell: bash
+      working-directory: ${{github.workspace}}
+      run: |
+        make
+        ls -R
+        
+    - name: Set up deploy folder
+      shell: bash
+      working-directory: ${{env.parentworkspace}}
+      run: |
+        mkdir "Danganronpa Online"
+        cp -R ./DRO-Client/dro-client "./Danganronpa Online"
+        mv "./Danganronpa Online/dro-client" "./Danganronpa Online/Danganronpa Online"

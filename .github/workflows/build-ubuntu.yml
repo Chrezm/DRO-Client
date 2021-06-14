@@ -23,14 +23,11 @@ jobs:
         mkdir "3rd"
         mkdir "3rd/include"
         mkdir "3rd/x86_64"
-        ls -R
         
     - name: Fetch Discord external library
       shell: bash
       working-directory: ${{env.parentworkspace}}
       run: |
-        pwd
-        ls -R
         curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-linux.zip -o discord_rpc_linux.zip
         unzip discord_rpc_linux.zip
         cp ./discord-rpc/linux-dynamic/include/discord_register.h ./DRO-Client/3rd/include/discord_register.h
@@ -51,7 +48,6 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         curl -L https://cdn.discordapp.com/attachments/422857337133596692/845396654642954260/libqapng.so -o libqapng.so
-        ls -R
         
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
@@ -76,8 +72,7 @@ jobs:
       working-directory: ${{env.parentworkspace}}
       run: |
         mkdir "Danganronpa Online"
-        cp -R ./DRO-Client/dro-client "./Danganronpa Online"
-        mv "./Danganronpa Online/dro-client" "./Danganronpa Online/Danganronpa Online"
+        cp -R ./DRO-Client/dro-client "./dro-client"
         
     - name: Deploy
       working-directory: "${{env.parentworkspace}}/Danganronpa Online"
@@ -102,4 +97,15 @@ jobs:
 
         4. To launch, run
         ./dro-client.sh" > "Readme (Ubuntu).txt"
-        ls -R
+
+    - name: Make ZIP File
+      working-directory: ${{env.parentworkspace}}
+      shell: bash
+      run: |
+        zip -r "Danganronpa Online.zip" "Danganronpa Online"
+      
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+         name: "Danganronpa Online.zip"
+         path: "${{env.parentworkspace}}/Danganronpa Online.zip"

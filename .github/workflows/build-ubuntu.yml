@@ -33,9 +33,9 @@ jobs:
         ls -R
         curl -L https://github.com/discordapp/discord-rpc/releases/download/v3.4.0/discord-rpc-linux.zip -o discord_rpc_linux.zip
         unzip discord_rpc_linux.zip
-        cp ./discord-rpc/linux-dynamic/include/discord_register.h ./DRO-Client/3rd/include
-        cp ./discord-rpc/linux-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include
-        cp ./discord-rpc/linux-dynamic/lib/libdiscord-rpc.so ./DRO-Client/3rd/x86_64
+        cp ./discord-rpc/linux-dynamic/include/discord_register.h ./DRO-Client/3rd/include/discord_register.h
+        cp ./discord-rpc/linux-dynamic/include/discord_rpc.h ./DRO-Client/3rd/include/discord_rpc.h
+        cp ./discord-rpc/linux-dynamic/lib/libdiscord-rpc.so ./DRO-Client/3rd/x86_64/libdiscord-rpc.so
         
     - name: Fetch Bass external library
       shell: bash
@@ -43,8 +43,8 @@ jobs:
       run: |
         curl http://www.un4seen.com/files/bass24-linux.zip -o bass.zip
         unzip bass.zip
-        cp ./bass.h ./DRO-Client/3rd/include
-        cp ./libbass.so ./DRO-Client/3rd/x86_64
+        cp ./bass.h ./DRO-Client/3rd/include/bass.h
+        cp ./libbass.so ./DRO-Client/3rd/x86_64/libbass.so
         
     - name: Fetch QtApng external library
       shell: bash
